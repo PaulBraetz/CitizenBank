@@ -1,0 +1,115 @@
+﻿@page "/user"
+@inherits SessionChild
+<SessionFrameInitialized>
+	<ShadowPage>
+		<Header>
+			<PBTitle>
+				<Localize Value="User" />
+			</PBTitle>
+		</Header>
+		<ChildContent>
+			<AuthorizeView>
+				<ShadowPageFormBox>
+					<Header>
+						<PBTitle>
+							<Localize Value="Manage Login" />
+						</PBTitle>
+					</Header>
+					<ChildContent>
+						<NotAuthorized>
+							<div class="my-1">
+								<LoginPreset />
+							</div>
+							<div class="my-1">
+								<CollapseFrame>
+									<CollapseText><CollapseChevron /><Localize Value="Forgot Password" /></CollapseText>
+									<CollapseContent>
+										<ForgotPasswordPreset />
+									</CollapseContent>
+								</CollapseFrame>
+							</div>
+						</NotAuthorized>
+						<Authorized>
+							<div class="my-1">
+								<UserDetails User="@SessionParent.Session.Owner" />
+							</div>
+							<AuthorizeView ForRole="@PBCommon.Settings.SUPERADMIN_ROLE">
+								<Authorized>
+									<div class="my-1">
+										<CollapseFrame>
+											<CollapseText><CollapseChevron /><Localize Value="Register" /></CollapseText>
+											<CollapseContent>
+												<RegisterPreset />
+											</CollapseContent>
+										</CollapseFrame>
+									</div>
+								</Authorized>
+							</AuthorizeView>
+							<div class="my-1">
+								<CollapseFrame>
+									<CollapseText><CollapseChevron /><Localize Value="Change Password" /></CollapseText>
+									<CollapseContent>
+										<ChangePasswordPreset />
+									</CollapseContent>
+								</CollapseFrame>
+							</div>
+							<div class="my-1">
+								<CollapseFrame>
+									<CollapseText><CollapseChevron /><Localize Value="Change Email" /></CollapseText>
+									<CollapseContent>
+										<PBFrontend.UI.Authorization.ChangeEmail.ChangeEmailPreset />
+									</CollapseContent>
+								</CollapseFrame>
+							</div>
+							<div class="my-1">
+								<CollapseFrame>
+									<CollapseText><CollapseChevron /><Localize Value="Delete User" /></CollapseText>
+									<CollapseContent>
+										<DeleteUser/>
+									</CollapseContent>
+								</CollapseFrame>
+							</div>
+							<LogoutPreset />
+						</Authorized>
+					</ChildContent>
+				</ShadowPageFormBox>
+				<Authorized>
+					<ShadowPageFormBox>
+						<Header>
+							<PBTitle>
+								<Localize Value="Settings" />
+							</PBTitle>
+						</Header>
+						<ChildContent>
+							<Settings />
+						</ChildContent>
+					</ShadowPageFormBox>
+					<ShadowPageFormBox>
+						<Header>
+							<PBTitle>
+								<Localize Value="Manage Delegates"/>
+							</PBTitle>
+						</Header>
+						<ChildContent>
+							<ManageDelegates/>
+						</ChildContent>
+					</ShadowPageFormBox>
+				</Authorized>
+			</AuthorizeView>
+			<AuthorizeView ForRole="@PBCommon.Settings.ADMIN_ROLE">
+				<Authorized>
+					<ShadowPageFormBox>
+						<Header>
+							<PBTitle>
+								<Localize Value="Roles" />
+							</PBTitle>
+						</Header>
+						<ChildContent>
+							<PBFrontend.UI.User.Roles.EditUserRoles />
+						</ChildContent>
+					</ShadowPageFormBox>
+				</Authorized>
+			</AuthorizeView>
+		</ChildContent>
+	</ShadowPage>
+</SessionFrameInitialized>

@@ -1,0 +1,10 @@
+﻿@inherits SearchAccountChild
+@code{
+	[CascadingParameter]
+	private CBFrontend.UI.DataFrames.Accounts.AccountsFrame AccountssParent { get; set; }
+	protected override void OnParametersSetAndSessionInitialized()
+	{
+		base.OnParametersSetAndSessionInitialized();
+		SearchAccountParent.Request.AsAccountId = AccountssParent.CurrentAccount?.Id ?? Guid.Empty;
+	}
+}

@@ -1,0 +1,12 @@
+﻿@inherits SessionChild
+<span>
+	@Citizen.Name
+	@if (Citizen.Owner != null)
+	{
+		<span style="cursor:help" title="@SessionParent.Localize("Verified Citizen")"> (✓)</span>
+	}
+	else
+	{
+		<span style="cursor:help" title="@SessionParent.Localize("Unverified Citizen")"> (✗)</span>
+	}
+</span>

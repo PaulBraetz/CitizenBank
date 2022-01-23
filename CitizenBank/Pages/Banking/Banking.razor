@@ -1,0 +1,72 @@
+﻿@page "/banking"
+<AuthorizeView ForRoles="new[] { CBCommon.Settings.CitizenBank.CITIZEN_ROLE, PBCommon.Settings.SUPERADMIN_ROLE }">
+	<AuthorizedRedirect TargetOnFail="/citizen">
+		<StateMachineFrame>
+			<TabFrame>
+				<Tab State="0">
+					<Localize Value="Create Transaction" />
+				</Tab>
+				<Tab State="1">
+					<Localize Value="Transaction Offers" />
+				</Tab>
+				<!--
+				<Tab State="0">
+					<Localize Value="Account Management" />
+				</Tab>
+				<Tab State="1">
+					<Localize Value="Department Management" />
+				</Tab>
+				-->
+				<!--
+				<Tab State="4">
+					<Localize Value="Transaction Contracts" />
+				</Tab>
+				-->
+			</TabFrame>
+			<CBFrontend.UI.DataFrames.Citizens.CitizensFrame>
+				<CBFrontend.UI.DataFrames.Accounts.AccountsFrame>
+					<Step State="0">
+						<ShadowPage>
+							<Header>
+								<PBTitle>
+									<Localize Value="Create Transaction" />
+								</PBTitle>
+							</Header>
+							<ChildContent>
+								<CreateTransaction />
+							</ChildContent>
+						</ShadowPage>
+					</Step>
+					<Step State="1">
+						<ShadowPage>
+							<Header>
+								<PBTitle>
+									<Localize Value="Transaction Offers" />
+								</PBTitle>
+							</Header>
+							<ChildContent>
+								<TransactionOffers />
+							</ChildContent>
+						</ShadowPage>
+					</Step>
+					<!--
+					<Step State="0">
+						<Accounts />
+					</Step>
+					-->
+					<!--
+					<Step State="1">
+						<Departments />
+					</Step>
+					<Step State="3">
+						<Requests />
+					</Step>
+					<Step State="4">
+						<Contracts />
+					</Step>
+					-->
+				</CBFrontend.UI.DataFrames.Accounts.AccountsFrame>
+			</CBFrontend.UI.DataFrames.Citizens.CitizensFrame>
+		</StateMachineFrame>
+	</AuthorizedRedirect>
+</AuthorizeView>

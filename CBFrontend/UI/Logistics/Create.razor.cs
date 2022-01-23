@@ -1,0 +1,60 @@
+﻿using CBApplication.Services.Abstractions;
+
+using CBData.Entities;
+
+using PBApplication.Responses;
+using PBApplication.Responses.Abstractions;
+
+using PBFrontend.Extensions;
+using PBFrontend.UI.Authorization;
+using PBFrontend.UI.Input;
+using PBFrontend.UI.Miscellaneous.Loading;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+using static CBCommon.Enums.LogisticsEnums;
+
+namespace CBFrontend.UI.Logistics
+{
+	public partial class Create : SessionChild
+	{
+		private IEventfulLogisticsService.CreateLogisticsOrderRequest request = new()
+		{
+			Deadline = DateTimeOffset.Now + TimeSpan.FromDays(1)
+		};
+		private IResponse response = new Response();
+
+		private LoadingFrame loadingFrameRef;
+
+
+		private DateTimeOffset deadlineDate = DateTimeOffset.Now + TimeSpan.FromDays(1);
+
+		private DateTimeOffset deadlineTime;
+
+		private CitizenEntity client = new CitizenEntity();
+
+		private DateTimeOffset TotalDeadline => deadlineDate.Date + deadlineTime.TimeOfDay;
+
+		private async Task Submit()
+		{
+			async Task run()
+			{
+				request.Deadline = TotalDeadline;
+				request.ClientId = client.Id;
+				response = await SessionParent.ServiceContext.GetService<IEventfulLogisticsService>().CreateLogisticsOrder(request);
+				if (response.Validation.NoneInvalid)
+				{
+					request = new();
+					deadlineDate = DateTimeOffset.Now + TimeSpan.FromDays(1);
+					deadlineTime = DateTimeOffset.MinValue;
+					response = new Response();
+				}
+				await InvokeAsync(StateHasChanged);
+			}
+			await loadingFrameRef.Load(run);
+		}
+	}
+}

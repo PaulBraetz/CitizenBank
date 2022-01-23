@@ -1,0 +1,85 @@
+﻿@inherits SessionChild
+<PBFrontend.UI.Formatting.Box.Presets.Shadow.ShadowPageFormBox>
+    <Header>
+        <PBFrontend.UI.Formatting.PBTitle>
+            <PBFrontend.UI.Formatting.Localize Value="Create" />
+        </PBFrontend.UI.Formatting.PBTitle>
+    </Header>
+    <ChildContent>
+        <div>
+            <SearchCitizenFrame @bind-Value="client">
+                <label for="searchClient"><PBFrontend.UI.Formatting.Localize Value="Search Client" /></label>
+                <div class="dropdown show" id="searchClient">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <PBFrontend.UI.Formatting.Localize Value="Client" /> : @(@client?.Name != null ? client.Name:SessionParent.Localize("None[0]"))
+                            </div>
+                        </div>
+                        <CBFrontend.UI.Citizen.SearchCitizen.Children.NameInput />
+                        <div class="input-group-append">
+                            <CBFrontend.UI.Citizen.SearchCitizen.Children.ClearButton />
+                        </div>
+                        <div class="input-group-append">
+                            <CBFrontend.UI.Citizen.SearchCitizen.Children.SubmitButton />
+                        </div>
+                    </div>
+                    <CBFrontend.UI.Citizen.SearchCitizen.Children.ResultsDropdown />
+                </div>
+            </SearchCitizenFrame>
+        </div>
+        <div class="mt-3">
+            <PBFrontend.UI.Input.TextInput @bind-Value="request.Origin"
+                                           ValidationField="response.Validation.GetField(nameof(request.Origin))"
+                                           OnEnterPressed="Submit"
+                                           Label="@nameof(request.Origin)" />
+        </div>
+        <div class="mt-3">
+            <PBFrontend.UI.Input.TextInput @bind-Value="request.Target"
+                                           ValidationField="response.Validation.GetField(nameof(request.Target))"
+                                           OnEnterPressed="Submit"
+                                           Label="@nameof(request.Target)" />
+        </div>
+        <div class="mt-3">
+            <PBFrontend.UI.Input.SelectInput @bind-Value="request.Type"
+                                             Options="CBFrontend.Classes.HelperEnumerables.OrderTypeOptions"
+                                             TOption="CBCommon.Enums.LogisticsEnums.OrderType"
+                                             Label="@nameof(request.Type)" />
+        </div>
+        <div class="mt-3">
+            <PBFrontend.UI.Input.TextInput @bind-Value="request.Details"
+                                           ValidationField="response.Validation.GetField(nameof(request.Details))"
+                                           OnEnterPressed="Submit"
+                                           Label="@nameof(request.Details)" />
+        </div>
+        <div class="mt-3">
+            <label for="deadline"><PBFrontend.UI.Formatting.Localize Value="Deadline" />&nbsp;:&nbsp;@SessionParent.Localize(TotalDeadline)</label>
+            <div class="input-group" id="deadline">
+                <PBFrontend.UI.Input.DateInput @bind-Value="deadlineDate"
+                                               Type="PBFrontend.UI.Input.DateInput.InputType.Date"
+                                               ValidationField="response.Validation.GetField(nameof(request.Deadline))"
+                                               Min="DateTimeOffset.Now" />
+                <PBFrontend.UI.Input.DateInput @bind-Value="deadlineTime"
+                                               Type="PBFrontend.UI.Input.DateInput.InputType.Time"
+                                               ValidationField="response.Validation.GetField(nameof(request.Deadline))" />
+            </div>
+        </div>
+        <div class="flex-column">
+            <PBFrontend.UI.Input.ValidationCollection ValidationFields="response.Validation" />
+        </div>
+    </ChildContent>
+    <Footer>
+        <PBFrontend.UI.Miscellaneous.Loading.LoadingFrame @ref="loadingFrameRef">
+            <div class="mt-3">
+                <PBFrontend.UI.Miscellaneous.Loading.Children.Loading>
+                    <PBFrontend.UI.Miscellaneous.Loading.Spinner></PBFrontend.UI.Miscellaneous.Loading.Spinner>
+                </PBFrontend.UI.Miscellaneous.Loading.Children.Loading>
+                <PBFrontend.UI.Miscellaneous.Loading.Children.NotLoading>
+                    <button class="btn btn-outline-success" @onclick="Submit">
+                        <PBFrontend.UI.Formatting.Localize Value="Submit" />
+                    </button>
+                </PBFrontend.UI.Miscellaneous.Loading.Children.NotLoading>
+            </div>
+        </PBFrontend.UI.Miscellaneous.Loading.LoadingFrame>
+    </Footer>
+</PBFrontend.UI.Formatting.Box.Presets.Shadow.ShadowPageFormBox>

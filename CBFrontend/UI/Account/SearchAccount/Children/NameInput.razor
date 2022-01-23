@@ -1,0 +1,6 @@
+﻿@inherits SearchAccountChild
+
+<PBFrontend.UI.Input.TextInput @bind-Value="SearchAccountParent.Request.Parameter.Name"
+                               ValidationField="SearchAccountParent.Response.Validation.GetField(nameof(IAccountService.SearchAccountsParameterBase.Name))"
+                               OnEnterPressed="SearchAccountParent.Submit"
+                               Placeholder="Search" />

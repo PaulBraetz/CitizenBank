@@ -1,0 +1,70 @@
+﻿@inherits SessionChild
+
+<div class="top-row pl-4 navbar navbar-dark">
+	<a class="navbar-brand" href="">CitizenBank</a>
+	<button class="navbar-toggler" @onclick="ToggleNavMenu">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+</div>
+
+<div class="@NavMenuCssClass">
+	<ul class="nav flex-column">
+		<li class="nav-item px-3 text-@SessionParent.ThemeInfo.GetCss" @onclick="()=>ToggleNavMenu(true)">
+			<NavLink class="nav-link" href="/user" Match="NavLinkMatch.All">
+				<span class="oi oi-person"></span> <Localize Value="User" /><Authorized>&nbsp;:&nbsp;<Ellipsis Width="100px" Value="@SessionParent.Session.Owner.Name" /></Authorized>
+			</NavLink>
+		</li>
+		<Authorized>
+			<li class="nav-item px-3 text-@SessionParent.ThemeInfo.GetCss" @onclick="()=>ToggleNavMenu(true)">
+				<NavLink class="nav-link" href="/citizen" Match="NavLinkMatch.All">
+					<span class="oi oi-person"></span> Citizen
+				</NavLink>
+			</li>
+		</Authorized>
+		<AuthorizeView ForRoles="new[] { CBCommon.Settings.CitizenBank.CITIZEN_ROLE, PBCommon.Settings.SUPERADMIN_ROLE }">
+			<Authorized>
+				<li class="nav-item px-3 text-@(SessionParent.ThemeInfo.GetCss)" @onclick="()=>ToggleNavMenu(true)">
+					<NavLink class="nav-link" href="/banking" Match="NavLinkMatch.All">
+						<span class="oi oi-credit-card"></span> <Localize Value="Bank" />
+					</NavLink>
+				</li>
+			</Authorized>
+		</AuthorizeView>
+		<li class="nav-item px-3 text-@(SessionParent.ThemeInfo.GetCss)" @onclick="()=>ToggleNavMenu(true)">
+			<NavLink class="nav-link" href="/logistics" Match="NavLinkMatch.All">
+				<span class="oi oi-paperclip"></span>&nbsp;<Localize Value="Logistics" />
+			</NavLink>
+		</li>
+		<li class="nav-item px-3 text-@(SessionParent.ThemeInfo.GetCss)" @onclick="()=>ToggleNavMenu(true)">
+			<NavLink class="nav-link" href="/cookies" Match="NavLinkMatch.All">
+				<span class="oi oi-info"></span> Cookies
+			</NavLink>
+		</li>
+		<li class="nav-item px-3 text-@SessionParent.ThemeInfo.GetCss">
+			<ThemeSwitch />
+		</li>
+		<li class="nav-item px-3 text-@SessionParent.ThemeInfo.GetCss">
+			<LanguageSelect />
+		</li>
+		<li class="nav-item px-3 text-@SessionParent.ThemeInfo.GetCss">
+			<TimeZoneSelect />
+		</li>
+	</ul>
+</div>
+
+@code {
+	private Boolean collapseNavMenu = true;
+
+	private String NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+	private void ToggleNavMenu(Boolean collapsed)
+	{
+		if (collapseNavMenu != collapsed)
+		{
+			collapseNavMenu = collapsed;
+			InvokeAsync(StateHasChanged);
+		}
+	}
+	private void ToggleNavMenu() => ToggleNavMenu(!collapseNavMenu);
+	public void Collapse() => ToggleNavMenu(true);
+	public void Expand() => ToggleNavMenu(false); 
+}

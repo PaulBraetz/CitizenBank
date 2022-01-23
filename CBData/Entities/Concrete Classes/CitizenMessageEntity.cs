@@ -1,0 +1,24 @@
+﻿using PBData.Entities;
+
+using System;
+using System.Collections.Generic;
+
+namespace CBData.Entities
+{
+	public class CitizenMessageEntity : MessageEntityBase<CitizenEntity>
+	{
+		public CitizenMessageEntity(CitizenEntity creator, String message, TimeSpan lifeSpan, Boolean expiryPaused) : base(creator, message, lifeSpan, expiryPaused)
+		{
+		}
+
+		public CitizenMessageEntity() { }
+		protected CitizenMessageEntity(CitizenMessageEntity from, IDictionary<Guid, Object> circularReferenceHelperDictionary) : base(from, circularReferenceHelperDictionary)
+		{
+		}
+
+		public override Object Clone(IDictionary<Guid, Object> circularReferenceHelperDictionary)
+		{
+			return new CitizenMessageEntity(this, circularReferenceHelperDictionary);
+		}
+	}
+}

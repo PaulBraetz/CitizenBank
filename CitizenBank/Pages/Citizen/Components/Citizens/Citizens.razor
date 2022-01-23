@@ -1,0 +1,51 @@
+﻿@inherits  CBFrontend.UI.DataFrames.Citizens.Children.CitizensFrameChild
+
+<ShadowPageBox>
+    <Header>
+        <PBTitle><Localize Value="Citizens" /></PBTitle>
+    </Header>
+    <ChildContent>
+        @if (CitizensParent.Citizens.Any())
+                {
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        <Localize Value="Citizen" />
+                    </th>
+                    <th>
+                        <Localize Value="Actions" />
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var citizen in CitizensParent.Citizens)
+                {
+                    <tr>
+                        <td>
+                            <CBFrontend.UI.Details.CitizenDetails Citizen="citizen" />
+                        </td>
+
+                        <td>
+                            <button class="btn btn-outline-danger" @onclick="e=>Unlink(citizen)">
+                                <Localize Value="Unlink" />
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        }
+                else
+                {
+        <InfoBox>
+            <Header>
+                <span class="oi oi-info"></span> <Localize Value="Info" />
+            </Header>
+            <ChildContent>
+                <Localize Value="Currently, you have not linked any citizens."></Localize><br />
+            </ChildContent>
+        </InfoBox>
+        }
+    </ChildContent>
+</ShadowPageBox>

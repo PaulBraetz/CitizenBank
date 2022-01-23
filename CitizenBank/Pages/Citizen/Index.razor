@@ -1,0 +1,20 @@
+﻿@page "/citizen"
+<AuthorizeView>
+	<AuthorizedRedirect TargetOnFail="/user">
+		<ShadowPage>
+			<Header>
+				<PBTitle>
+					<Localize Value="Citizen Management" />
+				</PBTitle>
+			</Header>
+			<ChildContent>
+				<CBFrontend.UI.DataFrames.Requests.CitizenRequestsFrame>
+					<CitizenBank.Pages.Citizen.Components.Requests.Requests />
+				</CBFrontend.UI.DataFrames.Requests.CitizenRequestsFrame>
+				<CBFrontend.UI.DataFrames.Citizens.CitizensFrame>
+					<CitizenBank.Pages.Citizen.Components.Citizens.Citizens />
+				</CBFrontend.UI.DataFrames.Citizens.CitizensFrame>
+			</ChildContent>
+		</ShadowPage>
+	</AuthorizedRedirect>
+</AuthorizeView>

@@ -1,0 +1,23 @@
+﻿@inherits LayoutComponentBase
+
+<SessionFrame @ref="sessionFrameRef">
+	<SessionFrameInitialized>
+		<ConsentFrame>
+			<AuthorizeView>
+				<div class="page">
+					<div class="sidebar sidebar-@sessionFrameRef.ThemeInfo.GetCss">
+						<NavMenu />
+					</div>
+					<div class="main d-flex flex-column text-@sessionFrameRef.ThemeInfo.GetCss bg-@sessionFrameRef.ThemeInfo.GetCss">
+						@Body
+						<ConditionalCookieBanner CookieInfoHref="/cookies" />
+					</div>
+				</div>
+			</AuthorizeView>
+		</ConsentFrame>
+	</SessionFrameInitialized>
+</SessionFrame>
+
+@code {
+	private SessionFrame sessionFrameRef;
+}
