@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="PBCommon" Version="16.3.0" />
+    <PackageReference Include="PBCommon" Version="17.0.0" />
   </ItemGroup>
 
 </Project>
