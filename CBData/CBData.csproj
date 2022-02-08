@@ -10,7 +10,7 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="PBData" Version="23.0.0" />
+    <PackageReference Include="PBData" Version="23.1.0" />
   </ItemGroup>
 
   <ItemGroup>
