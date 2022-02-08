@@ -6,9 +6,5 @@ namespace CBData.Mapping
 {
 	internal class RealAccountMapping : SubclassMap<RealAccountEntity>
 	{
-		public RealAccountMapping()
-		{
-			References(m => m.Owner);
-		}
 	}
 }

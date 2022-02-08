@@ -8,11 +8,9 @@ namespace CBData.Entities
 
 	public class VirtualAccountSettingsEntity : VirtualAccountSettingsEntityBase
 	{
-		public VirtualAccountSettingsEntity(VirtualAccountEntity owner,
-			CurrencyBoolDictionaryEntity canReceiveTransactionOffersFor,
+		public VirtualAccountSettingsEntity(CurrencyBoolDictionaryEntity canReceiveTransactionOffersFor,
 											   CurrencyBoolDictionaryEntity canCreateTransactionOffersFor,
-											   CurrencyBoolDictionaryEntity canBeMiddlemanFor) : base(owner,
-												   canReceiveTransactionOffersFor,
+											   CurrencyBoolDictionaryEntity canBeMiddlemanFor) : base(canReceiveTransactionOffersFor,
 																									  canCreateTransactionOffersFor,
 																									  canBeMiddlemanFor)
 		{

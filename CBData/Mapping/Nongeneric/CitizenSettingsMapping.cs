@@ -4,7 +4,7 @@ using PBData.Mapping;
 
 namespace CBData.Mapping
 {
-	internal class CitizenSettingsMapping : SettingsMappingBase<CitizenSettingsEntity, CitizenEntity>
+	internal class CitizenSettingsMapping : SettingsMappingBase<CitizenSettingsEntity>
 	{
 		public CitizenSettingsMapping()
 		{

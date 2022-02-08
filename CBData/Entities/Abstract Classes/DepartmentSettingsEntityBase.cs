@@ -7,13 +7,10 @@ using System.Collections.Generic;
 
 namespace CBData.Entities
 {
-	public abstract class DepartmentSettingsEntityBase<TDepartment> : SettingsEntityBase<TDepartment>, IDepartmentSettingsEntity<TDepartment>
-		where TDepartment : DepartmentEntityBase
+	public abstract class DepartmentSettingsEntityBase : SettingsEntityBase, IDepartmentSettingsEntity
 	{
-		protected DepartmentSettingsEntityBase(TDepartment owner) : base(owner) { }
-
 		protected DepartmentSettingsEntityBase() { }
-		protected DepartmentSettingsEntityBase(DepartmentSettingsEntityBase<TDepartment> from, IDictionary<Guid, Object> circularReferenceHelperDictionary) : base(from, circularReferenceHelperDictionary)
+		protected DepartmentSettingsEntityBase(DepartmentSettingsEntityBase from, IDictionary<Guid, Object> circularReferenceHelperDictionary) : base(from, circularReferenceHelperDictionary)
 		{
 			InviteOnly = from.InviteOnly;
 		}

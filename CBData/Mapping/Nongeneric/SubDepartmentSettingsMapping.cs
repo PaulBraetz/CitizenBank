@@ -2,7 +2,7 @@
 
 namespace CBData.Mapping
 {
-	internal class SubDepartmentSettingsMapping : DepartmentSettingsMappingBase<SubDepartmentSettingsEntity, SubDepartmentEntity>
+	internal class SubDepartmentSettingsMapping : DepartmentSettingsMappingBase<SubDepartmentSettingsEntity>
 	{
 	}
 }

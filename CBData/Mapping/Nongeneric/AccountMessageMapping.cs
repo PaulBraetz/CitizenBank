@@ -4,7 +4,7 @@ using PBData.Mapping;
 
 namespace CBData.Mapping
 {
-	internal class AccountMessageMapping : MessageMappingBase<AccountMessageEntity, AccountEntityBase>
+	internal class AccountMessageMapping : MessageMappingBase<AccountEntityBase, AccountMessageEntity>
 	{
 	}
 }

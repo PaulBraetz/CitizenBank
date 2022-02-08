@@ -11,12 +11,10 @@ namespace CBData.Entities
 
 	public class RealAccountSettingsEntity : AccountSettingsEntityBase
 	{
-		public RealAccountSettingsEntity(RealAccountEntity owner,
-			CurrencyBoolDictionaryEntity canReceiveTransactionOffersFor,
+		public RealAccountSettingsEntity(CurrencyBoolDictionaryEntity canReceiveTransactionOffersFor,
 										 CurrencyBoolDictionaryEntity canCreateTransactionOffersFor,
 										 CurrencyBoolDictionaryEntity canBeMiddlemanFor,
-										  CurrencyBoolDictionaryEntity canBeDepositAccountFor) : base(owner,
-											  canReceiveTransactionOffersFor,
+										  CurrencyBoolDictionaryEntity canBeDepositAccountFor) : base(canReceiveTransactionOffersFor,
 																								canCreateTransactionOffersFor,
 																								canBeMiddlemanFor)
 		{

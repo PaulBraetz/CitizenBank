@@ -4,7 +4,7 @@ using PBData.Mapping;
 
 namespace CBData.Mapping
 {
-	internal class CitizenMessageMapping : MessageMappingBase<CitizenMessageEntity, CitizenEntity>
+	internal class CitizenMessageMapping : MessageMappingBase<CitizenEntity, CitizenMessageEntity>
 	{
 	}
 }

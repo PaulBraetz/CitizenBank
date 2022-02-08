@@ -7,7 +7,8 @@ namespace CBData.Entities
 {
 	public class AccountMessageEntity : MessageEntityBase<AccountEntityBase>
 	{
-		public AccountMessageEntity(AccountEntityBase creator, String message, TimeSpan lifeSpan, Boolean expiryPaused) : base(creator, message, lifeSpan, expiryPaused)
+		public AccountMessageEntity(AccountEntityBase creator, IEnumerable<AccountEntityBase> recipients, String message, TimeSpan lifeSpan, Boolean expiryPaused) 
+			: base(creator, recipients, message, lifeSpan, expiryPaused)
 		{
 		}
 

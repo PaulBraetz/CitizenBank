@@ -2,7 +2,7 @@
 
 namespace CBData.Mapping
 {
-	internal class OrgSettingsMapping : DepartmentSettingsMappingBase<OrgSettingsEntity, OrgEntity>
+	internal class OrgSettingsMapping : DepartmentSettingsMappingBase<OrgSettingsEntity>
 	{
 	}
 }

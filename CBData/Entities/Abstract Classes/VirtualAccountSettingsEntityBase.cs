@@ -14,11 +14,9 @@ namespace CBData.Entities
 			DefaultDepositAccountMapRelativeLimit = from.DefaultDepositAccountMapRelativeLimit;
 			DefaultDepositAccountMapAbsoluteLimit = from.DefaultDepositAccountMapAbsoluteLimit;
 		}
-		protected VirtualAccountSettingsEntityBase(VirtualAccountEntityBase owner,
-			CurrencyBoolDictionaryEntity canReceiveTransactionOffersFor,
+		protected VirtualAccountSettingsEntityBase(CurrencyBoolDictionaryEntity canReceiveTransactionOffersFor,
 												 CurrencyBoolDictionaryEntity canCreateTransactionOffersFor,
-												 CurrencyBoolDictionaryEntity canBeMiddlemanFor) : base(owner,
-																										canReceiveTransactionOffersFor,
+												 CurrencyBoolDictionaryEntity canBeMiddlemanFor) : base(canReceiveTransactionOffersFor,
 																										canCreateTransactionOffersFor,
 																										canBeMiddlemanFor)
 		{

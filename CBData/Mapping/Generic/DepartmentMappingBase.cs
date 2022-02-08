@@ -13,8 +13,6 @@ namespace CBData.Mapping
 			HasMany(m => m.SubDepartments).Cascade.DeleteOrphan();
 			HasManyToMany(m => m.Tags);
 			HasManyToMany(m => m.PriorityTags);
-			HasManyToMany(m => m.Admins);
-			HasManyToMany(m => m.Members);
 		}
 	}
 }

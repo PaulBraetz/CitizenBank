@@ -4,9 +4,8 @@ using PBData.Mapping;
 
 namespace CBData.Mapping
 {
-	internal class DepartmentSettingsMappingBase<TDepartmentSettings, TDepartment> : SettingsMappingBase<TDepartmentSettings, TDepartment>
-		where TDepartmentSettings : IDepartmentSettingsEntity<TDepartment>
-		where TDepartment : IDepartmentEntity
+	internal class DepartmentSettingsMappingBase<TDepartmentSettings> : SettingsMappingBase<TDepartmentSettings>
+		where TDepartmentSettings : IDepartmentSettingsEntity
 	{
 		public DepartmentSettingsMappingBase()
 		{

@@ -4,8 +4,7 @@ using System;
 
 namespace CBData.Abstractions
 {
-	public interface IDepartmentSettingsEntity<TDepartment> : ISettingsEntity<TDepartment>
-		where TDepartment : IDepartmentEntity
+	public interface IDepartmentSettingsEntity : ISettingsEntity
 	{
 		public Boolean InviteOnly { get; set; }
 	}

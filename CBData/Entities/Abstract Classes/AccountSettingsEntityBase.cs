@@ -12,7 +12,7 @@ using static CBCommon.Enums.CitizenBankEnums;
 namespace CBData.Entities
 {
 
-	public abstract class AccountSettingsEntityBase : SettingsEntityBase<AccountEntityBase>, IAccountSettingsEntity
+	public abstract class AccountSettingsEntityBase : SettingsEntityBase, IAccountSettingsEntity
 	{
 		protected AccountSettingsEntityBase() { }
 		protected AccountSettingsEntityBase(AccountSettingsEntityBase from, IDictionary<Guid, Object> circularReferenceHelperDictionary) : base(from, circularReferenceHelperDictionary)
@@ -25,10 +25,9 @@ namespace CBData.Entities
 			CanCreateTransactionOffersFor = from.CanCreateTransactionOffersFor.CloneAsT(circularReferenceHelperDictionary);
 			CanBeMiddlemanFor = from.CanBeMiddlemanFor.CloneAsT(circularReferenceHelperDictionary);
 		}
-		protected AccountSettingsEntityBase(AccountEntityBase owner,
-											CurrencyBoolDictionaryEntity canReceiveTransactionOffersFor,
+		protected AccountSettingsEntityBase(CurrencyBoolDictionaryEntity canReceiveTransactionOffersFor,
 											CurrencyBoolDictionaryEntity canCreateTransactionOffersFor,
-											CurrencyBoolDictionaryEntity canBeMiddlemanFor) : base(owner)
+											CurrencyBoolDictionaryEntity canBeMiddlemanFor)
 		{
 			TransactionOfferLifetime = TimeSpan.FromDays((Int32)DefaultTimeSpanDays.Short);
 			MinimumContractLifeSpan = TimeSpan.FromDays((Int32)DefaultTimeSpanDays.Long);

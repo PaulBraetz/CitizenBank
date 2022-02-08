@@ -8,7 +8,6 @@ namespace CBData.Mapping
 	{
 		public CitizenMapping()
 		{
-			References(m => m.Owner);
 		}
 	}
 }

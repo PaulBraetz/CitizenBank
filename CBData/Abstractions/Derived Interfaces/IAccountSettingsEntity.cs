@@ -6,7 +6,7 @@ using System;
 
 namespace CBData.Abstractions
 {
-	public interface IAccountSettingsEntity : ISettingsEntity<AccountEntityBase>
+	public interface IAccountSettingsEntity : ISettingsEntity
 	{
 		CurrencyBoolDictionaryEntity CanReceiveTransactionOffersFor { get; }
 		CurrencyBoolDictionaryEntity CanCreateTransactionOffersFor { get; }

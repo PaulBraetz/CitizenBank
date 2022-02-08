@@ -3,10 +3,8 @@ using System.Collections.Generic;
 
 namespace CBData.Entities
 {
-	public class SubDepartmentSettingsEntity : DepartmentSettingsEntityBase<SubDepartmentEntity>
+	public class SubDepartmentSettingsEntity : DepartmentSettingsEntityBase
 	{
-		public SubDepartmentSettingsEntity(SubDepartmentEntity owner) : base(owner) { }
-
 		public SubDepartmentSettingsEntity() { }
 		protected SubDepartmentSettingsEntity(SubDepartmentSettingsEntity from, IDictionary<Guid, Object> circularReferenceHelperDictionary) : base(from, circularReferenceHelperDictionary) { }
 

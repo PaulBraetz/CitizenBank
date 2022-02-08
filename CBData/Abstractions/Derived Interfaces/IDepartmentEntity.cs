@@ -9,8 +9,6 @@ namespace CBData.Abstractions
 {
 	public interface IDepartmentEntity : IHasTags,
 		IHasPriorityTags,
-		IHasAdmins<CitizenEntity>,
-		IHasMembers<AccountEntityBase>,
 		IHasCreator<CitizenEntity>,
 		IHasName
 	{

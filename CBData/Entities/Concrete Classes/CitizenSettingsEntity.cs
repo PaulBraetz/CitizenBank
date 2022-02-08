@@ -6,15 +6,13 @@ using System.Collections.Generic;
 namespace CBData.Entities
 {
 
-	public class CitizenSettingsEntity : SettingsEntityBase<CitizenEntity>
+	public class CitizenSettingsEntity : SettingsEntityBase
 	{
-		public CitizenSettingsEntity(CitizenEntity owner) : base(owner)
+		public CitizenSettingsEntity()
 		{
 			CanBeRecruitedAsDepartmentAdmin = true;
 			CanBeRecruitedAsAccountAdmin = true;
 		}
-
-		public CitizenSettingsEntity() { }
 		protected CitizenSettingsEntity(CitizenSettingsEntity from, IDictionary<Guid, Object> circularReferenceHelperDictionary) : base(from, circularReferenceHelperDictionary)
 		{
 			CanBeRecruitedAsDepartmentAdmin = from.CanBeRecruitedAsDepartmentAdmin;
