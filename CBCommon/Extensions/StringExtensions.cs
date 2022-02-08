@@ -45,7 +45,7 @@ namespace CBCommon.Extensions
 
 		public static String ToVerifyLink(this String code)
 		{
-			return $"{PBCommon.Settings.URL}/v/{code}";
+			return $"{PBCommon.Configuration.Settings.URL}/v/{code}";
 		}
 	}
 }
