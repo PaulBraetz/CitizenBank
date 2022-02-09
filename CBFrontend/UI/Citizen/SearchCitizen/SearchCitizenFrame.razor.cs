@@ -25,7 +25,7 @@ namespace CBFrontend.UI.Citizen.SearchCitizen
 		[Parameter]
 		public EventCallback<CitizenEntity> ValueChanged { get; set; }
 
-		public IGetPaginatedAsUserEncryptableRequest<ICitizenService.SearchCitizensParameter> Request = new GetPaginatedAsUserEncryptableRequest<ICitizenService.SearchCitizensParameter>()
+		public IAsUserGetPaginatedEncryptableRequest<IEventfulCitizenService.SearchCitizensParameter> Request = new AsUserGetPaginatedEncryptableRequest<IEventfulCitizenService.SearchCitizensParameter>()
 		{
 			PerPage = 5,
 			Parameter = new()
@@ -33,7 +33,7 @@ namespace CBFrontend.UI.Citizen.SearchCitizen
 		public IGetPaginatedResponse<CitizenEntity> Response = new GetPaginatedResponse<CitizenEntity>();
 		public async Task Submit()
 		{
-			Response = await SessionParent.ServiceContext.GetService<ICitizenService>().SearchCitizens(Request);
+			Response = await SessionParent.ServiceContext.GetService<IEventfulCitizenService>().SearchCitizens(Request);
 		}
 
 		public async Task Clear()

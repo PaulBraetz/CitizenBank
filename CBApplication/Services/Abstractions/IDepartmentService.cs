@@ -149,18 +149,18 @@ namespace CBApplication.Services.Abstractions
 				AdminsIds = await encryptor.Encrypt(AdminsIds);
 			}
 		}
-		Task<IGetPaginatedEncryptableResponse<IDepartmentEntity>> SearchDepartments(IGetPaginatedAsAccountEncryptableRequest<SearchDepartmentsParameterBase> request);
+		Task<IGetPaginatedEncryptableResponse<IDepartmentEntity>> SearchDepartments(IAsAccountGetPaginatedEncryptableRequest<SearchDepartmentsParameterBase> request);
 
 		sealed class SearchOrgsParameter : SearchDepartmentsParameterBase
 		{
 			public String SID { get; set; }
 		}
-		Task<IGetPaginatedEncryptableResponse<OrgEntity>> SearchOrgs(IGetPaginatedAsAccountEncryptableRequest<SearchOrgsParameter> request);
+		Task<IGetPaginatedEncryptableResponse<OrgEntity>> SearchOrgs(IAsAccountGetPaginatedEncryptableRequest<SearchOrgsParameter> request);
 
 		sealed class SearchSubDepartmentsParameter : SearchDepartmentsParameterBase
 		{
 		}
-		Task<IGetPaginatedEncryptableResponse<SubDepartmentEntity>> SearchSubDepartments(IGetPaginatedAsAccountEncryptableRequest<SearchSubDepartmentsParameter> request);
+		Task<IGetPaginatedEncryptableResponse<SubDepartmentEntity>> SearchSubDepartments(IAsAccountGetPaginatedEncryptableRequest<SearchSubDepartmentsParameter> request);
 	}
 	public interface IDepartmentService : IDepartmentServiceBase, IEventfulService
 	{

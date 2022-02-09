@@ -22,12 +22,12 @@ using PBData.Extensions;
 using System;
 using System.Linq;
 
-using static CBApplication.Services.Abstractions.IEventfulLogisticsService;
 using static CBCommon.Enums.LogisticsEnums;
 using System.Threading.Tasks;
 using static CBApplication.Services.Abstractions.ILogisticsService;
 using PBApplication.Context.Abstractions;
 using PBCommon;
+using CBApplication.Requests.Abstractions;
 
 namespace CBApplication.Services
 {
@@ -42,34 +42,35 @@ namespace CBApplication.Services
 		public event ServiceEventHandler<ServiceEventArgs<LogisticsOrderEntity>> OnLogisticsOrderEdited;
 		public event ServiceEventHandler<ServiceEventArgs> OnLogisticsOrderDeleted;
 
-		public async Task<IResponse> CreateLogisticsOrder(IEventfulLogisticsService.CreateLogisticsOrderRequest request)
+		public async Task<IResponse> CreateLogisticsOrder(IAsCitizenRequest<CreateLogisticsOrderParameter> request)
 		{
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(CreateLogisticsOrder));
+
 			var response = new Response();
 
 			async Task notNullRequest()
 			{
-				CitizenEntity citizen = Connection.GetSingle<CitizenEntity>(request.ClientId);
-
 				async Task successAction()
 				{
+					var client = GetCitizenEntity(request);
 
 					Boolean targetCheck()
 					{
-						return !String.IsNullOrWhiteSpace(request.Target);
+						return !String.IsNullOrWhiteSpace(request.Parameter.Target);
 					}
 					Boolean detailsCheck()
 					{
-						return !String.IsNullOrWhiteSpace(request.Details);
+						return !String.IsNullOrWhiteSpace(request.Parameter.Details);
 					}
 					Boolean deadlineCheck()
 					{
-						return request.Deadline > TimeManager.Now;
+						return request.Parameter.Deadline > TimeManager.Now;
 					}
 					void createOrder()
 					{
-						var newEntity = new LogisticsOrderEntity(request.Deadline, request.Target, citizen, request.Type, request.Details)
+						var newEntity = new LogisticsOrderEntity(request.Parameter.Deadline, request.Parameter.Target, client, request.Parameter.Type, request.Parameter.Details)
 						{
-							Origin = request.Origin
+							Origin = request.Parameter.Origin
 						};
 						Connection.Insert(newEntity);
 						Connection.SaveChanges();
@@ -77,61 +78,46 @@ namespace CBApplication.Services
 						OnLogisticsOrderCreated.Invoke(Session, sessions, newEntity.CloneAsT());
 					}
 
-					var validChain = FirstCompound(targetCheck,
-										response.Validation.GetField(nameof(request.Target)),
+					await FirstCompound(targetCheck,
+										response.Validation.GetField(nameof(request.Parameter.Target)),
 										DefaultCode.Invalid)
 						.NextCompound(detailsCheck,
-										response.Validation.GetField(nameof(request.Details)),
+										response.Validation.GetField(nameof(request.Parameter.Details)),
 										DefaultCode.Invalid)
 						.NextCompound(deadlineCheck,
-										response.Validation.GetField(nameof(request.Deadline)),
+										response.Validation.GetField(nameof(request.Parameter.Deadline)),
 										DefaultCode.Invalid)
-						.SetOnCriterionMet(createOrder);
-
-					async Task evaluate()
-					{
-						await validChain.Evaluate();
-					}
-					async Task successAction()
-					{
-						await FirstValidateAuthenticated(response.Validation)
-							.NextManagerManagesProperty(Session.Owner, citizen.Owner, Connection, response.Validation.GetField(nameof(request.ClientId)))
-							.SetOnCriterionMet(evaluate)
-							.Evaluate();
-					}
-
-					await FirstNullCheck(citizen.Owner)
-						.SetOnCriterionMet(successAction)
-						.SetOnCriterionFailed(evaluate)
+						.SetOnCriterionMet(createOrder)
 						.Evaluate();
 				}
 
-				await FirstNullCheck(citizen,
-						response.Validation.GetField(nameof(request.ClientId)),
-						DefaultCode.NotFound.SetMessage("The user requested could not be found."))
+				await FirstValidateAsCitizen(request, response)
 					.SetOnCriterionMet(successAction)
 					.Evaluate();
 			}
 
-			await FirstRequestNullCheck(request, response)
+			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
+				.CatchAll(response.Validation.GetField(nameof(request)))
 				.Evaluate();
 
 			return response;
 		}
 
-		public async Task<IResponse> EditLogisticsOrder(IAsUserEncryptableRequest<EditLogisticsOrderParameter> request)
+		public async Task<IResponse> EditLogisticsOrder(IAsCitizenEncryptableRequest<EditLogisticsOrderParameter> request)
 		{
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(EditLogisticsOrder));
+
 			var response = new Response();
 
 			async Task notNullRequest()
 			{
-				UserEntity user = GetUserEntity(request);
+				var manager = GetCitizenEntityLazily(request);
 				Lazy<LogisticsOrderEntity> order = Connection.GetSingleLazily<LogisticsOrderEntity>(request.Parameter.LogisticsOrderId);
 
 				Boolean roleCheck()
 				{
-					return user.IsInRole(CBCommon.Settings.Logistics.LOGISTICS_ROLE);
+					return manager.Value.HoldsClaim(Connection, CBCommon.Settings.Logistics.LOGISTICS_MANAGER_RIGHT);
 				}
 				void successAction()
 				{
@@ -153,7 +139,7 @@ namespace CBApplication.Services
 					OnLogisticsOrderEdited.Invoke(Session, order.Value, order.Value.CloneAsT());
 				}
 
-				await FirstValidateAsUser(user, response.Validation)
+				await FirstValidateAsCitizen(request, response)
 					.NextCompound(roleCheck,
 						response.Validation.GetField(nameof(request.AsUserId)),
 						DefaultCode.Unauthorized.SetMessage("You are not authorized to edit logistics orders."))
@@ -166,6 +152,7 @@ namespace CBApplication.Services
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
+				.CatchAll(response.Validation.GetField(nameof(request)))
 				.Evaluate();
 
 			return response;
@@ -173,6 +160,8 @@ namespace CBApplication.Services
 
 		public async Task<IGetPaginatedEncryptableResponse<LogisticsOrderEntity>> GetLogisticsOrders(IGetPaginatedEncryptableRequest<GetLogisticsOrdersParameter> request)
 		{
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(GetLogisticsOrders));
+
 			var response = new GetPaginatedEncryptableResponse<LogisticsOrderEntity>();
 
 			async Task notNullRequest()

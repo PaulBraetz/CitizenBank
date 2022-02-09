@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace CBApplication.Requests
 {
-	public class GetPaginatedAsCitizenRequest : GetPaginatedAsUserRequest, IGetPaginatedAsCitizenRequest
+	public class AsCitizenGetPaginatedRequest : AsUserGetPaginatedRequest, IAsCitizenGetPaginatedRequest
 	{
 		public Guid AsCitizenId { get; set; }
 	}
-	public class GetPaginatedAsCitizenRequest<TParameter> : GetPaginatedAsUserRequest<TParameter>, IGetPaginatedAsCitizenRequest<TParameter>
+	public class AsCitizenGetPaginatedRequest<TParameter> : AsUserGetPaginatedRequest<TParameter>, IAsCitizenGetPaginatedRequest<TParameter>
 	{
 		public Guid AsCitizenId { get; set; }
 	}
-	public class GetPaginatedAsCitizenEncryptableRequest<TParameter> : GetPaginatedAsUserEncryptableRequest<TParameter>, IGetPaginatedAsCitizenEncryptableRequest<TParameter>
+	public class AsCitizenGetPaginatedEncryptableRequest<TParameter> : AsUserGetPaginatedEncryptableRequest<TParameter>, IAsCitizenGetPaginatedEncryptableRequest<TParameter>
 		where TParameter: IEncryptable<Guid>
 	{
 		public Guid AsCitizenId { get; set; }

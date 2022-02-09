@@ -27,7 +27,7 @@ namespace CBFrontend.UI.Account.SearchAccount
 		[Parameter]
 		public EventCallback<IAccountEntity> ValueChanged { get; set; }
 
-		public GetPaginatedAsAccountEncryptableRequest<IAccountService.SearchAccountsParameterBase> Request = new GetPaginatedAsAccountEncryptableRequest<IAccountService.SearchAccountsParameterBase>()
+		public AsAccountGetPaginatedEncryptableRequest<IAccountService.SearchAccountsParameterBase> Request = new AsAccountGetPaginatedEncryptableRequest<IAccountService.SearchAccountsParameterBase>()
 		{
 			PerPage = 5,
 			Parameter = new() 

@@ -644,7 +644,7 @@ namespace CBApplication.Services
 			return response;
 		}
 
-		private async Task<IEnumerable<TDepartment>> SearchDepartments<TDepartment, TDepartmentSettings, TParameter>(IGetPaginatedAsAccountEncryptableRequest<TParameter> request, IValidationFieldCollection validation)
+		private async Task<IEnumerable<TDepartment>> SearchDepartments<TDepartment, TDepartmentSettings, TParameter>(IAsAccountGetPaginatedEncryptableRequest<TParameter> request, IValidationFieldCollection validation)
 			where TDepartment : IDepartmentEntity
 			where TDepartmentSettings : IDepartmentSettingsEntity<TDepartment>
 			where TParameter : SearchDepartmentsParameterBase
@@ -713,7 +713,7 @@ namespace CBApplication.Services
 			return retVal2;
 		}
 
-		public async Task<IGetPaginatedEncryptableResponse<IDepartmentEntity>> SearchDepartments(IGetPaginatedAsAccountEncryptableRequest<SearchDepartmentsParameterBase> request)
+		public async Task<IGetPaginatedEncryptableResponse<IDepartmentEntity>> SearchDepartments(IAsAccountGetPaginatedEncryptableRequest<SearchDepartmentsParameterBase> request)
 		{
 			var response = new GetPaginatedEncryptableResponse<IDepartmentEntity>();
 
@@ -739,7 +739,7 @@ namespace CBApplication.Services
 			return response;
 		}
 
-		public async Task<IGetPaginatedEncryptableResponse<OrgEntity>> SearchOrgs(IGetPaginatedAsAccountEncryptableRequest<SearchOrgsParameter> request)
+		public async Task<IGetPaginatedEncryptableResponse<OrgEntity>> SearchOrgs(IAsAccountGetPaginatedEncryptableRequest<SearchOrgsParameter> request)
 		{
 			var response = new GetPaginatedEncryptableResponse<OrgEntity>();
 
@@ -769,7 +769,7 @@ namespace CBApplication.Services
 			return response;
 		}
 
-		public async Task<IGetPaginatedEncryptableResponse<SubDepartmentEntity>> SearchSubDepartments(IGetPaginatedAsAccountEncryptableRequest<SearchSubDepartmentsParameter> request)
+		public async Task<IGetPaginatedEncryptableResponse<SubDepartmentEntity>> SearchSubDepartments(IAsAccountGetPaginatedEncryptableRequest<SearchSubDepartmentsParameter> request)
 		{
 			var response = new GetPaginatedEncryptableResponse<SubDepartmentEntity>();
 

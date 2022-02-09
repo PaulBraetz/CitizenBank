@@ -10,7 +10,7 @@ namespace CitizenBank.Pages.Citizen.Components.Citizens
 	{
 		private void Unlink(CitizenEntity response)
 		{
-			SessionParent.ServiceContext.GetService<ICitizenService>()
+			SessionParent.ServiceContext.GetService<IEventfulCitizenService>()
 				.UnlinkCitizen(new CBApplication.Requests.AsCitizenRequest()
 				{
 					AsCitizenId = response.Id,

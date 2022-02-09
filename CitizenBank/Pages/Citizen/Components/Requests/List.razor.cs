@@ -16,7 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using static CBApplication.Services.Abstractions.ICitizenServiceBase;
+using static CBApplication.Services.Abstractions.ICitizenService;
 
 namespace CitizenBank.Pages.Citizen.Components.Requests
 {
@@ -25,7 +25,7 @@ namespace CitizenBank.Pages.Citizen.Components.Requests
 		private async Task Verify(CitizenLinkRequestEntity request)
 		{
 			await SessionParent.ServiceContext
-					   .GetService<ICitizenServiceBase>()
+					   .GetService<ICitizenService>()
 					   .VerifyCitizenLinkRequest(new AsUserEncryptableRequest<VerifyCitizenLinkRequestParameter>()
 					   {
 						   Parameter = new VerifyCitizenLinkRequestParameter()
@@ -39,9 +39,9 @@ namespace CitizenBank.Pages.Citizen.Components.Requests
 		{
 			await SessionParent
 					.ServiceContext
-					.GetService<ICitizenServiceBase>()
+					.GetService<ICitizenService>()
 					.CancelCitizenLinkRequest(
-					   new AsUserEncryptableRequest<ICitizenService.CancelCitizenLinkRequestParameter>()
+					   new AsUserEncryptableRequest<IEventfulCitizenService.CancelCitizenLinkRequestParameter>()
 					   {
 						   Parameter = new CancelCitizenLinkRequestParameter()
 						   {

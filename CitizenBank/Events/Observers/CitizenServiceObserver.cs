@@ -10,13 +10,13 @@ using PBServer.Hubs;
 
 namespace CitizenBank.Events.Observers
 {
-	internal sealed class CitizenServiceObserver : ServiceBaseObserver<ICitizenService>
+	internal sealed class CitizenServiceObserver : ServiceBaseObserver<IEventfulCitizenService>
 	{
 		public CitizenServiceObserver(IHubContext<EventHub> hubContext, IEncryptionService encryptionService, ISerializer serializer) : base(hubContext, encryptionService, serializer)
 		{
 		}
 
-		public override void Observe(ICitizenService service)
+		public override void Observe(IEventfulCitizenService service)
 		{
 			base.Observe(service);
 			service.OnCitizenLinkRequestCancelled += async (args) => await Send(nameof(service.OnCitizenLinkRequestCancelled), args);

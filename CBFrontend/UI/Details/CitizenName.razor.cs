@@ -19,10 +19,10 @@ namespace CBFrontend.UI.Details
 
 		protected override async Task OnParametersSetAndSessionInitializedAsync()
 		{
-			await SubscribeOnce<ICitizenService.OnCitizenUnlinkedData>(new EventSubscription(nameof(ICitizenService.OnCitizenUnlinked), Citizen.HubId), onUnlinked);
-			await SubscribeOnce<CitizenEntity>(new EventSubscription(nameof(ICitizenService.OnCitizenLinked), Citizen.HubId), onLinked);
+			await SubscribeOnce<IEventfulCitizenService.OnCitizenUnlinkedData>(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenUnlinked), Citizen.HubId), onUnlinked);
+			await SubscribeOnce<CitizenEntity>(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenLinked), Citizen.HubId), onLinked);
 
-			void onUnlinked(ICitizenService.OnCitizenUnlinkedData data)
+			void onUnlinked(IEventfulCitizenService.OnCitizenUnlinkedData data)
 			{
 				Citizen = data.Citizen;
 				InvokeAsync(StateHasChanged);

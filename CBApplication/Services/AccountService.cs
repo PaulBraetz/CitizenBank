@@ -1008,7 +1008,7 @@ namespace CBApplication.Services
 			return response;
 		}
 
-		private async Task<IEnumerable<TAccount>> SearchAccounts<TAccount, TAccountSettings, TParameter>(IGetPaginatedAsAccountEncryptableRequest<TParameter> request, IValidationFieldCollection validation)
+		private async Task<IEnumerable<TAccount>> SearchAccounts<TAccount, TAccountSettings, TParameter>(IAsAccountGetPaginatedEncryptableRequest<TParameter> request, IValidationFieldCollection validation)
 			where TAccount : IAccountEntity
 			where TAccountSettings : IAccountSettingsEntity
 			where TParameter : SearchAccountsParameterBase
@@ -1098,7 +1098,7 @@ namespace CBApplication.Services
 			return retVal2;
 		}
 
-		public async Task<IGetPaginatedEncryptableResponse<IAccountEntity>> SearchAccounts(IGetPaginatedAsAccountEncryptableRequest<SearchAccountsParameterBase> request)
+		public async Task<IGetPaginatedEncryptableResponse<IAccountEntity>> SearchAccounts(IAsAccountGetPaginatedEncryptableRequest<SearchAccountsParameterBase> request)
 		{
 			var response = new GetPaginatedEncryptableResponse<IAccountEntity>();
 
@@ -1123,7 +1123,7 @@ namespace CBApplication.Services
 			return response;
 		}
 
-		public async Task<IGetPaginatedEncryptableResponse<RealAccountEntity>> SearchRealAccounts(IGetPaginatedAsAccountEncryptableRequest<SearchRealAccountsParameter> request)
+		public async Task<IGetPaginatedEncryptableResponse<RealAccountEntity>> SearchRealAccounts(IAsAccountGetPaginatedEncryptableRequest<SearchRealAccountsParameter> request)
 		{
 			var response = new GetPaginatedEncryptableResponse<RealAccountEntity>();
 
@@ -1155,7 +1155,7 @@ namespace CBApplication.Services
 			return response;
 		}
 
-		private async Task<IEnumerable<TAccount>> SearchVirtualAccounts<TAccount, TAccountSettings, TParameter>(IGetPaginatedAsAccountEncryptableRequest<TParameter> request, IValidationFieldCollection validation)
+		private async Task<IEnumerable<TAccount>> SearchVirtualAccounts<TAccount, TAccountSettings, TParameter>(IAsAccountGetPaginatedEncryptableRequest<TParameter> request, IValidationFieldCollection validation)
 			where TAccount : class, IVirtualAccountEntity
 			where TAccountSettings : IVirtualAccountSettingsEntity
 			where TParameter : SearchVirtualAccountsParameterBase
@@ -1171,7 +1171,7 @@ namespace CBApplication.Services
 			return retVal;
 		}
 
-		public async Task<IGetPaginatedEncryptableResponse<IVirtualAccountEntity>> SearchVirtualAccounts(IGetPaginatedAsAccountEncryptableRequest<SearchVirtualAccountsParameterBase> request)
+		public async Task<IGetPaginatedEncryptableResponse<IVirtualAccountEntity>> SearchVirtualAccounts(IAsAccountGetPaginatedEncryptableRequest<SearchVirtualAccountsParameterBase> request)
 		{
 			var response = new GetPaginatedEncryptableResponse<IVirtualAccountEntity>();
 
@@ -1196,7 +1196,7 @@ namespace CBApplication.Services
 			return response;
 		}
 
-		public async Task<IGetPaginatedEncryptableResponse<VirtualAccountEntity>> SearchVirtualAccounts(IGetPaginatedAsAccountEncryptableRequest<SearchVirtualAccountsParameter> request)
+		public async Task<IGetPaginatedEncryptableResponse<VirtualAccountEntity>> SearchVirtualAccounts(IAsAccountGetPaginatedEncryptableRequest<SearchVirtualAccountsParameter> request)
 		{
 			var response = new GetPaginatedEncryptableResponse<VirtualAccountEntity>();
 
@@ -1221,7 +1221,7 @@ namespace CBApplication.Services
 			return response;
 		}
 
-		public async Task<IGetPaginatedEncryptableResponse<DepartmentAccountEntity>> SearchDepartmentAccounts(IGetPaginatedAsAccountEncryptableRequest<SearchDepartmentAccountsParameter> request)
+		public async Task<IGetPaginatedEncryptableResponse<DepartmentAccountEntity>> SearchDepartmentAccounts(IAsAccountGetPaginatedEncryptableRequest<SearchDepartmentAccountsParameter> request)
 		{
 			var response = new GetPaginatedEncryptableResponse<DepartmentAccountEntity>();
 

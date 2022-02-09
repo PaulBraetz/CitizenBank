@@ -23,7 +23,7 @@ using static PBCommon.Enums;
 
 namespace CBApplication.Services.Abstractions
 {
-	public interface ICitizenServiceBase : IService
+	public interface ICitizenService : IService
 	{
 		sealed class CreateCitizenLinkRequestParameter
 		{
@@ -63,11 +63,11 @@ namespace CBApplication.Services.Abstractions
 		Task<IResponse> VerifyCitizenLinkRequest(IAsUserEncryptableRequest<VerifyCitizenLinkRequestParameter> request);
 
 		sealed class GetCitizenLinkRequestsParameter { }
-		Task<IGetPaginatedEncryptableResponse<CitizenLinkRequestEntity>> GetCitizenLinkRequests(IGetPaginatedAsUserRequest<GetCitizenLinkRequestsParameter> request);
+		Task<IGetPaginatedEncryptableResponse<CitizenLinkRequestEntity>> GetCitizenLinkRequests(IAsUserGetPaginatedRequest<GetCitizenLinkRequestsParameter> request);
 		Task<IGetPaginatedEncryptableResponse<CitizenLinkRequestEntity>> GetCitizenLinkRequests();
 
 		sealed class GetCitizensParameter { }
-		Task<IGetPaginatedEncryptableResponse<CitizenEntity>> GetCitizens(IGetPaginatedAsUserRequest<GetCitizensParameter> request);
+		Task<IGetPaginatedEncryptableResponse<CitizenEntity>> GetCitizens(IAsUserGetPaginatedRequest<GetCitizensParameter> request);
 		Task<IGetPaginatedEncryptableResponse<CitizenEntity>> GetCitizens();
 
 		Task<IEncryptableResponse<CitizenSettingsEntity>> GetCitizenSettings(IAsCitizenRequest request);
@@ -100,11 +100,11 @@ namespace CBApplication.Services.Abstractions
 				ExcludeIds = await encryptor.Encrypt(ExcludeIds);
 			}
 		}
-		Task<IGetPaginatedEncryptableResponse<CitizenEntity>> SearchCitizens(IGetPaginatedAsUserEncryptableRequest<SearchCitizensParameter> request);
+		Task<IGetPaginatedEncryptableResponse<CitizenEntity>> SearchCitizens(IAsUserGetPaginatedEncryptableRequest<SearchCitizensParameter> request);
 
 		Task<IEncryptableResponse<CitizenEntity>> RetrieveCitizen(String name);
 	}
-	public interface ICitizenService : ICitizenServiceBase, IEventfulService
+	public interface IEventfulCitizenService : ICitizenService, IEventfulService
 	{
 		//Payload : new request
 		//Recipients : affected user

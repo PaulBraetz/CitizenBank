@@ -16,25 +16,25 @@ using System.Threading.Tasks;
 
 namespace CitizenBank.Client.Services
 {
-	internal sealed class ClientCitizenService : ClientService, ICitizenServiceBase
+	internal sealed class ClientCitizenService : ClientService, ICitizenService
 	{
 		public ClientCitizenService(IServiceContext serviceContext, WebClient webClient) : base(serviceContext, webClient)
 		{
 		}
 
-		public async Task<IResponse> CancelCitizenLinkRequest(IAsUserEncryptableRequest<ICitizenServiceBase.CancelCitizenLinkRequestParameter> request)
+		public async Task<IResponse> CancelCitizenLinkRequest(IAsUserEncryptableRequest<ICitizenService.CancelCitizenLinkRequestParameter> request)
 		{
-			return await WebClient.SerializePostDeserialize<IAsUserEncryptableRequest<ICitizenServiceBase.CancelCitizenLinkRequestParameter>, Response>("api/citizen/CancelCitizenLinkRequest", request);
+			return await WebClient.SerializePostDeserialize<IAsUserEncryptableRequest<ICitizenService.CancelCitizenLinkRequestParameter>, Response>("api/citizen/CancelCitizenLinkRequest", request);
 		}
 
-		public async Task<IResponse> CreateCitizenLinkRequest(IAsUserRequest<ICitizenServiceBase.CreateCitizenLinkRequestParameter> request)
+		public async Task<IResponse> CreateCitizenLinkRequest(IAsUserRequest<ICitizenService.CreateCitizenLinkRequestParameter> request)
 		{
-			return await WebClient.SerializePostDeserialize<IAsUserRequest<ICitizenServiceBase.CreateCitizenLinkRequestParameter>, Response>("api/citizen/CreateCitizenLinkRequest", request);
+			return await WebClient.SerializePostDeserialize<IAsUserRequest<ICitizenService.CreateCitizenLinkRequestParameter>, Response>("api/citizen/CreateCitizenLinkRequest", request);
 		}
 
-		public async Task<IGetPaginatedEncryptableResponse<CitizenLinkRequestEntity>> GetCitizenLinkRequests(IGetPaginatedAsUserRequest<ICitizenServiceBase.GetCitizenLinkRequestsParameter> request)
+		public async Task<IGetPaginatedEncryptableResponse<CitizenLinkRequestEntity>> GetCitizenLinkRequests(IAsUserGetPaginatedRequest<ICitizenService.GetCitizenLinkRequestsParameter> request)
 		{
-			return await WebClient.SerializePostDeserialize<IGetPaginatedAsUserRequest<ICitizenServiceBase.GetCitizenLinkRequestsParameter>, IGetPaginatedEncryptableResponse<CitizenLinkRequestEntity>>("api/citizen/GetCitizenLinkRequests", request);
+			return await WebClient.SerializePostDeserialize<IAsUserGetPaginatedRequest<ICitizenService.GetCitizenLinkRequestsParameter>, IGetPaginatedEncryptableResponse<CitizenLinkRequestEntity>>("api/citizen/GetCitizenLinkRequests", request);
 		}
 
 		public async Task<IGetPaginatedEncryptableResponse<CitizenLinkRequestEntity>> GetCitizenLinkRequests()
@@ -42,9 +42,9 @@ namespace CitizenBank.Client.Services
 			return await WebClient.GetDeserialize<GetPaginatedEncryptableResponse<CitizenLinkRequestEntity>>("api/citizen/GetCitizenLinkRequests");
 		}
 
-		public async Task<IGetPaginatedEncryptableResponse<CitizenEntity>> GetCitizens(IGetPaginatedAsUserRequest<ICitizenServiceBase.GetCitizensParameter> request)
+		public async Task<IGetPaginatedEncryptableResponse<CitizenEntity>> GetCitizens(IAsUserGetPaginatedRequest<ICitizenService.GetCitizensParameter> request)
 		{
-			return await WebClient.SerializePostDeserialize<IGetPaginatedAsUserRequest<ICitizenServiceBase.GetCitizensParameter>, GetPaginatedEncryptableResponse<CitizenEntity>>("api/citizen/GetCitizens", request);
+			return await WebClient.SerializePostDeserialize<IAsUserGetPaginatedRequest<ICitizenService.GetCitizensParameter>, GetPaginatedEncryptableResponse<CitizenEntity>>("api/citizen/GetCitizens", request);
 		}
 
 		public async Task<IGetPaginatedEncryptableResponse<CitizenEntity>> GetCitizens()
@@ -62,14 +62,14 @@ namespace CitizenBank.Client.Services
 			return await WebClient.PostDeserialize<IEncryptableResponse<CitizenEntity>>("api/citizen/RetrieveCitizen", name);
 		}
 
-		public async Task<IGetPaginatedEncryptableResponse<CitizenEntity>> SearchCitizens(IGetPaginatedAsUserEncryptableRequest<ICitizenServiceBase.SearchCitizensParameter> request)
+		public async Task<IGetPaginatedEncryptableResponse<CitizenEntity>> SearchCitizens(IAsUserGetPaginatedEncryptableRequest<ICitizenService.SearchCitizensParameter> request)
 		{
-			return await WebClient.SerializePostDeserialize<IGetPaginatedAsUserEncryptableRequest<ICitizenServiceBase.SearchCitizensParameter>, GetPaginatedEncryptableResponse<CitizenEntity>>("api/citizen/SearchCitizens", request);
+			return await WebClient.SerializePostDeserialize<IAsUserGetPaginatedEncryptableRequest<ICitizenService.SearchCitizensParameter>, GetPaginatedEncryptableResponse<CitizenEntity>>("api/citizen/SearchCitizens", request);
 		}
 
-		public async Task<IResponse> SetCitizenSettings(IAsCitizenRequest<ICitizenServiceBase.SetCitizenSettingsParameter> request)
+		public async Task<IResponse> SetCitizenSettings(IAsCitizenRequest<ICitizenService.SetCitizenSettingsParameter> request)
 		{
-			return await WebClient.SerializePostDeserialize< IAsCitizenRequest < ICitizenServiceBase.SetCitizenSettingsParameter > ,Response >("api/citizen/SetCitizenSettings", request);
+			return await WebClient.SerializePostDeserialize< IAsCitizenRequest < ICitizenService.SetCitizenSettingsParameter > ,Response >("api/citizen/SetCitizenSettings", request);
 		}
 
 		public async Task<IResponse> UnlinkCitizen(IAsCitizenRequest request)
@@ -77,9 +77,9 @@ namespace CitizenBank.Client.Services
 			return await WebClient.SerializePostDeserialize<IAsCitizenRequest, Response>("api/citizen/UnlinkCitizen", request);
 		}
 
-		public async Task<IResponse> VerifyCitizenLinkRequest(IAsUserEncryptableRequest<ICitizenServiceBase.VerifyCitizenLinkRequestParameter> request)
+		public async Task<IResponse> VerifyCitizenLinkRequest(IAsUserEncryptableRequest<ICitizenService.VerifyCitizenLinkRequestParameter> request)
 		{
-			return await WebClient.SerializePostDeserialize<IAsUserEncryptableRequest<ICitizenServiceBase.VerifyCitizenLinkRequestParameter>, Response>("api/citizen/VerifyCitizenLinkRequest", request);
+			return await WebClient.SerializePostDeserialize<IAsUserEncryptableRequest<ICitizenService.VerifyCitizenLinkRequestParameter>, Response>("api/citizen/VerifyCitizenLinkRequest", request);
 		}
 	}
 }

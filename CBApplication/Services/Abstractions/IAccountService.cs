@@ -228,7 +228,7 @@ namespace CBApplication.Services.Abstractions
 				CreatorId = await encryptor.Encrypt(CreatorId);
 			}
 		}
-		Task<IGetPaginatedEncryptableResponse<IAccountEntity>> SearchAccounts(IGetPaginatedAsAccountEncryptableRequest<SearchAccountsParameterBase> request);
+		Task<IGetPaginatedEncryptableResponse<IAccountEntity>> SearchAccounts(IAsAccountGetPaginatedEncryptableRequest<SearchAccountsParameterBase> request);
 
 		sealed class SearchRealAccountsParameter : SearchAccountsParameterBase
 		{
@@ -246,18 +246,18 @@ namespace CBApplication.Services.Abstractions
 				await base.EncryptSelf(encryptor);
 			}
 		}
-		Task<IGetPaginatedEncryptableResponse<RealAccountEntity>> SearchRealAccounts(IGetPaginatedAsAccountEncryptableRequest<SearchRealAccountsParameter> request);
+		Task<IGetPaginatedEncryptableResponse<RealAccountEntity>> SearchRealAccounts(IAsAccountGetPaginatedEncryptableRequest<SearchRealAccountsParameter> request);
 
 		abstract class SearchVirtualAccountsParameterBase : SearchAccountsParameterBase
 		{
 			public TimeSpan? DepositForwardLifeSpan { get; set; }
 		}
-		Task<IGetPaginatedEncryptableResponse<IVirtualAccountEntity>> SearchVirtualAccounts(IGetPaginatedAsAccountEncryptableRequest<SearchVirtualAccountsParameterBase> request);
+		Task<IGetPaginatedEncryptableResponse<IVirtualAccountEntity>> SearchVirtualAccounts(IAsAccountGetPaginatedEncryptableRequest<SearchVirtualAccountsParameterBase> request);
 
 		sealed class SearchVirtualAccountsParameter : SearchVirtualAccountsParameterBase { }
-		Task<IGetPaginatedEncryptableResponse<VirtualAccountEntity>> SearchVirtualAccounts(IGetPaginatedAsAccountEncryptableRequest<SearchVirtualAccountsParameter> request);
+		Task<IGetPaginatedEncryptableResponse<VirtualAccountEntity>> SearchVirtualAccounts(IAsAccountGetPaginatedEncryptableRequest<SearchVirtualAccountsParameter> request);
 
 		sealed class SearchDepartmentAccountsParameter : SearchVirtualAccountsParameterBase { }
-		Task<IGetPaginatedEncryptableResponse<DepartmentAccountEntity>> SearchDepartmentAccounts(IGetPaginatedAsAccountEncryptableRequest<SearchDepartmentAccountsParameter> request);
+		Task<IGetPaginatedEncryptableResponse<DepartmentAccountEntity>> SearchDepartmentAccounts(IAsAccountGetPaginatedEncryptableRequest<SearchDepartmentAccountsParameter> request);
 	}
 }

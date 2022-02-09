@@ -1,4 +1,5 @@
 ﻿
+using CBApplication.Requests.Abstractions;
 using CBData.Entities;
 using PBApplication.Requests.Abstractions;
 using PBApplication.Responses.Abstractions;
@@ -13,26 +14,15 @@ namespace CBApplication.Services.Abstractions
 {
 	public interface ILogisticsService : IService
 	{
-		sealed class CreateLogisticsOrderRequest : EncryptableBase<Guid>
+		sealed class CreateLogisticsOrderParameter
 		{
 			public DateTimeOffset Deadline { get; set; }
 			public String Origin { get; set; }
 			public String Target { get; set; }
 			public OrderType Type { get; set; }
 			public String Details { get; set; }
-			public Guid ClientId { get; set; }
-
-			protected override async Task DecryptSelf(IDecryptor<Guid> decryptor)
-			{
-				ClientId = await decryptor.Decrypt(ClientId);
-			}
-
-			protected override async Task EncryptSelf(IEncryptor<Guid> encryptor)
-			{
-				ClientId = await encryptor.Encrypt(ClientId);
-			}
 		}
-		Task<IResponse> CreateLogisticsOrder(CreateLogisticsOrderRequest request);
+		Task<IResponse> CreateLogisticsOrder(IAsCitizenRequest<CreateLogisticsOrderParameter> request);
 
 		sealed class EditLogisticsOrderParameter : EncryptableBase<Guid>
 		{
@@ -49,7 +39,7 @@ namespace CBApplication.Services.Abstractions
 				LogisticsOrderId = await encryptor.Encrypt(LogisticsOrderId);
 			}
 		}
-		Task<IResponse> EditLogisticsOrder(IAsUserEncryptableRequest<EditLogisticsOrderParameter> request);
+		Task<IResponse> EditLogisticsOrder(IAsCitizenEncryptableRequest<EditLogisticsOrderParameter> request);
 		sealed class GetLogisticsOrdersParameter : EncryptableBase<Guid>
 		{
 			public OrderStatus Status { get; set; }

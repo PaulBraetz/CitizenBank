@@ -28,29 +28,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using static CBApplication.Services.Abstractions.ICitizenService;
+using static CBApplication.Services.Abstractions.IEventfulCitizenService;
 using static PBCommon.Enums;
 using System.Threading.Tasks;
-using static CBApplication.Services.Abstractions.ICitizenServiceBase;
+using static CBApplication.Services.Abstractions.ICitizenService;
 using PBApplication.Context.Abstractions;
 
 namespace CBApplication.Services
 {
-	public class CitizenService : CBService, ICitizenService
+	public class CitizenService : CBService, IEventfulCitizenService
 	{
 		public CitizenService(IServiceContext serviceContext) : base(serviceContext)
 		{
-			Observe<ICitizenService>(this);
+			Observe<IEventfulCitizenService>(this);
 		}
 
 		public event ServiceEventHandler<ServiceEventArgs<CitizenLinkRequestEntity>> OnCitizenLinkRequestCreated;
 		public async Task<IResponse> CreateCitizenLinkRequest(IAsUserRequest<CreateCitizenLinkRequestParameter> request)
 		{
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(CreateCitizenLinkRequest));
+
 			var response = new Response();
 
 			async Task notNullRequest()
 			{
-				UserEntity user = GetUserEntity(request);
 				CitizenEntity citizen = await GetCitizen(request.Parameter.Name);
 
 				void successAction()
@@ -59,6 +60,8 @@ namespace CBApplication.Services
 					 * TODO: check if account has sc-package
 					 * var record = "<span class=\"label\">UEE Citizen Record</span><strong class=\"value\">#2405299</strong>";
 					 */
+					UserEntity user = GetUserEntity(request);
+
 					var verification = GetService<IEventfulCUDService>().GenerateUniqueVerification();
 					var createRequest = new CitizenLinkRequestEntity(user, citizen, verification);
 					createRequest.RefreshNow();
@@ -70,7 +73,7 @@ namespace CBApplication.Services
 										createRequest.CloneAsT());
 				}
 
-				await FirstValidateAsUser(user, response.Validation)
+				await FirstValidateAuthenticatedDelegate(request, response)
 					.NextNullCheck(citizen,
 						response.Validation.GetField(nameof(request.Parameter.Name)),
 						DefaultCode.NotFound.SetMessage("The requested citizen could not be found."))
@@ -80,6 +83,7 @@ namespace CBApplication.Services
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
+				.CatchAll(response.Validation.GetField(nameof(request)))
 				.Evaluate();
 
 			return response;
@@ -88,16 +92,18 @@ namespace CBApplication.Services
 		public event ServiceEventHandler<ServiceEventArgs> OnCitizenLinkRequestCancelled;
 		public async Task<IResponse> CancelCitizenLinkRequest(IAsUserEncryptableRequest<CancelCitizenLinkRequestParameter> request)
 		{
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(CancelCitizenLinkRequest));
+
 			var response = new Response();
 
 			async Task notNullRequest()
 			{
-				UserEntity user = GetUserEntity(request);
-				Lazy<CitizenLinkRequestEntity> createRequest = Connection.GetSingleLazily<CitizenLinkRequestEntity>(request.Parameter.RequestId);
+				var user = GetUserEntityLazily(request);
+				var createRequest = Connection.GetSingleLazily<CitizenLinkRequestEntity>(request.Parameter.RequestId);
 
 				Boolean userOwnsRequestCheck()
 				{
-					return user.Id == createRequest.Value.Owner.Id;
+					return user.Value.Id == createRequest.Value.User.Id;
 				}
 				void successAction()
 				{
@@ -106,10 +112,10 @@ namespace CBApplication.Services
 
 					OnCitizenLinkRequestCancelled.Invoke(createRequest.Value);
 
-					LogIfAccessingAsDelegate(user, "cancelled citizen link request for " + createRequest.Value.CitizenName);
+					LogIfAccessingAsDelegate(user.Value, "cancelled citizen link request for {0}", createRequest.Value.Citizen.Name);
 				}
 
-				await FirstValidateAsUser(user, response.Validation)
+				await FirstValidateAuthenticatedDelegate(request, response)
 					.NextCompound(userOwnsRequestCheck,
 						response.Validation.GetField(nameof(request.Parameter.RequestId)),
 						DefaultCode.NotFound.SetMessage("The request requested could not be found."))
@@ -119,6 +125,7 @@ namespace CBApplication.Services
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
+				.CatchAll(response.Validation.GetField(nameof(request)))
 				.Evaluate();
 
 			return response;
@@ -129,20 +136,22 @@ namespace CBApplication.Services
 
 		public async Task<IResponse> VerifyCitizenLinkRequest(IAsUserEncryptableRequest<VerifyCitizenLinkRequestParameter> request)
 		{
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(VerifyCitizenLinkRequest));
+
 			var response = new Response();
 
 			async Task notNullRequest()
 			{
-				UserEntity user = GetUserEntity(request);
-				Lazy<CitizenLinkRequestEntity> createRequest = Connection.GetSingleLazily<CitizenLinkRequestEntity>(request.Parameter.RequestId);
+				var user = GetUserEntityLazily(request);
+				var createRequest = Connection.GetSingleLazily<CitizenLinkRequestEntity>(request.Parameter.RequestId);
 
 				Boolean userOwnsRequestCheck()
 				{
-					return user.Id == createRequest.Value.Owner.Id;
+					return user.Value.Id == createRequest.Value.User.Id;
 				}
 				Boolean validCheck()
 				{
-					String url = "https://robertsspaceindustries.com/citizens/" + createRequest.Value.CitizenName;
+					String url = "https://robertsspaceindustries.com/citizens/" + createRequest.Value.Citizen.Name;
 
 					var scraperFactory = new ScraperFactory();
 
@@ -162,25 +171,27 @@ namespace CBApplication.Services
 
 					return retVal;
 				}
-				async Task successAction()
+				void successAction()
 				{
-					var citizen = await GetCitizen(createRequest.Value.CitizenName);
-					citizen.Owner = createRequest.Value.Owner;
-					Connection.Update(citizen);
+					var citizen = createRequest.Value.Citizen;
+					var previousOwners = citizen.GetClaims(Connection, PBCommon.Configuration.Settings.OWNER_RIGHT);
+					var claimService = GetService<IEventfulClaimService>();
+					var ownerArray = new[] { PBCommon.Configuration.Settings.OWNER_RIGHT };
+
+					previousOwners.ForEach(c => claimService.UpdateClaim(c, c.Rights.Except(ownerArray)));
+					claimService.EnsureClaim(user.Value, ownerArray, citizen);
+					claimService.EnsureClaim(user.Value, CBCommon.Settings.CitizenBank.CITIZEN_RIGHT);
+
 					Connection.Delete(createRequest.Value);
 					Connection.SaveChanges();
 
-					OnCitizenLinked.Invoke(Session, new IEntity[] { createRequest.Value.Owner, citizen }, citizen.CloneAsT());
+					OnCitizenLinked.Invoke(Session, new IEntity[] { createRequest.Value.User, citizen }, citizen.CloneAsT());
 					OnCitizenLinkRequestVerified.Invoke(createRequest.Value);
 
-					GetService<IEventfulUserRoleService>().TryAddToRole(Session.Owner,
-																	Connection.GetFirst<UserRoleEntity>(r => r.Name.Equals(CBCommon.Settings.CitizenBank.CITIZEN_ROLE)),
-																	Connection.Query<UserRoleEntity>().Where(r => r.Name.Equals(PBCommon.Settings.SYSTEM_ROLE)));
-
-					LogIfAccessingAsDelegate(user, "verified citizen link request for " + citizen.Name);
+					LogIfAccessingAsDelegate(user.Value, "verified citizen link request for {0}", citizen.Name);
 				}
 
-				await FirstValidateAsUser(user, response.Validation)
+				await FirstValidateAuthenticatedDelegate(request, response)
 					.NextNullCheck(createRequest,
 						response.Validation.GetField(nameof(request.Parameter.RequestId)),
 						DefaultCode.NotFound.SetMessage("The request requested could not be found."))
@@ -194,6 +205,7 @@ namespace CBApplication.Services
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
+				.CatchAll(response.Validation.GetField(nameof(request)))
 				.Evaluate();
 
 			return response;
@@ -201,30 +213,34 @@ namespace CBApplication.Services
 
 		public async Task EnsureSettingsAndAccountForCitizen(CitizenEntity citizen)
 		{
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(EnsureSettingsAndAccountForCitizen));
+
 			void run()
 			{
-				if (GetSettings<CitizenSettingsEntity, CitizenEntity>(citizen) == null)
+				var claimService = GetService<IEventfulClaimService>();
+				if (GetSettings<CitizenSettingsEntity>(citizen) == null)
 				{
 					//TODO: set default accessibility to private
-					var citizenSettings = new CitizenSettingsEntity(citizen)
+					var citizenSettings = new CitizenSettingsEntity()
 					{
 						Accessibility = AccessibilityType.Public
 					};
 					Connection.Insert(citizenSettings);
+
+					claimService.EnsureClaim(citizen, PBCommon.Configuration.Settings.OWNER_RIGHT, citizenSettings);
 				}
-				if (Connection.GetSingle<RealAccountEntity>(a => a.Owner.Id == citizen.Id) == null)
+				if (!citizen.GetHeldOwnerClaimsValues<RealAccountEntity>(Connection).Any())
 				{
 					List<CurrencyEntity> currencies = Connection.Query<CurrencyEntity>().Where(c => c.IsActive).ToList();
 
 					CreditScoreEntity creditScore = new CreditScoreEntity();
 					RealAccountEntity account = new RealAccountEntity(citizen, creditScore);
 					//TODO: set default accessibility to private
-					RealAccountSettingsEntity accountSettings = new RealAccountSettingsEntity(account,
-													  new CurrencyBoolDictionaryEntity(currencies, true),
+					RealAccountSettingsEntity accountSettings = new RealAccountSettingsEntity(new CurrencyBoolDictionaryEntity(currencies, true),
 													  new CurrencyBoolDictionaryEntity(currencies, true),
 													  new CurrencyBoolDictionaryEntity(currencies),
 													  new CurrencyBoolDictionaryEntity(currencies))
-					{ 
+					{
 						Accessibility = AccessibilityType.Public
 					};
 
@@ -235,26 +251,31 @@ namespace CBApplication.Services
 									accountSettings.CanCreateTransactionOffersFor,
 									accountSettings.CanReceiveTransactionOffersFor,
 									accountSettings);
+
+					_ = claimService.EnsureClaim(account, PBCommon.Configuration.Settings.OWNER_RIGHT, accountSettings);
+					_ = claimService.EnsureClaim(citizen, PBCommon.Configuration.Settings.OWNER_RIGHT, account);
 				}
 				Connection.SaveChanges();
 			}
 			await Task.Run(run);
 		}
 
-		public async Task<IGetPaginatedEncryptableResponse<CitizenLinkRequestEntity>> GetCitizenLinkRequests(IGetPaginatedAsUserRequest<GetCitizenLinkRequestsParameter> request)
+		public async Task<IGetPaginatedEncryptableResponse<CitizenLinkRequestEntity>> GetCitizenLinkRequests(IAsUserGetPaginatedRequest<GetCitizenLinkRequestsParameter> request)
 		{
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(GetCitizenLinkRequests));
+
 			var response = new GetPaginatedEncryptableResponse<CitizenLinkRequestEntity>();
 
 			async Task notNullRequest()
 			{
-				UserEntity user = GetUserEntity(request);
-
 				async Task successAction()
 				{
+					UserEntity user = GetUserEntity(request);
+
 					GetService<IEventfulManageExpirantsService>().DeleteExpirants<CitizenLinkRequestEntity>();
 
 					var query = Connection.Query<CitizenLinkRequestEntity>()
-						.Where(r => r.Owner.Id == user.Id);
+						.Where(r => r.User.Id == user.Id);
 
 					void setData()
 					{
@@ -264,7 +285,7 @@ namespace CBApplication.Services
 						.ToList();
 						response.LastPage = query.GetPageCount(request.PerPage) - 1;
 
-						LogIfAccessingAsDelegate(user, "retrieved citizen link requests for :\n" + String.Join("\n", response.Data.Select(r => r.CitizenName)));
+						LogIfAccessingAsDelegate(user, "retrieved citizen link requests for : {0}", String.Join(", ", response.Data.Select(r => r.Citizen.Name)));
 					}
 
 					await CachedCriterionChain.Cache.Get()
@@ -273,7 +294,7 @@ namespace CBApplication.Services
 						.Evaluate();
 				}
 
-				await FirstValidateAsUser(user, response.Validation)
+				await FirstValidateAuthenticatedDelegate(request, response)
 					.SetOnCriterionMet(successAction)
 					.Evaluate();
 
@@ -281,50 +302,55 @@ namespace CBApplication.Services
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
+				.CatchAll(response.Validation.GetField(nameof(request)))
 				.Evaluate();
 
 			return response;
 		}
 		public async Task<IGetPaginatedEncryptableResponse<CitizenLinkRequestEntity>> GetCitizenLinkRequests()
 		{
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(GetCitizenLinkRequests));
+
 			var response = new GetPaginatedEncryptableResponse<CitizenLinkRequestEntity>();
 
 			void successAction()
 			{
 				response.Data = Connection.Query<CitizenLinkRequestEntity>()
-					.Where(r => r.Owner.Id == Session.Owner.Id)
-					.Select(r => r.CloneAsT())
+					.Where(r => r.User.Id == Session.User.Id)
+					.CloneAsT()
 					.ToList();
 			}
 
 			await FirstValidateAuthenticated(response.Validation)
 				.SetOnCriterionMet(successAction)
+				.CatchAll(response.Validation.GetField("request"))
 				.Evaluate();
 
 			return response;
 		}
 
-		public async Task<IGetPaginatedEncryptableResponse<CitizenEntity>> GetCitizens(IGetPaginatedAsUserRequest<GetCitizensParameter> request)
+		public async Task<IGetPaginatedEncryptableResponse<CitizenEntity>> GetCitizens(IAsUserGetPaginatedRequest<GetCitizensParameter> request)
 		{
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(GetCitizens));
+
 			var response = new GetPaginatedEncryptableResponse<CitizenEntity>();
 
 			async Task notNullRequest()
 			{
-				UserEntity user = GetUserEntity(request);
-
 				async Task successAction()
 				{
-					var query = Connection.Query<CitizenEntity>()
-						.Where(c => c.Owner.Id == user.Id);
+					UserEntity user = GetUserEntity(request);
+
+					var query = user.GetHeldOwnerClaimsValuesRecursively<CitizenEntity>(Connection);
 
 					void setData()
 					{
 						response.Data = query
 						.Paginate(request.PerPage, request.Page)
-						.Select(c => c.CloneAsT())
+						.CloneAsT()
 						.ToList();
 
-						LogIfAccessingAsDelegate(user, "retrieved citizens :\n" + String.Join("\n", response.Data.Select(c => c.Name)));
+						LogIfAccessingAsDelegate(user, "retrieved citizens :{0}", String.Join(", ", response.Data.Select(c => c.Name)));
 					}
 
 					await CachedCriterionChain.Cache.Get()
@@ -333,31 +359,34 @@ namespace CBApplication.Services
 						.Evaluate();
 				}
 
-				await FirstValidateAsUser(user, response.Validation)
+				await FirstValidateAuthenticatedDelegate(request, response)
 					.SetOnCriterionMet(successAction)
 					.Evaluate();
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
+				.CatchAll(response.Validation.GetField(nameof(request)))
 				.Evaluate();
 
 			return response;
 		}
 		public async Task<IGetPaginatedEncryptableResponse<CitizenEntity>> GetCitizens()
 		{
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(GetCitizens));
+
 			var response = new GetPaginatedEncryptableResponse<CitizenEntity>();
 
 			void successAction()
 			{
-				response.Data = Connection.Query<CitizenEntity>()
-					.Where(c => c.Owner.Id == Session.Owner.Id)
-					.Select(c => c.CloneAsT())
+				response.Data = Session.User.GetHeldOwnerClaimsValuesRecursively<CitizenEntity>(Connection)
+					.CloneAsT()
 					.ToList();
 			}
 
 			await FirstValidateAuthenticated(response.Validation)
 				.SetOnCriterionMet(successAction)
+				.CatchAll(response.Validation.GetField("request"))
 				.Evaluate();
 
 			return response;
@@ -365,25 +394,30 @@ namespace CBApplication.Services
 
 		public async Task<IEncryptableResponse<CitizenSettingsEntity>> GetCitizenSettings(IAsCitizenRequest request)
 		{
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(GetCitizenSettings));
+
 			var response = new EncryptableResponse<CitizenSettingsEntity>();
 
 			async Task notNullRequest()
 			{
-				UserEntity user = GetUserEntity(request);
-				Lazy<CitizenEntity> citizen = GetCitizenEntityLazily(request);
-
 				void successAction()
 				{
-					response.Overwrite(Connection.GetSingle<CitizenSettingsEntity>(s => s.Owner.Id == citizen.Value.Id).CloneAsT());
+					var citizen = GetCitizenEntity(request);
+					var settings = GetSettings<CitizenSettingsEntity>(citizen);
+
+					response.Overwrite(settings);
+
+					LogIfAccessingAsDelegate(GetUserEntity(request), "retrieved citizen settings for :{0}", citizen.Name);
 				}
 
-				await FirstValidateAsCitizen(user, citizen, response.Validation)
+				await FirstValidateAsCitizen(request, response)
 					.SetOnCriterionMet(successAction)
 					.Evaluate();
 			}
 
 			await FirstRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
+				.CatchAll(response.Validation.GetField(nameof(request)))
 				.Evaluate();
 
 			return response;
@@ -392,110 +426,115 @@ namespace CBApplication.Services
 		public event ServiceEventHandler<ServiceEventArgs<CitizenSettingsEntity>> OnCitizenSettingsChanged;
 		public async Task<IResponse> SetCitizenSettings(IAsCitizenRequest<SetCitizenSettingsParameter> request)
 		{
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(SetCitizenSettings));
+
 			var response = new Response();
 
 			async Task notNullRequest()
 			{
-				UserEntity user = GetUserEntity(request);
-				Lazy<CitizenEntity> citizen = GetCitizenEntityLazily(request);
-				Lazy<CitizenSettingsEntity> settings = Connection.GetFirstLazily<CitizenSettingsEntity>(s => s.Owner.Id == citizen.Value.Id);
-
 				void successAction()
 				{
+					var citizen = GetCitizenEntity(request);
+					var settings = GetSettings<CitizenSettingsEntity>(citizen);
+					Boolean changed = false;
+
 					if (request.Parameter.CanBeRecruitedAsDepartmentAdmin.HasValue)
 					{
-						settings.Value.CanBeRecruitedAsDepartmentAdmin = request.Parameter.CanBeRecruitedAsDepartmentAdmin.Value;
+						settings.CanBeRecruitedAsDepartmentAdmin = request.Parameter.CanBeRecruitedAsDepartmentAdmin.Value;
+						changed = true;
 					}
 					if (request.Parameter.Accessibility.HasValue)
 					{
-						settings.Value.Accessibility = request.Parameter.Accessibility.Value;
+						settings.Accessibility = request.Parameter.Accessibility.Value;
+						changed = true;
 					}
-					if (settings.IsValueCreated)
+					if (changed)
 					{
 						Connection.Update(settings);
 						Connection.SaveChanges();
 
-						OnCitizenSettingsChanged.Invoke(Session, settings.Value, settings.Value.CloneAsT());
+						OnCitizenSettingsChanged.Invoke(Session, settings, settings.CloneAsT());
+
+						LogIfAccessingAsDelegate(GetUserEntity(request), "set citizen settings for :{0}", citizen.Name);
 					}
 				}
 
-				await FirstValidateAsCitizen(user, citizen, response.Validation)
+				await FirstValidateAsCitizen(request, response)
 					.SetOnCriterionMet(successAction)
 					.Evaluate();
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
+				.CatchAll(response.Validation.GetField(nameof(request)))
 				.Evaluate();
 
 			return response;
 		}
 
-		public event ServiceEventHandler<ServiceEventArgs<ICitizenService.OnCitizenUnlinkedData>> OnCitizenUnlinked;
+		public event ServiceEventHandler<ServiceEventArgs<IEventfulCitizenService.OnCitizenUnlinkedData>> OnCitizenUnlinked;
 		public async Task<IResponse> UnlinkCitizen(IAsCitizenRequest request)
 		{
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(UnlinkCitizen));
+
 			var response = new Response();
 
 			async Task notNullRequest()
 			{
-				UserEntity user = GetUserEntity(request);
-				Lazy<CitizenEntity> citizen = GetCitizenEntityLazily(request);
-
 				void successAction()
 				{
-					var previousOwner = citizen.Value.Owner;
+					var citizen = GetCitizenEntity(request);
 
-					citizen.Value.Owner = null;
-					Connection.Update(citizen);
-					Connection.SaveChanges();
+					var claimService = GetService<IEventfulClaimService>();
 
-					OnCitizenUnlinked.Invoke(Session, citizen.Value, new ICitizenService.OnCitizenUnlinkedData(citizen.Value.CloneAsT(), previousOwner.CloneAsT()));
+					var ownershipClaim = citizen.GetClaims(Connection, PBCommon.Configuration.Settings.OWNER_RIGHT).Single();
+					var previousOwner = Connection.GetSingle<UserEntity>(ownershipClaim.HolderId);
 
-					if (!Connection.Query<CitizenEntity>().Where(c => c.Owner.Id == user.Id).Any())
+					claimService.RemoveRight(ownershipClaim, PBCommon.Configuration.Settings.OWNER_RIGHT);
+
+					if (!previousOwner.GetHeldOwnerClaimsValues<CitizenEntity>(Connection).Any())
 					{
-						GetService<IEventfulUserRoleService>().TryRemoveFromRole(user,
-																		Connection.GetSingle<UserRoleEntity>(r => r.Name.Equals(CBCommon.Settings.CitizenBank.CITIZEN_ROLE)),
-																		Connection.Query<UserRoleEntity>().Where(r => r.Name.Equals(PBCommon.Settings.SYSTEM_ROLE)));
+						var globalClaim = previousOwner.GetHeldClaims(Connection, CBCommon.Settings.CitizenBank.CITIZEN_RIGHT).Single();
+						claimService.RemoveRight(globalClaim, CBCommon.Settings.CitizenBank.CITIZEN_RIGHT);
 					}
 
-					LogIfAccessingAsDelegate(user, "unlinked citizen " + citizen.Value.Name);
+					OnCitizenUnlinked.Invoke(Session, citizen, new IEventfulCitizenService.OnCitizenUnlinkedData(citizen.CloneAsT(), previousOwner.CloneAsT()));
+
+					LogIfAccessingAsDelegate(GetUserEntity(request), "unlinked citizen :{0}", citizen.Name);
 				}
 
-				await FirstValidateAsCitizen(user, citizen, response.Validation)
+				await FirstValidateAsCitizen(request, response)
 					.SetOnCriterionMet(successAction)
 					.Evaluate();
 			}
 
 			await FirstRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
+				.CatchAll(response.Validation.GetField(nameof(request)))
 				.Evaluate();
 
 			return response;
 		}
 
-		public async Task<IGetPaginatedEncryptableResponse<CitizenEntity>> SearchCitizens(IGetPaginatedAsUserEncryptableRequest<SearchCitizensParameter> request)
+		public async Task<IGetPaginatedEncryptableResponse<CitizenEntity>> SearchCitizens(IAsUserGetPaginatedEncryptableRequest<SearchCitizensParameter> request)
 		{
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(SearchCitizens));
+
 			var response = new GetPaginatedEncryptableResponse<CitizenEntity>();
 
 			async Task notNullRequest()
 			{
-				Lazy<IQueryable<CitizenEntity>> query = new Lazy<IQueryable<CitizenEntity>>(() =>
+				Lazy<IEnumerable<CitizenEntity>> query = new Lazy<IEnumerable<CitizenEntity>>(() =>
 				{
 					var retVal1 = Connection.Query<CitizenSettingsEntity>();
 					if (request.Parameter.Accessibility.HasValue && request.Parameter.Accessibility.Value == AccessibilityType.Private)
 					{
-						var user = GetUserEntity(request);
-						Boolean userIsInRoleCheck()
-						{
-							return user.IsInRole(PBCommon.Settings.ADMIN_ROLE) || user.IsInRole(PBCommon.Settings.SUPERADMIN_ROLE);
-						}
 						void accessibilitySuccessAction()
 						{
-							retVal1 = retVal1.Where(s => s.Accessibility == request.Parameter.Accessibility.Value);
+							retVal1 = retVal1.Where(s => s.Accessibility == AccessibilityType.Private);
 						}
 
-						FirstValidateAsUser(user, response.Validation)
-							.NextCompound(userIsInRoleCheck)
+						FirstValidateAuthenticatedDelegate(request, response)
 							.SetOnCriterionMet(accessibilitySuccessAction)
 							.Evaluate();
 					}
@@ -511,18 +550,19 @@ namespace CBApplication.Services
 					{
 						retVal1 = retVal1.Where(s => s.CanBeRecruitedAsAccountAdmin == request.Parameter.CanBeRecruitedAsAccountAdmin.Value);
 					}
-					IQueryable<CitizenEntity> retVal2 = retVal1.Select(s => s.Owner);
+
+					var retVal2 = retVal1.ToArray().SelectMany(s => s.GetOwnerClaimsHolders<CitizenEntity>(Connection));
 					if (request.Parameter.ExcludeIds?.Any() ?? false)
 					{
-						retVal2 = retVal2.Where(a => !request.Parameter.ExcludeIds.Contains(a.Id));
+						retVal2 = retVal2.Where(c => !request.Parameter.ExcludeIds.Contains(c.Id));
 					}
 					if (request.Parameter.ExcludeNames?.Any() ?? false)
 					{
-						retVal2 = retVal2.Where(a => !request.Parameter.ExcludeNames.Contains(a.Name.ToLower()));
+						retVal2 = retVal2.Where(c => !request.Parameter.ExcludeNames.Contains(c.Name.ToLower()));
 					}
 					if (request.Parameter.Name != null)
 					{
-						retVal2 = retVal2.Where(s => s.Name.Equals(request.Parameter.Name) || s.Name.ToLower().Contains(request.Parameter.Name.ToLower()));
+						retVal2 = retVal2.Where(c => c.Name.Equals(request.Parameter.Name) || c.Name.ToLower().Contains(request.Parameter.Name.ToLower()));
 					}
 					return retVal2;
 				});
@@ -533,7 +573,9 @@ namespace CBApplication.Services
 						.Paginate(request.PerPage, request.Page)
 						.CloneAsT()
 						.ToList();
+
 					response.LastPage = query.Value.GetPageCount(request.PerPage) - 1;
+					
 					CitizenEntity newCitizen = await GetCitizen(request.Parameter.Name);
 					if (response.Data.Count() == 0 && newCitizen != null)
 					{
@@ -553,6 +595,7 @@ namespace CBApplication.Services
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
+				.CatchAll(response.Validation.GetField(nameof(request)))
 				.Evaluate();
 
 			return response;
@@ -560,35 +603,38 @@ namespace CBApplication.Services
 
 		public async Task<CitizenEntity> GetCitizen(String name)
 		{
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(GetCitizen));
+
 			CitizenEntity citizen = null;
-			if (!name.IsValidHandle())
+			if (name.IsValidHandle())
 			{
-				return null;
-			}
-			name = name.ToLower();
-			if ((citizen = Connection.GetSingle<CitizenEntity>(c => c.Name.ToLower().Equals(name))) == null)
-			{
-				String url = "https://robertsspaceindustries.com/citizens/" + name;
-				String actualName = String.Empty;
-				ScraperFactory scraperFactory = new ScraperFactory();
-				scraperFactory.CreateSinglePageScraper(url)
-					.SetTargetPageXPaths(new Dictionary<String, String>
-					{
-							{nameof(actualName),     "/html/body/div[2]/div[2]/div[2]/div/div/div[2]/div[1]/div/div[1]/div/div[2]/p[2]/strong" }
-					}).Go((String link, IDictionary<String, String> dict) => actualName = dict[nameof(actualName)]);
-				if (actualName == null)
+				name = name.ToLower();
+				if ((citizen = Connection.GetSingle<CitizenEntity>(c => c.Name.ToLower().Equals(name))) == null)
 				{
-					return null;
+					String url = "https://robertsspaceindustries.com/citizens/" + name;
+					String actualName = String.Empty;
+					ScraperFactory scraperFactory = new ScraperFactory();
+					scraperFactory.CreateSinglePageScraper(url)
+						.SetTargetPageXPaths(new Dictionary<String, String>
+						{
+							{nameof(actualName),     "/html/body/div[2]/div[2]/div[2]/div/div/div[2]/div[1]/div/div[1]/div/div[2]/p[2]/strong" }
+						}).Go((String link, IDictionary<String, String> dict) => actualName = dict[nameof(actualName)]);
+					if (actualName == null)
+					{
+						return null;
+					}
+					Connection.Insert(citizen = new CitizenEntity(actualName));
+					await EnsureSettingsAndAccountForCitizen(citizen);
+					Connection.SaveChanges();
 				}
-				Connection.Insert(citizen = new CitizenEntity(actualName) );
-				await EnsureSettingsAndAccountForCitizen(citizen);
-				Connection.SaveChanges();
 			}
 			return citizen;
 		}
 
 		public async Task<IEncryptableResponse<CitizenEntity>> RetrieveCitizen(String name)
 		{
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(GetCitizen));
+
 			var response = new EncryptableResponse<CitizenEntity>();
 
 			var citizen = await GetCitizen(name);
@@ -602,6 +648,7 @@ namespace CBApplication.Services
 					response.Validation.GetField(nameof(name)),
 					DefaultCode.NotFound.SetMessage("The requested citizen could not be found."))
 				.SetOnCriterionMet(successAction)
+				.CatchAll(response.Validation.GetField("request"))
 				.Evaluate();
 
 			return response;

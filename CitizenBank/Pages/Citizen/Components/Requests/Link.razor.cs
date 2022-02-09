@@ -11,7 +11,7 @@ using PBFrontend.UI.Miscellaneous.Loading.Children;
 using System;
 using System.Threading.Tasks;
 
-using static CBApplication.Services.Abstractions.ICitizenServiceBase;
+using static CBApplication.Services.Abstractions.ICitizenService;
 
 namespace CitizenBank.Pages.Citizen.Components.Requests
 {
@@ -25,7 +25,7 @@ namespace CitizenBank.Pages.Citizen.Components.Requests
 
 		private async Task LinkNew(String name)
 		{
-			linkNewResponse = await LoadingParent.Load(() => SessionParent.ServiceContext.GetService<ICitizenService>().CreateCitizenLinkRequest(new AsUserRequest<CreateCitizenLinkRequestParameter>()
+			linkNewResponse = await LoadingParent.Load(() => SessionParent.ServiceContext.GetService<IEventfulCitizenService>().CreateCitizenLinkRequest(new AsUserRequest<CreateCitizenLinkRequestParameter>()
 			{
 				AsUserId = SessionParent.Session.Owner.Id,
 				Parameter = new()

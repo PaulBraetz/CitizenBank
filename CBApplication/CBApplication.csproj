@@ -16,7 +16,7 @@
 
  <ItemGroup>
   <PackageReference Include="MailKit" Version="2.15.0" />
-  <PackageReference Include="PBApplication" Version="35.0.0" />
+  <PackageReference Include="PBApplication" Version="36.3.0" />
   <PackageReference Include="ScrapeX" Version="1.1.0" />
  </ItemGroup>
 

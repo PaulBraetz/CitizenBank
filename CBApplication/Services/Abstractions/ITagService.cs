@@ -53,7 +53,7 @@ namespace CBApplication.Services.Abstractions
 				await Tag.SafeEncrypt(encryptor);
 			}
 		}
-		Task<IGetPaginatedEncryptableResponse<SearchTagModel>> SearchTags(IGetPaginatedAsAccountEncryptableRequest<SearchTagsParameter> request);
+		Task<IGetPaginatedEncryptableResponse<SearchTagModel>> SearchTags(IAsAccountGetPaginatedEncryptableRequest<SearchTagsParameter> request);
 
 		Task<TagEntity> GetTag(String name);
 	}

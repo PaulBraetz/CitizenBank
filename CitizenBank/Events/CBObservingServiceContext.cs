@@ -21,12 +21,12 @@ namespace CitizenBank.Events
 		{
 			RegisterTypeToServices<IEventfulAccountService, AccountService>(new InjectionConstructor(this));
 			RegisterTypeToServices<IEventfulCBMessageService, CBMessageService>(new InjectionConstructor(this));
-			RegisterTypeToServices<ICitizenService, CitizenService>(new InjectionConstructor(this));
+			RegisterTypeToServices<IEventfulCitizenService, CitizenService>(new InjectionConstructor(this));
 			RegisterTypeToServices<IDepartmentService, DepartmentService>(new InjectionConstructor(this));
 			RegisterTypeToServices<IEventfulTransactionService, TransactionService>(new InjectionConstructor(this));
 			RegisterTypeToServices<IEventfulLogisticsService, LogisticsService>(new InjectionConstructor(this));
 
-			RegisterTypeToServices<ICitizenServiceBase, CitizenService>(new InjectionConstructor(this));
+			RegisterTypeToServices<ICitizenService, CitizenService>(new InjectionConstructor(this));
 			RegisterTypeToServices<IDepartmentServiceBase, DepartmentService>(new InjectionConstructor(this));
 
 			RegisterTypeToServices<IAccountService, AccountService>(new InjectionConstructor(this));
@@ -39,7 +39,7 @@ namespace CitizenBank.Events
 
 			IEncryptionService encryptionService = GetService<IEncryptionService>();
 
-			RegisterTypeToObservers<IServiceObserver<ICitizenService>, CitizenServiceObserver, ICitizenService>(new InjectionConstructor(hubContext, encryptionService, serializer));
+			RegisterTypeToObservers<IServiceObserver<IEventfulCitizenService>, CitizenServiceObserver, IEventfulCitizenService>(new InjectionConstructor(hubContext, encryptionService, serializer));
 			RegisterTypeToObservers<IServiceObserver<IEventfulLogisticsService>, LogisticsServiceObserver, IEventfulLogisticsService>(new InjectionConstructor(hubContext, encryptionService, serializer));
 			RegisterTypeToObservers<IServiceObserver<IEventfulAccountService>, AccountServiceObserver, IEventfulAccountService>(new InjectionConstructor(hubContext, encryptionService, serializer));
 		}

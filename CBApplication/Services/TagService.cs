@@ -11,7 +11,7 @@ using PBApplication.Context.Abstractions;
 using PBApplication.Extensions;
 using PBApplication.Responses;
 using PBApplication.Responses.Abstractions;
-
+using PBCommon;
 using PBCommon.Extensions;
 using PBCommon.Validation;
 using PBData.Extensions;
@@ -36,8 +36,10 @@ namespace CBApplication.Services.Public
 			Observe<IEventfulTagService>(this);
 		}
 
-		public async Task<IGetPaginatedEncryptableResponse<SearchTagModel>> SearchTags(IGetPaginatedAsAccountEncryptableRequest<SearchTagsParameter> request)
+		public async Task<IGetPaginatedEncryptableResponse<SearchTagModel>> SearchTags(IAsAccountGetPaginatedEncryptableRequest<SearchTagsParameter> request)
 		{
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(SearchTags));
+
 			var response = new GetPaginatedEncryptableResponse<SearchTagModel>();
 
 			async Task notNullRequest()
@@ -84,6 +86,7 @@ namespace CBApplication.Services.Public
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
+				.CatchAll(response.Validation.GetField(nameof(request)))
 				.Evaluate();
 
 			return response;
@@ -91,6 +94,8 @@ namespace CBApplication.Services.Public
 
 		public async Task<TagEntity> GetTag(String name)
 		{
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(GetTag));
+
 			TagEntity run()
 			{
 				name = name?.Trim().ToLower();

@@ -19,7 +19,7 @@ namespace CBFrontend.UI.Transactions
 	partial class TransactionOffers : AccountsFrameChild
 	{
 		private IGetPaginatedEncryptableResponse<TransactionOfferEntity> response;
-		private IGetPaginatedAsAccountRequest<ITransactionService.GetTransactionOffersParameter> request;
+		private IAsAccountGetPaginatedRequest<ITransactionService.GetTransactionOffersParameter> request;
 
 		protected override async Task OnParametersSetAndSessionInitializedAsync()
 		{
@@ -31,7 +31,7 @@ namespace CBFrontend.UI.Transactions
 
 		private async Task Refresh()
 		{
-			request = new GetPaginatedAsAccountRequest<ITransactionService.GetTransactionOffersParameter>()
+			request = new AsAccountGetPaginatedRequest<ITransactionService.GetTransactionOffersParameter>()
 			{
 				AsUserId = SessionParent.Session.Owner.Id,
 				AsAccountId = AccountsParent.CurrentAccount.Id,

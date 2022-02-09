@@ -6,6 +6,7 @@ using MimeKit;
 using PBApplication.Context.Abstractions;
 using PBApplication.Services;
 using PBApplication.Services.Abstractions;
+using PBCommon;
 using PBCommon.Globalization;
 using PBData.Entities;
 using System;
@@ -33,8 +34,11 @@ namespace CBApplication.Services
 		private const String CHANGE_EMAIL_SUBJECT = "Change Email Confirmation";
 		private const String CHANGEEMAIL_BODY_PART_1 = "Click this link to confirm your email change : {0}";
 		private const String CHANGEEMAIL_BODY_PART_2 = "Your user email will be changed to : {0}";
+
 		public async Task ChangeEmail(String name, String email, String verificationCode, String newEmail)
 		{
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(ChangeEmail));
+
 			var bodyPart1 = GetLocalized(CHANGEEMAIL_BODY_PART_1);
 			var bodyPart1WithLink = String.Format(bodyPart1, verificationCode.ToVerifyLink());
 			var bodyPart2 = GetLocalized(CHANGEEMAIL_BODY_PART_2);
@@ -47,6 +51,8 @@ namespace CBApplication.Services
 		private const String REGISTER_BODY_PART = "Click this link to confirm your registration : {0}";
 		public async Task Register(String name, String email, String verificationCode)
 		{
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(Register));
+
 			var bodyPart = GetLocalized(REGISTER_BODY_PART);
 			var bodyPartWithLink = String.Format(bodyPart, verificationCode.ToVerifyLink());
 			var ignoreEmailPart = GetLocalized(IGNORE_EMAIL_BODY_PART);
@@ -57,6 +63,8 @@ namespace CBApplication.Services
 		private const String DELETE_BODY_PART = "Your user has successfully been deleted.";
 		public async Task DeleteUser(String name, String email)
 		{
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(DeleteUser));
+
 			var bodyPart = GetLocalized(DELETE_BODY_PART);
 			await SendEmail(name, email, DELETE_SUBJECT,  bodyPart);
 		}
@@ -65,6 +73,8 @@ namespace CBApplication.Services
 		private const String PASSWORD_BODY_PART = "Click this link to confirm your password change : {0}";
 		public async Task RequestPasswordChange(String name, String email, String verificationCode)
 		{
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(RequestPasswordChange));
+
 			var bodyPart = GetLocalized(PASSWORD_BODY_PART);
 			var bodyPartWithLink = String.Format(bodyPart, verificationCode.ToVerifyLink());
 			var ignoreEmailPart = GetLocalized(IGNORE_EMAIL_BODY_PART);
@@ -75,6 +85,8 @@ namespace CBApplication.Services
 		private const String AUTH_BODY_PART = "Your two factor authentication code is : {0}";
 		public async Task TwoFactorAuthentication(String name, String email, String verificationCode)
 		{
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(TwoFactorAuthentication));
+
 			var bodyPart = GetLocalized(AUTH_BODY_PART);
 			var bodyPartWithLink = String.Format(bodyPart, verificationCode);
 			var ignoreEmailChangePasswordPart = GetLocalized(IGNORE_EMAIL_CHANGE_PASSWORD_BODY_PART);

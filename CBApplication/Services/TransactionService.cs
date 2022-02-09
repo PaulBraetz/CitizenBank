@@ -711,7 +711,7 @@ namespace CBApplication.Services
 
 			return response;
 		}
-		public async Task<IGetPaginatedEncryptableResponse<TransactionOfferEntity>> GetTransactionOffers(IGetPaginatedAsAccountRequest<GetTransactionOffersParameter> request)
+		public async Task<IGetPaginatedEncryptableResponse<TransactionOfferEntity>> GetTransactionOffers(IAsAccountGetPaginatedRequest<GetTransactionOffersParameter> request)
 		{
 			var response = new GetPaginatedEncryptableResponse<TransactionOfferEntity>();
 
@@ -753,7 +753,7 @@ namespace CBApplication.Services
 
 			return response;
 		}
-		public async Task<IGetPaginatedEncryptableResponse<SourceTransactionContractEntity>> GetSourceTransactionContracts(IGetPaginatedAsAccountRequest<GetSourceTransactionContractsParameter> request)
+		public async Task<IGetPaginatedEncryptableResponse<SourceTransactionContractEntity>> GetSourceTransactionContracts(IAsAccountGetPaginatedRequest<GetSourceTransactionContractsParameter> request)
 		{
 			var response = new GetPaginatedEncryptableResponse<SourceTransactionContractEntity>();
 
@@ -795,7 +795,7 @@ namespace CBApplication.Services
 
 			return response;
 		}
-		public async Task<IGetPaginatedEncryptableResponse<TargetTransactionContractEntity>> GetTargetTransactionContracts(IGetPaginatedAsAccountRequest<GetTargetTransactionContractsParameter> request)
+		public async Task<IGetPaginatedEncryptableResponse<TargetTransactionContractEntity>> GetTargetTransactionContracts(IAsAccountGetPaginatedRequest<GetTargetTransactionContractsParameter> request)
 		{
 			var response = new GetPaginatedEncryptableResponse<TargetTransactionContractEntity>();
 

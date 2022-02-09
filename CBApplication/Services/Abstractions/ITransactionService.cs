@@ -88,7 +88,7 @@ namespace CBApplication.Services.Abstractions
 			public SimpleTransactionContractProperty OrderByProperty { get; set; }
 			public SimpleTransactionContractProperty FilterProperty { get; set; }
 		}
-		Task<IGetPaginatedEncryptableResponse<TransactionOfferEntity>> GetTransactionOffers(IGetPaginatedAsAccountRequest<GetTransactionOffersParameter> request);
+		Task<IGetPaginatedEncryptableResponse<TransactionOfferEntity>> GetTransactionOffers(IAsAccountGetPaginatedRequest<GetTransactionOffersParameter> request);
 
 		abstract class GetTransactionContractsParameterBase : GetTransactionsParameterBase
 		{
@@ -98,7 +98,7 @@ namespace CBApplication.Services.Abstractions
 		sealed class GetSourceTransactionContractsParameter : GetTransactionContractsParameterBase
 		{
 		}
-		Task<IGetPaginatedEncryptableResponse<SourceTransactionContractEntity>> GetSourceTransactionContracts(IGetPaginatedAsAccountRequest<GetSourceTransactionContractsParameter> request);
+		Task<IGetPaginatedEncryptableResponse<SourceTransactionContractEntity>> GetSourceTransactionContracts(IAsAccountGetPaginatedRequest<GetSourceTransactionContractsParameter> request);
 
 		sealed class GetSourceTransactionContractParameter : EncryptableBase<Guid>
 		{
@@ -117,7 +117,7 @@ namespace CBApplication.Services.Abstractions
 
 		sealed class GetTargetTransactionContractsParameter : GetTransactionContractsParameterBase
 		{ }
-		Task<IGetPaginatedEncryptableResponse<TargetTransactionContractEntity>> GetTargetTransactionContracts(IGetPaginatedAsAccountRequest<GetTargetTransactionContractsParameter> request);
+		Task<IGetPaginatedEncryptableResponse<TargetTransactionContractEntity>> GetTargetTransactionContracts(IAsAccountGetPaginatedRequest<GetTargetTransactionContractsParameter> request);
 
 		sealed class GetTargetTransactionContractParameter : EncryptableBase<Guid>
 		{

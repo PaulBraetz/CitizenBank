@@ -5,15 +5,15 @@ using System.Threading.Tasks;
 
 namespace CBApplication.Requests
 {
-	public class GetPaginatedAsAccountRequest : GetPaginatedAsCitizenRequest, IGetPaginatedAsAccountRequest
+	public class AsAccountGetPaginatedRequest : AsCitizenGetPaginatedRequest, IAsAccountGetPaginatedRequest
 	{
 		public Guid AsAccountId { get; set; }
 	}
-	public class GetPaginatedAsAccountRequest<TParameter> : GetPaginatedAsCitizenRequest<TParameter>, IGetPaginatedAsAccountRequest<TParameter>
+	public class AsAccountGetPaginatedRequest<TParameter> : AsCitizenGetPaginatedRequest<TParameter>, IAsAccountGetPaginatedRequest<TParameter>
 	{
 		public Guid AsAccountId { get; set; }
 	}
-	public class GetPaginatedAsAccountEncryptableRequest<TParameter> : GetPaginatedAsCitizenEncryptableRequest<TParameter>, IGetPaginatedAsAccountEncryptableRequest<TParameter>
+	public class AsAccountGetPaginatedEncryptableRequest<TParameter> : AsCitizenGetPaginatedEncryptableRequest<TParameter>, IAsAccountGetPaginatedEncryptableRequest<TParameter>
 		where TParameter : IEncryptable<Guid>
 	{
 		public Guid AsAccountId { get; set; }

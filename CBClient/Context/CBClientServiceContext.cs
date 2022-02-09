@@ -14,7 +14,7 @@ namespace CitizenBank.Client.Context
 	{
 		public CBClientServiceContext(WebClient webClient) : base(webClient)
 		{
-			RegisterTypeToServices<ICitizenServiceBase, ClientCitizenService>(new InjectionConstructor(this, webClient));
+			RegisterTypeToServices<ICitizenService, ClientCitizenService>(new InjectionConstructor(this, webClient));
 		}
 	}
 }

@@ -123,8 +123,8 @@ namespace CitizenBank
 						adminData.GetValue<String>("Reset"))
 				.UseRoleNames(new Dictionary<String, ICollection<String>>()
 				{
-					{CBCommon.Settings.CitizenBank.CITIZEN_ROLE ,new String[]{PBCommon.Settings.SYSTEM_ROLE} },
-					{CBCommon.Settings.Logistics.LOGISTICS_ROLE ,new String[]{PBCommon.Settings.ADMIN_ROLE} }
+					{CBCommon.Settings.CitizenBank.CITIZEN_RIGHT ,new String[]{PBCommon.Settings.SYSTEM_ROLE} },
+					{CBCommon.Settings.Logistics.LOGISTICS_MANAGER_RIGHT ,new String[]{PBCommon.Settings.ADMIN_ROLE} }
 				});
 			})
 			.ConfigurePBServer(cs =>

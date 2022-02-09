@@ -9,8 +9,8 @@ namespace CBData.Mapping
 		public CitizenLinkRequestMapping()
 		{
 			Map(m => m.VerificationCode).Length(32768);
-			Map(m => m.CitizenName).Length(32768);
-			References(m => m.Owner);
+			References(m => m.Citizen);
+			References(m => m.User);
 		}
 	}
 }

@@ -48,25 +48,25 @@ namespace CBFrontend.UI.DataFrames.Citizens
 
 				previousUser = SessionParent.Session.Owner;
 
-				citizens = (await SessionParent.ServiceContext.GetService<ICitizenService>().GetCitizens()).Data.ToList();
-				await Task.WhenAll(citizens.Select(c => new EventSubscription(nameof(ICitizenService.OnCitizenUnlinked), c.HubId)).Select(s => SubscribeOnce<ICitizenService.OnCitizenUnlinkedData>(s, remove)));
-				await SubscribeOnce<CitizenEntity>(new EventSubscription(nameof(ICitizenService.OnCitizenLinked), SessionParent.Session.Owner.HubId), add);
+				citizens = (await SessionParent.ServiceContext.GetService<IEventfulCitizenService>().GetCitizens()).Data.ToList();
+				await Task.WhenAll(citizens.Select(c => new EventSubscription(nameof(IEventfulCitizenService.OnCitizenUnlinked), c.HubId)).Select(s => SubscribeOnce<IEventfulCitizenService.OnCitizenUnlinkedData>(s, remove)));
+				await SubscribeOnce<CitizenEntity>(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenLinked), SessionParent.Session.Owner.HubId), add);
 
 				async Task generalUnsubscribe()
 				{
-					await Unsubscribe(citizens.Select(c => new EventSubscription(nameof(ICitizenService.OnCitizenUnlinked), c.HubId)));
-					await Unsubscribe(new EventSubscription(nameof(ICitizenService.OnCitizenLinked), previousUser.HubId));
+					await Unsubscribe(citizens.Select(c => new EventSubscription(nameof(IEventfulCitizenService.OnCitizenUnlinked), c.HubId)));
+					await Unsubscribe(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenLinked), previousUser.HubId));
 				}
 				void add(CitizenEntity response)
 				{
 					citizens.Add(response);
-					SubscribeOnce<ICitizenService.OnCitizenUnlinkedData>(new EventSubscription(nameof(ICitizenService.OnCitizenUnlinked), response.HubId), remove);
+					SubscribeOnce<IEventfulCitizenService.OnCitizenUnlinkedData>(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenUnlinked), response.HubId), remove);
 					InvokeAsync(StateHasChanged);
 				}
-				void remove(ICitizenService.OnCitizenUnlinkedData data)
+				void remove(IEventfulCitizenService.OnCitizenUnlinkedData data)
 				{
 					citizens.Remove(citizens.SingleOrDefault(c => c.Id == data.Citizen.Id));
-					Unsubscribe(new EventSubscription(nameof(ICitizenService.OnCitizenUnlinked), data.Citizen.HubId));
+					Unsubscribe(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenUnlinked), data.Citizen.HubId));
 					InvokeAsync(StateHasChanged);
 				}
 			}

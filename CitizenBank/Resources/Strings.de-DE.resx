@@ -402,6 +402,12 @@
   <data name="Target" xml:space="preserve">
     <value>Ziel</value>
   </data>
+  <data name="The account provided could not be found." xml:space="preserve">
+    <value>Der angegebene Account konnte nicht gefunden werden.</value>
+  </data>
+  <data name="The citizen provided could not be found." xml:space="preserve">
+    <value>Der angegebene Citizen konnte nicht gefunden werden.</value>
+  </data>
   <data name="This site is running" xml:space="preserve">
     <value>Diese Seite nutzt</value>
   </data>
@@ -455,6 +461,12 @@
   </data>
   <data name="Whereever" xml:space="preserve">
     <value>Egal</value>
+  </data>
+  <data name="You are not authorized to access this account." xml:space="preserve">
+    <value>Sie sind nicht dazu berechtigt, auf den angegebenen Account zuzugreifen.</value>
+  </data>
+  <data name="You are not authorized to access this citizen." xml:space="preserve">
+    <value>Sie sind nicht dazu berechtigt, auf den angegebenen Citizen zuzugreifen.</value>
   </data>
   <data name="You can edit your bio here" xml:space="preserve">
     <value>Hier kannst du dein Bio bearbeiten</value>

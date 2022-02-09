@@ -13,12 +13,12 @@ namespace CBApplication.Services.Abstractions
 		{
 
 		}
-		Task<IGetPaginatedEncryptableResponse<CitizenMessageEntity>> GetCitizenMessages(IGetPaginatedAsCitizenRequest<GetCitizenMessagesParameter> request);
+		Task<IGetPaginatedEncryptableResponse<CitizenMessageEntity>> GetCitizenMessages(IAsCitizenGetPaginatedRequest<GetCitizenMessagesParameter> request);
 
 		sealed class GetAccountMessagesParameter
 		{
 
 		}
-		Task<IGetPaginatedEncryptableResponse<AccountMessageEntity>> GetAccountMessages(IGetPaginatedAsAccountRequest<GetAccountMessagesParameter> request);
+		Task<IGetPaginatedEncryptableResponse<AccountMessageEntity>> GetAccountMessages(IAsAccountGetPaginatedRequest<GetAccountMessagesParameter> request);
 	}
 }
