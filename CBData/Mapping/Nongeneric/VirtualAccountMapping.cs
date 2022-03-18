@@ -4,7 +4,11 @@ using FluentNHibernate.Mapping;
 
 namespace CBData.Mapping
 {
-	internal class VirtualAccountMapping : SubclassMap<VirtualAccountEntity>
+	internal class VirtualAccountMapping : AccountMappingBase<VirtualAccountEntity>
 	{
+		public VirtualAccountMapping()
+		{
+			HasMany(m => m.DepositReferences);
+		}
 	}
 }

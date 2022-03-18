@@ -23,14 +23,14 @@ namespace CBFrontend.UI.Logistics
 	{
 		private IEventfulLogisticsService.CreateLogisticsOrderRequest request = new()
 		{
-			Deadline = DateTimeOffset.Now + TimeSpan.FromDays(1)
+			Deadline = TimeManager.Now + TimeSpan.FromDays(1)
 		};
 		private IResponse response = new Response();
 
 		private LoadingFrame loadingFrameRef;
 
 
-		private DateTimeOffset deadlineDate = DateTimeOffset.Now + TimeSpan.FromDays(1);
+		private DateTimeOffset deadlineDate = TimeManager.Now + TimeSpan.FromDays(1);
 
 		private DateTimeOffset deadlineTime;
 
@@ -48,7 +48,7 @@ namespace CBFrontend.UI.Logistics
 				if (response.Validation.NoneInvalid)
 				{
 					request = new();
-					deadlineDate = DateTimeOffset.Now + TimeSpan.FromDays(1);
+					deadlineDate = TimeManager.Now + TimeSpan.FromDays(1);
 					deadlineTime = DateTimeOffset.MinValue;
 					response = new Response();
 				}

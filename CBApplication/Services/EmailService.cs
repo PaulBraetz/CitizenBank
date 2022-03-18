@@ -108,9 +108,11 @@ namespace CBApplication.Services
 			var localizedDisclaimer = GetLocalized(EMAIL_PRIVACY_DISCLAIMER);
 			bodyParts = bodyParts.Append(localizedDisclaimer);
 
-			var bodyBuilder = new BodyBuilder();
-			bodyBuilder.HtmlBody = String.Format(EMAIL_TEMPLATE, localizedSubject, $"<div style=\"white-space: pre-line;\">{String.Join('\n', bodyParts)}</div>");
-			bodyBuilder.TextBody = $"{localizedSubject}\n{String.Join('\n', bodyParts)}";
+			var bodyBuilder = new BodyBuilder
+			{
+				HtmlBody = String.Format(EMAIL_TEMPLATE, localizedSubject, $"<div style=\"white-space: pre-line;\">{String.Join('\n', bodyParts)}</div>"),
+				TextBody = $"{localizedSubject}\n{String.Join('\n', bodyParts)}"
+			};
 			message.Body = bodyBuilder.ToMessageBody();
 
 			using (var client = new SmtpClient())
@@ -121,13 +123,11 @@ namespace CBApplication.Services
 				await client.DisconnectAsync(true);
 			}
 
-			using (var pop3Client = new Pop3Client())
-			{
-				await pop3Client.ConnectAsync(CitizenBank.EMAIL_SERVER, CitizenBank.EMAIL_POP3_PORT);
-				await pop3Client.AuthenticateAsync(CitizenBank.EMAIL_NOREPLY_ADDRESS, CitizenBank.EMAIL_NOREPLY_PASSWORD);
-				await pop3Client.DeleteAllMessagesAsync();
-				await pop3Client.DisconnectAsync(true);
-			}
+			using var pop3Client = new Pop3Client();
+			await pop3Client.ConnectAsync(CitizenBank.EMAIL_SERVER, CitizenBank.EMAIL_POP3_PORT);
+			await pop3Client.AuthenticateAsync(CitizenBank.EMAIL_NOREPLY_ADDRESS, CitizenBank.EMAIL_NOREPLY_PASSWORD);
+			await pop3Client.DeleteAllMessagesAsync();
+			await pop3Client.DisconnectAsync(true);
 		}
 	}
 }

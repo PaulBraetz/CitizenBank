@@ -4,7 +4,7 @@ using CBCommon.Extensions;
 
 using CBData.Abstractions;
 using CBData.Entities;
-
+using PBApplication.Extensions;
 using PBApplication.Services.Abstractions;
 
 using PBData.Abstractions;
@@ -18,35 +18,6 @@ namespace CBApplication.Extensions
 {
 	internal static class EntityExtensions
 	{
-		private static TTo As<TTo>(this IEntity entity)
-			where TTo : IEntity
-		{
-			return entity is TTo entityOfTTo ? entityOfTTo : default;
-		}
-		public static TTo As<TTo>(this IEntity entity, IConnection connection)
-			where TTo : IEntity
-		{
-			return entity is TTo entityOfTTo ? entityOfTTo : connection.Query<TTo>().SingleOrDefault(e => e.Id == entity.Id);
-		}
-
-		private static Boolean Is<TTo>(this IEntity entity, out TTo result)
-			where TTo : IEntity
-		{
-			result = entity.As<TTo>();
-			return result != null;
-		}
-		public static Boolean Is<TTo>(this IEntity entity, out TTo result, IConnection connection)
-			where TTo : IEntity
-		{
-			result = entity.As<TTo>(connection);
-			return result != null;
-		}
-		public static Boolean Is<TTo>(this IEntity entity, IConnection connection)
-			where TTo : IEntity
-		{
-			return entity.As<TTo>(connection) != null;
-		}
-
 		public static Decimal CalculateCreditScore(this CreditScoreEntity creditScore)
 		{
 			return creditScore.DiscrepancyProbability * creditScore.DiscrepancyValueAverage;
@@ -63,6 +34,26 @@ namespace CBApplication.Extensions
 		public static Boolean BookingIsPossible(this TargetTransactionContractEntity target, Decimal value, Boolean forCreditor)
 		{
 			return ((forCreditor ? target.CreditorBookings : target.DebtorBookings).Sum(b => b.Value) + value) <= (forCreditor ? target.Net : target.Gross);
+		}
+		
+		public static Boolean HoldsManagerRightImplicitlyRecursively<TCreditor, TDebtor, TCreator, TRecipient>(this IEntity holder, IConnection connection, ITransactionEntity<TCreditor, TDebtor, TCreator, TRecipient> value)
+			where TCreditor : IAccountEntity
+			where TDebtor : IAccountEntity
+			where TCreator : IAccountEntity
+			where TRecipient : IAccountEntity
+		{
+			return holder.HoldsManagerRightImplicitlyRecursively(connection, value.Creditor) ||
+				holder.HoldsManagerRightImplicitlyRecursively(connection, value.Debtor) ||
+				holder.HoldsManagerRightImplicitlyRecursively(connection, value.Creator) ||
+				holder.HoldsManagerRightImplicitlyRecursively(connection, value.Recipient);
+		}
+		public static Boolean HoldsObserverRightImplicitlyRecursively<TCreditor, TDebtor, TCreator, TRecipient>(this IEntity holder, IConnection connection, ITransactionEntity<TCreditor, TDebtor, TCreator, TRecipient> value)
+			where TCreditor : IAccountEntity
+			where TDebtor : IAccountEntity
+			where TCreator : IAccountEntity
+			where TRecipient : IAccountEntity
+		{
+			return holder.HoldsManagerRightImplicitlyRecursively(connection, value);
 		}
 	}
 }

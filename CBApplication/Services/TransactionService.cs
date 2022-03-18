@@ -32,6 +32,7 @@ using static CBCommon.Enums.CitizenBankEnums;
 using System.Threading.Tasks;
 using static CBApplication.Services.Abstractions.ITransactionService;
 using PBApplication.Context.Abstractions;
+using PBCommon.Globalization;
 
 namespace CBApplication.Services
 {
@@ -44,23 +45,24 @@ namespace CBApplication.Services
 			Observe<IEventfulTransactionService>(this);
 		}
 
-		private async Task<SourceTransactionContractEntity> CreateSourceTransactionContract(IAsAccountEncryptableRequest<CreateTransactionOfferParameter> request, IValidationFieldCollection fields)
+		private async Task<SourceTransactionContractEntity> CreateSourceTransactionContract(IAsAccountEncryptableRequest<CreateTransactionOfferParameter> request, IResponse response)
 		{
 			UserEntity user = GetUserEntity(request);
-			Lazy<CitizenEntity> citizen = GetCitizenEntityLazily(request);
-			Lazy<AccountEntityBase> account = GetAccountEntityLazily<AccountEntityBase>(request);
-			Lazy<AccountSettingsEntityBase> accountSettings = new(() => GetSettings<AccountSettingsEntityBase, AccountEntityBase>(account.Value));
-			Lazy<CurrencyEntity> currency = Connection.GetSingleLazily<CurrencyEntity>(request.Parameter.CurrencyId);
-			Lazy<AccountEntityBase> recipient = Connection.GetSingleLazily<AccountEntityBase>(request.Parameter.RecipientId);
-			Lazy<AccountSettingsEntityBase> recipientSettings = new(() => GetSettings<AccountSettingsEntityBase, AccountEntityBase>(recipient.Value));
-			Lazy<AccountEntityBase> creditor = Connection.GetSingleLazily<AccountEntityBase>(request.Parameter.CreditorId);
-			Lazy<AccountEntityBase> debtor = Connection.GetSingleLazily<AccountEntityBase>(request.Parameter.DebtorId);
+			CitizenEntity citizen = GetCitizenEntity(request);
+			AccountEntityBase creator = GetAccountEntity<AccountEntityBase>(request);
+			CurrencyEntity currency = Connection.GetSingle<CurrencyEntity>(request.Parameter.CurrencyId);
+			AccountEntityBase recipient = Connection.GetSingle<AccountEntityBase>(request.Parameter.RecipientId);
+			AccountEntityBase creditor = Connection.GetSingle<AccountEntityBase>(request.Parameter.CreditorId);
+			AccountEntityBase debtor = Connection.GetSingle<AccountEntityBase>(request.Parameter.DebtorId);
+
+			Lazy<IAccountSettingsEntity> creatorSettings = new(() => GetSettings<IAccountSettingsEntity>(creator));
+			Lazy<IAccountSettingsEntity> recipientSettings = new(() => GetSettings<IAccountSettingsEntity>(recipient));
 
 			SourceTransactionContractEntity retVal = null;
 
 			Boolean creditorDebtorCheck()
 			{
-				return (creditor.Value.Id == account.Value.Id && debtor.Value.Id == recipient.Value.Id) || (debtor.Value.Id == account.Value.Id && creditor.Value.Id == recipient.Value.Id);
+				return (creditor.Id == creator.Id && debtor.Id == recipient.Id) || (debtor.Id == creator.Id && creditor.Id == recipient.Id);
 			}
 			Boolean valueCheck()
 			{
@@ -72,39 +74,39 @@ namespace CBApplication.Services
 			}
 			Boolean canReceiveCheck()
 			{
-				return recipientSettings.Value.CanReceiveTransactionOffersFor[currency.Value];
+				return recipientSettings.Value.CanReceiveTransactionOffersFor[currency];
 			}
 			Boolean canCreateCheck()
 			{
-				return accountSettings.Value.CanCreateTransactionOffersFor[currency.Value];
+				return creatorSettings.Value.CanCreateTransactionOffersFor[currency];
 			}
 			async Task successAction()
 			{
 				TagEntity[] tags = request.Parameter.TagsTexts != null ? await Task.WhenAll(request.Parameter.TagsTexts.Select(t => GetService<IEventfulTagService>().GetTag(t))) : Array.Empty<TagEntity>();
-				retVal = CreateSourceTransactionContract(account.Value,
-					recipient.Value,
-					creditor.Value,
-					debtor.Value,
+				retVal = CreateSourceTransactionContract(creator,
+					recipient,
+					creditor,
+					debtor,
 					request.Parameter.Value,
-					currency.Value,
+					currency,
 					request.Parameter.Usage,
 					tags,
 					TimeSpan.FromDays(request.Parameter.AdditionalDaysUntilDue));
 			}
 
-			await FirstValidateAsAccount(user, citizen, account, fields)
-				.NextNullCheck(creditor, fields.GetField(nameof(request.Parameter.CreditorId)), DefaultCode.NotFound)
-				.NextNullCheck(debtor, fields.GetField(nameof(request.Parameter.DebtorId)))
-				.NextNullCheck(recipient, fields.GetField(nameof(request.Parameter.RecipientId)))
-				.NextCompound(creditorDebtorCheck, fields.GetField(DefaultField.MiscellaneousName), DefaultCode.Invalid)
-				.NextCompound(valueCheck, fields.GetField(nameof(request.Parameter.Value)), DefaultCode.Invalid)
-				.NextCompound(request.Parameter.Usage.IsValidUsage, fields.GetField(nameof(request.Parameter.Usage)))
-				.NextCompound(additionalDaysUntilDueCheck, fields.GetField(nameof(request.Parameter.AdditionalDaysUntilDue)), DefaultCode.Invalid)
-				.NextNullCheck(currency, fields.GetField(nameof(request.Parameter.CurrencyId)), DefaultCode.NotFound)
-				.NextCompound(canReceiveCheck, fields.GetField(nameof(request.Parameter.RecipientId)), DefaultCode.Invalid)
-				.NextCompound(canCreateCheck, fields.GetField(nameof(request.AsAccountId)), DefaultCode.Invalid)
+			await FirstValidateAsAccount(request, response)
+				.NextNullCheck(creditor, ValidationField.Create(nameof(request.Parameter.CreditorId)), ValidationCode.NotFound)
+				.NextNullCheck(debtor, ValidationField.Create(nameof(request.Parameter.DebtorId)))
+				.NextNullCheck(recipient, ValidationField.Create(nameof(request.Parameter.RecipientId)))
+				.NextCompound(creditorDebtorCheck, ValidationField.Miscellaneous, ValidationCode.Invalid)
+				.NextCompound(valueCheck, ValidationField.Create(nameof(request.Parameter.Value)), ValidationCode.Invalid)
+				.NextCompound(request.Parameter.Usage.IsValidUsage, ValidationField.Create(nameof(request.Parameter.Usage)))
+				.NextCompound(additionalDaysUntilDueCheck, ValidationField.Create(nameof(request.Parameter.AdditionalDaysUntilDue)), ValidationCode.Invalid)
+				.NextNullCheck(currency, ValidationField.Create(nameof(request.Parameter.CurrencyId)), ValidationCode.NotFound)
+				.NextCompound(canReceiveCheck, ValidationField.Create(nameof(request.Parameter.RecipientId)), ValidationCode.Invalid)
+				.NextCompound(canCreateCheck, ValidationField.Create(nameof(request.AsAccountId)), ValidationCode.Invalid)
 				.SetOnCriterionMet(successAction)
-				.Evaluate();
+				.Evaluate(response);
 
 			return retVal;
 		}
@@ -114,22 +116,22 @@ namespace CBApplication.Services
 
 			async Task notNullRequest()
 			{
-				SourceTransactionContractEntity source = await CreateSourceTransactionContract(request, response.Validation);
-
-				Lazy<IAccountEntity> account = GetAccountEntityLazily(request);
-				UserEntity user = GetUserEntity(request);
+				SourceTransactionContractEntity source = await CreateSourceTransactionContract(request, response);
 
 				if (response.Validation.NoneInvalid)
 				{
-					response.Overwrite(source.CloneFor(account.Value));
+					IAccountEntity account = GetAccountEntity(request);
+					response.Overwrite(source.CloneFor(account));
 
+					UserEntity user = GetUserEntity(request);
 					LogIfAccessingAsDelegate(user, "created transaction offer preview");
 				}
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -141,8 +143,7 @@ namespace CBApplication.Services
 
 			async Task notNullRequest()
 			{
-				SourceTransactionContractEntity source = await CreateSourceTransactionContract(request, response.Validation);
-				UserEntity user = GetUserEntity(request);
+				SourceTransactionContractEntity source = await CreateSourceTransactionContract(request, response);
 
 				if (response.Validation.NoneInvalid)
 				{
@@ -152,11 +153,13 @@ namespace CBApplication.Services
 					}
 					Connection.Insert(source);
 
-					Lazy<AccountSettingsEntityBase> recipientSettings = GetSettingsLazily<AccountSettingsEntityBase, AccountEntityBase>(source.Recipient);
+					IAccountSettingsEntity recipientSettings = GetSettings<IAccountSettingsEntity>(source.Recipient);
 
-					if (recipientSettings.Value.TransactionOfferLifetime > TimeSpan.Zero)
+					UserEntity user = GetUserEntity(request);
+
+					if (recipientSettings.TransactionOfferLifetime > TimeSpan.Zero)
 					{
-						TransactionOfferEntity newOffer = new TransactionOfferEntity(source, recipientSettings.Value.TransactionOfferLifetime);
+						TransactionOfferEntity newOffer = new TransactionOfferEntity(source, recipientSettings.TransactionOfferLifetime);
 						newOffer.RefreshNow();
 						Connection.Insert(newOffer);
 
@@ -179,7 +182,8 @@ namespace CBApplication.Services
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -192,18 +196,21 @@ namespace CBApplication.Services
 			async Task notNullRequest()
 			{
 				UserEntity user = GetUserEntity(request);
-				Lazy<CitizenEntity> citizen = GetCitizenEntityLazily(request);
-				Lazy<IAccountEntity> account = GetAccountEntityLazily<IAccountEntity>(request);
+				CitizenEntity citizen = GetCitizenEntity(request);
+				IAccountEntity account = GetAccountEntity(request);
 
-				Lazy<TargetTransactionContractEntity> targetContract = Connection.GetSingleLazily<TargetTransactionContractEntity>(request.Parameter.TargetTransactionId);
-				Lazy<SourceTransactionContractEntity> sourceContract = Connection.GetSingleLazily<SourceTransactionContractEntity>(s => s.TargetTransactionContracts.Any(t => t.Id == targetContract.Value.Id));
+				TargetTransactionContractEntity targetContract = Connection.GetSingle<TargetTransactionContractEntity>(request.Parameter.TargetTransactionId);
+				Lazy<SourceTransactionContractEntity> sourceContract = new(() => Connection.GetSingle<SourceTransactionContractEntity>(s => s.TargetTransactionContracts.Any(t => t.Id == targetContract.Id)));
 
-				Lazy<Boolean> requestAccountIsCreditor = new Lazy<Boolean>(() => targetContract.Value.Creditor.Id == account.Value.Id);
+				Boolean requestAccountIsCreditor()
+				{
+					return targetContract.Creditor.Id == account.Id;
+				}
 				Lazy<Decimal> valueSubAccountBookingsSum = new Lazy<Decimal>(() =>
 				{
-					ICollection<BookingEntity> creditorBookings = targetContract.Value.CreditorBookings;
+					ICollection<BookingEntity> creditorBookings = targetContract.CreditorBookings;
 
-					ICollection<BookingEntity> debtorBookings = targetContract.Value.DebtorBookings;
+					ICollection<BookingEntity> debtorBookings = targetContract.DebtorBookings;
 
 					Decimal creditorBookingsSum = 0m;
 					Decimal debtorBookingsSum = 0m;
@@ -217,75 +224,86 @@ namespace CBApplication.Services
 						creditorBookingsSum = creditorBookings.Sum(b => b.Value);
 					}
 
-					var accountBookingsSum = requestAccountIsCreditor.Value ? creditorBookingsSum : debtorBookingsSum;
+					var accountBookingsSum = requestAccountIsCreditor() ? creditorBookingsSum : debtorBookingsSum;
 
-					return targetContract.Value.Net - accountBookingsSum;
+					return targetContract.Net - accountBookingsSum;
 				});
 
+				Boolean authorizedCheck()
+				{
+					return account.HoldsManagerRightImplicitlyRecursively(Connection, targetContract);
+				}
 				Boolean targetExposedCheck()
 				{
-					return !targetContract.Value.IsExposed;
+					return !targetContract.IsExposed;
 				}
 				Boolean targetBookedCheck()
 				{
-					return !targetContract.Value.IsBooked;
+					return !targetContract.IsBooked;
 				}
 				Boolean validBookingValueCheck()
 				{
-					return ValidateBookingValue(sourceContract.Value, targetContract.Value, account.Value, request.Parameter.Value);
+					return ValidateBookingValue(sourceContract.Value, targetContract, account, request.Parameter.Value);
 				}
 				Boolean notExceedingLeftoverCheck()
 				{
 					return request.Parameter.Value <= valueSubAccountBookingsSum.Value;
 				}
+
 				void successAction()
 				{
 					BookingEntity newBooking;
 
-					if (requestAccountIsCreditor.Value)
+					if (requestAccountIsCreditor())
 					{
 						newBooking = new BookingEntity(request.Parameter.Value);
 						Connection.Insert(newBooking);
-						targetContract.Value.CreditorBookings.Add(newBooking);
+						targetContract.CreditorBookings.Add(newBooking);
 					}
 					else
 					{
 						newBooking = new BookingEntity(request.Parameter.Value);
 						Connection.Insert(newBooking);
-						targetContract.Value.DebtorBookings.Add(newBooking);
+						targetContract.DebtorBookings.Add(newBooking);
 					}
 
-					OnBookingCreated.Invoke(Session, targetContract.Value, newBooking.CloneAsT());
+					OnBookingCreated.Invoke(Session, targetContract, newBooking.CloneAsT());
 
 					LogIfAccessingAsDelegate(user, "created booking");
 
 					Connection.Update(targetContract);
 					Connection.SaveChanges();
 
-					if (targetContract.Value.IsBooked)
+					if (targetContract.IsBooked)
 					{
 						Expose(sourceContract.Value);
 					}
 				}
 
-				await FirstValidateAsAccount(user, citizen, account, response.Validation)
-					.NextManagerManagesProperty(account, targetContract, Connection, response.Validation.GetField(nameof(request.Parameter.TargetTransactionId)))
+				await FirstValidateAsAccount(request, response)
+					.NextCompound(authorizedCheck,
+						ValidationField.Create(nameof(request.Parameter.TargetTransactionId)),
+						ValidationCode.Unauthorized)
 					.NextCompound(targetExposedCheck,
-						DefaultCode.Invalid.SetMessage("The target requested has not been exposed yet."))
+						ValidationCode.Invalid.WithMessage("The target requested has not been exposed yet."))
+					.InheritField()
 					.NextCompound(targetBookedCheck,
-						DefaultCode.Invalid.SetMessage("The target requested is already fully booked."))
+						ValidationCode.Invalid.WithMessage("The target requested is already fully booked."))
+					.InheritField()
 					.NextCompound(validBookingValueCheck,
-						response.Validation.GetField(nameof(request.Parameter.Value)),
-						DefaultCode.Invalid.SetMessage("The value requested is not valid."))
+						ValidationField.Create(nameof(request.Parameter.Value)),
+						ValidationCode.Invalid.WithMessage("The value requested is not valid."))
 					.NextCompound(notExceedingLeftoverCheck,
-						DefaultCode.Invalid.SetMessage("The value requested exceeds the value left to book."))
+						ValidationCode.Invalid.WithMessage("The value requested exceeds the value left to book."))
+					.InheritField()
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -298,91 +316,100 @@ namespace CBApplication.Services
 			{
 				GetService<IEventfulManageExpirantsService>().DeleteExpirants<TransactionOfferEntity>();
 
-				UserEntity user = GetUserEntity(request);
-				Lazy<CitizenEntity> citizen = GetCitizenEntityLazily(request);
-				Lazy<IAccountEntity> account = GetAccountEntityLazily<IAccountEntity>(request);
+				TransactionOfferEntity offer = Connection.GetSingle<TransactionOfferEntity>(request.Parameter.TransactionOfferId);
 
-				Lazy<TransactionOfferEntity> offer = Connection.GetSingleLazily<TransactionOfferEntity>(request.Parameter.TransactionOfferId);
+				IAccountEntity account = GetAccountEntity(request);
 
+				Boolean authorizedCheck()
+				{
+					return account.HoldsManagerRightImplicitlyRecursively(Connection, offer);
+				}
 				Boolean answerCheck()
 				{
 					return request.Parameter.Answer != TransactionOfferAnswer.None;
 				}
 				async Task successAction()
 				{
-					if (account.Value.Id == offer.Value.Creator.Id)
+					if (account.Id == offer.Creator.Id)
 					{
 						Boolean creatorAnswerCheck()
 						{
-							return offer.Value.CreatorConfirmation == TransactionOfferAnswer.None;
+							return offer.CreatorConfirmation == TransactionOfferAnswer.None;
 						}
 						void creatorAnswerSuccessAction()
 						{
-							offer.Value.CreatorConfirmation = request.Parameter.Answer;
+							offer.CreatorConfirmation = request.Parameter.Answer;
 						}
 
 						await FirstCompound(creatorAnswerCheck,
-							   response.Validation.GetField(nameof(request.Parameter.Answer)),
-							   DefaultCode.Invalid)
+							   ValidationField.Create(nameof(request.Parameter.Answer)),
+							   ValidationCode.Invalid)
 							.SetOnCriterionMet(creatorAnswerSuccessAction)
-							.Evaluate();
+							.Evaluate(response);
 					}
 					else
 					{
 						Boolean recipientAnswerCheck()
 						{
-							return offer.Value.RecipientAnswer == TransactionOfferAnswer.None;
+							return offer.RecipientAnswer == TransactionOfferAnswer.None;
 						}
 						void recipientAnswerSuccessAction()
 						{
-							offer.Value.RecipientAnswer = request.Parameter.Answer;
+							offer.RecipientAnswer = request.Parameter.Answer;
 						}
 
 						await FirstCompound(recipientAnswerCheck,
-							 response.Validation.GetField(nameof(request.Parameter.Answer)),
-							 DefaultCode.Invalid)
+							 ValidationField.Create(nameof(request.Parameter.Answer)),
+							 ValidationCode.Invalid)
 							.SetOnCriterionMet(recipientAnswerSuccessAction)
-							.Evaluate();
+							.Evaluate(response);
 					}
 					Connection.Update(offer);
 					Connection.SaveChanges();
 
-					OnTransactionOfferAnswered.Invoke(Session, offer.Value, offer.Value.CloneAsT());
+					OnTransactionOfferAnswered.Invoke(Session, offer, offer.CloneAsT());
 
+					UserEntity user = GetUserEntity(request);
 					LogIfAccessingAsDelegate(user, "answered transaction offer");
 
-					if (offer.Value.RecipientAnswer == TransactionOfferAnswer.Accepted && offer.Value.CreatorConfirmation == TransactionOfferAnswer.Accepted)
+					if (offer.RecipientAnswer == TransactionOfferAnswer.Accepted && offer.CreatorConfirmation == TransactionOfferAnswer.Accepted)
 					{
-						Expose(offer.Value.SourceTransactionContract);
+						Expose(offer.SourceTransactionContract);
 
-						OnSourceTransactionContractCreated.Invoke(Session, offer.Value.SourceTransactionContract.Creditor, offer.Value.SourceTransactionContract.CloneFor(offer.Value.SourceTransactionContract.Creditor));
-						OnSourceTransactionContractCreated.Invoke(Session, offer.Value.SourceTransactionContract.Debtor, offer.Value.SourceTransactionContract.CloneFor(offer.Value.SourceTransactionContract.Debtor));
+						OnSourceTransactionContractCreated.Invoke(Session, offer.SourceTransactionContract.Creditor, offer.SourceTransactionContract.CloneFor(offer.SourceTransactionContract.Creditor));
+						OnSourceTransactionContractCreated.Invoke(Session, offer.SourceTransactionContract.Debtor, offer.SourceTransactionContract.CloneFor(offer.SourceTransactionContract.Debtor));
 
 						LogIfAccessingAsDelegate(user, "created transaction source");
 
-						Connection.Delete(offer.Value);
+						Connection.Delete(offer);
 						Connection.SaveChanges();
 					}
-					else if (offer.Value.RecipientAnswer == TransactionOfferAnswer.Rejected || offer.Value.CreatorConfirmation == TransactionOfferAnswer.Rejected)
+					else if (offer.RecipientAnswer == TransactionOfferAnswer.Rejected || offer.CreatorConfirmation == TransactionOfferAnswer.Rejected)
 					{
-						Connection.Delete(offer.Value.SourceTransactionContract);
-						Connection.Delete(offer.Value);
+						Connection.Delete(offer.SourceTransactionContract);
+						Connection.Delete(offer);
 						Connection.SaveChanges();
 					}
 				}
 
-				await FirstValidateAsAccount(user, citizen, account, response.Validation)
-					.NextManagerManagesProperty(account, offer, Connection, response.Validation.GetField(nameof(request.Parameter.TransactionOfferId)))
+				await FirstValidateAsAccount(request, response)
+					.NextNullCheck(offer,
+						ValidationField.Create(nameof(request.Parameter.TransactionOfferId)),
+						ValidationCode.NotFound)
+					.NextCompound(authorizedCheck,
+						ValidationCode.Unauthorized)
+					.InheritField()
 					.NextCompound(answerCheck,
-						response.Validation.GetField(nameof(request.Parameter.Answer)),
-						DefaultCode.Invalid.SetMessage("The answer can not be none."))
+						ValidationField.Create(nameof(request.Parameter.Answer)),
+						ValidationCode.Invalid.WithMessage("The answer can not be none."))
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -392,27 +419,37 @@ namespace CBApplication.Services
 
 			async Task notNullRequest()
 			{
-				UserEntity user = GetUserEntity(request);
-				Lazy<CitizenEntity> citizen = GetCitizenEntityLazily(request);
-				Lazy<IAccountEntity> account = GetAccountEntityLazily(request);
-				Lazy<SourceTransactionContractEntity> source = Connection.GetSingleLazily<SourceTransactionContractEntity>(request.Parameter.SourceTransactionContractId);
+				IAccountEntity account = GetAccountEntity(request);
+				SourceTransactionContractEntity source = Connection.GetSingle<SourceTransactionContractEntity>(request.Parameter.SourceTransactionContractId);
+
+				Boolean authorizedCheck()
+				{
+					return account.HoldsManagerRightImplicitlyRecursively(Connection, source);
+				}
 
 				void successAction()
 				{
-					response.Overwrite(source.Value.CloneFor(account.Value));
+					response.Overwrite(source.CloneFor(account));
 
+					UserEntity user = GetUserEntity(request);
 					LogIfAccessingAsDelegate(user, "retrieved transaction source");
 				}
 
-				await FirstValidateAsAccount(user, citizen, account, response.Validation)
-					.NextManagerManagesProperty(account, source, Connection, response.Validation.GetField(nameof(request.Parameter.SourceTransactionContractId)))
+				await FirstValidateAsAccount(request, response)
+					.NextNullCheck(source,
+						ValidationField.Create(nameof(request.Parameter.SourceTransactionContractId)),
+						ValidationCode.NotFound)
+					.NextCompound(authorizedCheck,
+						ValidationCode.Unauthorized)
+					.InheritField()
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -423,26 +460,36 @@ namespace CBApplication.Services
 			async Task notNullRequest()
 			{
 				UserEntity user = GetUserEntity(request);
-				Lazy<CitizenEntity> citizen = GetCitizenEntityLazily(request);
-				Lazy<IAccountEntity> account = GetAccountEntityLazily(request);
-				Lazy<TargetTransactionContractEntity> target = Connection.GetSingleLazily<TargetTransactionContractEntity>(request.Parameter.TargetTransactionContractId);
+				IAccountEntity account = GetAccountEntity(request);
+				TargetTransactionContractEntity target = Connection.GetSingle<TargetTransactionContractEntity>(request.Parameter.TargetTransactionContractId);
+
+				Boolean authorizedCheck()
+				{
+					return account.HoldsManagerRightImplicitlyRecursively(Connection, target);
+				}
 
 				void successAction()
 				{
-					response.Overwrite(target.Value.CloneAsT());
+					response.Overwrite(target.CloneAsT());
 
 					LogIfAccessingAsDelegate(user, "retrieved transaction target");
 				}
 
-				await FirstValidateAsAccount(user, citizen, account, response.Validation)
-					.NextManagerManagesProperty(account, target, Connection, response.Validation.GetField(nameof(request.Parameter.TargetTransactionContractId)))
+				await FirstValidateAsAccount(request, response)
+					.NextNullCheck(target,
+						ValidationField.Create(nameof(request.Parameter.TargetTransactionContractId)),
+						ValidationCode.NotFound)
+					.NextCompound(authorizedCheck,
+						ValidationCode.Unauthorized)
+					.InheritField()
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -460,15 +507,16 @@ namespace CBApplication.Services
 				}
 
 				await FirstNullCheck(currency,
-						response.Validation.GetField(nameof(request.CurrencyId)),
-						DefaultCode.NotFound.SetMessage("The currency requested could not be found."))
+						ValidationField.Create(nameof(request.CurrencyId)),
+						ValidationCode.NotFound.WithMessage("The currency requested could not be found."))
 					.SetOnCriterionMet(setData)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -487,34 +535,34 @@ namespace CBApplication.Services
 				await CachedCriterionChain.Cache.Get()
 					.ThisValidatePagination(request, data, response.Validation)
 					.SetOnCriterionMet(setData)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
 		public event ServiceEventHandler<ServiceEventArgs<CurrencyEntity>> OnCurrencyCreated;
-		public async Task<IResponse> CreateCurrency(IAsUserRequest<CreateCurrencyParameter> request)
+		public async Task<IResponse> CreateCurrency(IRequest<CreateCurrencyParameter> request)
 		{
 			var response = new Response();
 
 			async Task notNullRequest()
 			{
-				UserEntity user = GetUserEntity(request);
-				var name = request.Parameter.Name.ToLower();
-				Lazy<CurrencyEntity> duplicate = Connection.GetFirstLazily<CurrencyEntity>(c => c.Name.ToLower().Equals(name));
+				var name = request.Parameter.Name?.ToLower() ?? String.Empty;
+				CurrencyEntity duplicate = Connection.GetFirst<CurrencyEntity>(c => c.Name.ToLower().Equals(name));
 
 				Boolean roleCheck()
 				{
-					return user.IsInRole(Settings.ADMIN_ROLE);
+					return Session.User.HoldsAdminRightImplicitly(Connection);
 				}
 
 				void successAction()
 				{
-					CurrencyEntity newCurrency = new CurrencyEntity(user, request.Parameter.Name, request.Parameter.PluralName, request.Parameter.IngameTax);
+					CurrencyEntity newCurrency = new CurrencyEntity(Session.User, request.Parameter.Name, request.Parameter.PluralName, request.Parameter.IngameTax);
 					Connection.Insert(newCurrency);
 
 					var dictionaries = Connection.Query<CurrencyBoolDictionaryEntity>();
@@ -529,108 +577,111 @@ namespace CBApplication.Services
 					OnCurrencyCreated.Invoke(Session, ids, newCurrency.CloneAsT());
 				}
 
-				await FirstValidateAsUser(user, response.Validation)
+				await FirstValidateAuthenticated(response.Validation)
 					.NextCompound(roleCheck,
-						response.Validation.GetField(nameof(request)),
-						DefaultCode.Unauthorized.SetMessage("The user requested is not authorized to create currencies."))
+						ValidationField.Create(nameof(request)),
+						ValidationCode.Unauthorized.WithMessage("You are not authorized to create currencies."))
 					.NextNullCheck(duplicate,
-						response.Validation.GetField(nameof(request.Parameter.Name)),
-						DefaultCode.Unauthorized.SetMessage("The currency requested has already been created."))
+						ValidationField.Create(nameof(request.Parameter.Name)),
+						ValidationCode.Unauthorized.WithMessage("The currency requested has already been created."))
 					.InvertCriterion()
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
 		public event ServiceEventHandler<ServiceEventArgs<CurrencyEntity>> OnCurrencyToggled;
-		public async Task<IResponse> ToggleCurrency(IAsUserEncryptableRequest<ToggleCurrencyParameter> request)
+		public async Task<IResponse> ToggleCurrency(IEncryptableRequest<ToggleCurrencyParameter> request)
 		{
 			var response = new Response();
 
 			async Task notNullRequest()
 			{
-				UserEntity user = GetUserEntity(request);
-				Lazy<CurrencyEntity> currency = Connection.GetSingleLazily<CurrencyEntity>(request.Parameter.CurrencyId);
+				CurrencyEntity currency = Connection.GetSingle<CurrencyEntity>(request.Parameter.CurrencyId);
 
 				Boolean roleCheck()
 				{
-					return user.IsInRole(Settings.ADMIN_ROLE);
+					return Session.User.HoldsAdminRightImplicitly(Connection);
 				}
 				void successAction()
 				{
-					currency.Value.IsActive = request.Parameter.IsActive;
-					Connection.Update(currency.Value);
-					Connection.SaveChanges();
+					if (currency.IsActive != request.Parameter.IsActive)
+					{
+						currency.IsActive = request.Parameter.IsActive;
+						Connection.Update(currency);
+						Connection.SaveChanges();
 
-					OnCurrencyToggled.Invoke(Session, currency.Value, currency.Value.CloneAsT());
+						OnCurrencyToggled.Invoke(Session, currency, currency.CloneAsT());
+					}
 				}
 
-				await FirstValidateAsUser(user, response.Validation)
+				await FirstValidateAuthenticated(response.Validation)
 					.NextCompound(roleCheck,
-						response.Validation.GetField(nameof(request.AsUserId)),
-						DefaultCode.Unauthorized.SetMessage("The user requested is not authorized to toggle currencies."))
+						ValidationField.Create(nameof(request)),
+						ValidationCode.Unauthorized.WithMessage("You are not authorized to toggle currencies."))
 					.NextNullCheck(currency,
-						response.Validation.GetField(nameof(request.Parameter.CurrencyId)),
-						DefaultCode.NotFound.SetMessage("The currency requested could not be found."))
+						ValidationField.Create(nameof(request.Parameter.CurrencyId)),
+						ValidationCode.NotFound.WithMessage("The currency requested could not be found."))
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
 		public event ServiceEventHandler<ServiceEventArgs> OnCurrencyDeleted;
-		public async Task<IResponse> DeleteCurrency(IAsUserEncryptableRequest<DeleteCurrencyParameter> request)
+		public async Task<IResponse> DeleteCurrency(IEncryptableRequest<DeleteCurrencyParameter> request)
 		{
 			var response = new Response();
 
 			async Task notNullRequest()
 			{
-				UserEntity user = GetUserEntity(request);
-				Lazy<CurrencyEntity> currency = Connection.GetSingleLazily<CurrencyEntity>(request.Parameter.CurrencyId);
+				CurrencyEntity currency = Connection.GetSingle<CurrencyEntity>(request.Parameter.CurrencyId);
 
 				Boolean roleCheck()
 				{
-					return user.IsInRole(Settings.ADMIN_ROLE);
+					return Session.User.HoldsAdminRightImplicitly(Connection);
 				}
 				void successAction()
 				{
-					Connection.Delete(currency.Value);
-					Connection
-						   .Query<CurrencyBoolDictionaryEntity>()
+					Connection.Delete(currency);
+					Connection.Query<CurrencyBoolDictionaryEntity>()
 						   .ToList()
 						   .ForEach(d =>
-						   {
-							   d.TryRemoveValue(currency.Value);
-							   Connection.Update(d);
-						   });
+							   {
+								   d.TryRemoveValue(currency);
+								   Connection.Update(d);
+							   });
 					Connection.SaveChanges();
 
-					OnCurrencyDeleted.Invoke(currency.Value);
+					OnCurrencyDeleted.Invoke(currency);
 				}
 
-				await FirstValidateAsUser(user, response.Validation)
+				await FirstValidateAuthenticated(response.Validation)
 					.NextCompound(roleCheck,
-						response.Validation.GetField(nameof(request.AsUserId)),
-						DefaultCode.Unauthorized.SetMessage("The user requested is not authorized to delete currencies."))
+						ValidationField.Create(nameof(request)),
+						ValidationCode.Unauthorized.WithMessage("You are not not authorized to delete currencies."))
 					.NextNullCheck(currency,
-						response.Validation.GetField(nameof(request.Parameter.CurrencyId)),
-						DefaultCode.NotFound.SetMessage("The currency requested could not be found."))
+						ValidationField.Create(nameof(request.Parameter.CurrencyId)),
+						ValidationCode.NotFound.WithMessage("The currency requested could not be found."))
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -641,25 +692,26 @@ namespace CBApplication.Services
 
 			async Task notNullRequest()
 			{
-				UserEntity user = GetUserEntity(request);
-				Lazy<CitizenEntity> citizen = GetCitizenEntityLazily(request);
-				Lazy<IVirtualAccountEntity> account = GetAccountEntityLazily<IVirtualAccountEntity>(request);
-
 				void successAction()
 				{
+					UserEntity user = GetUserEntity(request);
+					CitizenEntity citizen = GetCitizenEntity(request);
+					VirtualAccountEntity account = GetAccountEntity<VirtualAccountEntity>(request);
+
 					throw new NotImplementedException("Equalizing depends on middleman logic.");
 
 					LogIfAccessingAsDelegate(user, "created equalizing transaction source");
 				}
 
-				await FirstValidateAsAccount(user, citizen, account, response.Validation)
+				await FirstValidateAsAccount(request, response)
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -673,7 +725,7 @@ namespace CBApplication.Services
 				UserEntity user = GetUserEntity(request);
 				Lazy<CitizenEntity> citizen = GetCitizenEntityLazily(request);
 				Lazy<VirtualAccountEntityBase> account = GetAccountEntityLazily<VirtualAccountEntityBase>(request);
-				Lazy<TransactionOfferEntity> offer = Connection.GetSingleLazily<TransactionOfferEntity>(request.Parameter.TransactionOfferId);
+				Lazy<TransactionOfferEntity> offer = Connection.GetSingle<TransactionOfferEntity>(request.Parameter.TransactionOfferId);
 				Lazy<DepositAccountReferenceEntity> forwardingReference = new Lazy<DepositAccountReferenceEntity>(() => account.Value.DepositReferences.SingleOrDefault(r => r.Id == request.Parameter.ForwardingAccountReferenceId));
 				Lazy<ICollection<DepositAccountReferenceEntity>> depositReferences = new Lazy<ICollection<DepositAccountReferenceEntity>>(() => request.Parameter.DepositAccountReferencesIds.Select(id => account.Value.DepositReferences.SingleOrDefault(r => r.Id == id)).Distinct().ToList());
 
@@ -694,20 +746,21 @@ namespace CBApplication.Services
 				}
 
 				await FirstValidateAsAccount(user, citizen, account, response.Validation)
-					.NextManagerManagesProperty(account, offer, Connection, response.Validation.GetField(nameof(request.Parameter.TransactionOfferId)))
+					.NextManagerManagesProperty(account, offer, Connection, ValidationField.Create(nameof(request.Parameter.TransactionOfferId)))
 					.NextNullCheck(forwardingReference,
-						response.Validation.GetField(nameof(request.Parameter.ForwardingAccountReferenceId)),
-						DefaultCode.NotFound.SetMessage("The forwarding reference requested could not be found."))
-					.NextCompound(depositReferencesCheck, 
-						response.Validation.GetField(nameof(request.Parameter.DepositAccountReferencesIds)),
-						DefaultCode.PartiallyNotFound.SetMessage("Not all of the deposit references requested could be found."))
+						ValidationField.Create(nameof(request.Parameter.ForwardingAccountReferenceId)),
+						ValidationCode.NotFound.WithMessage("The forwarding reference requested could not be found."))
+					.NextCompound(depositReferencesCheck,
+						ValidationField.Create(nameof(request.Parameter.DepositAccountReferencesIds)),
+						ValidationCode.PartiallyNotFound.WithMessage("Not all of the deposit references requested could be found."))
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -739,17 +792,18 @@ namespace CBApplication.Services
 					await CachedCriterionChain.Cache.Get()
 						.ThisValidatePagination(request, data, response.Validation)
 						.SetOnCriterionMet(setData)
-						.Evaluate();
+						.Evaluate(response);
 				}
 
 				await FirstValidateAsAccount(user, citizen, account, response.Validation)
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -781,17 +835,18 @@ namespace CBApplication.Services
 					await CachedCriterionChain.Cache.Get()
 						.ThisValidatePagination(request, data, response.Validation)
 						.SetOnCriterionMet(setData)
-						.Evaluate();
+						.Evaluate(response);
 				}
 
 				await FirstValidateAsAccount(user, citizen, account, response.Validation)
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -823,17 +878,18 @@ namespace CBApplication.Services
 					await CachedCriterionChain.Cache.Get()
 						.ThisValidatePagination(request, data, response.Validation)
 						.SetOnCriterionMet(setData)
-						.Evaluate();
+						.Evaluate(response);
 				}
 
 				await FirstValidateAsAccount(user, citizen, account, response.Validation)
 						.SetOnCriterionMet(successAction)
-						.Evaluate();
+						.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -844,13 +900,13 @@ namespace CBApplication.Services
 		}
 		public TransactionPartnersRelationship GetSuperficialRelationship(IAccountEntity creditor, IAccountEntity debtor)
 		{
-			if (creditor.Id == debtor.Id && creditor.Is<IVirtualAccountEntity>(Connection))
+			if (creditor.Id == debtor.Id && creditor.Is<VirtualAccountEntity>(Connection))
 			{
 				return TransactionPartnersRelationship.Equalizing;
 			}
-			if (creditor.Is<IVirtualAccountEntity>(Connection))
+			if (creditor.Is<VirtualAccountEntity>(Connection))
 			{
-				if (debtor.Is<IVirtualAccountEntity>(Connection))
+				if (debtor.Is<VirtualAccountEntity>(Connection))
 				{
 					return TransactionPartnersRelationship.VirtualToVirtual;
 				}
@@ -861,7 +917,7 @@ namespace CBApplication.Services
 			}
 			else if (creditor.Is<RealAccountEntity>(Connection))
 			{
-				if (debtor is IVirtualAccountEntity)
+				if (debtor is VirtualAccountEntity)
 				{
 					return TransactionPartnersRelationship.VirtualToReal;
 				}
@@ -878,7 +934,7 @@ namespace CBApplication.Services
 			{
 				void update(AccountEntityBase account, RealAccountEntity referencedAccount, Decimal value)
 				{
-					GetService<IEventfulAccountService>().UpdateDepositBalance(account.As<IVirtualAccountEntity>(Connection), referencedAccount, value);
+					GetService<IEventfulAccountService>().UpdateDepositBalance(account.As<VirtualAccountEntity>(Connection), referencedAccount, value);
 				};
 				switch (target.Relationship)
 				{
@@ -946,12 +1002,12 @@ namespace CBApplication.Services
 			TransactionPartnersRelationship sourceRelationship = GetSuperficialRelationship(creditor, debtor);
 			List<TargetTransactionContractEntity> targetTransactionContracts = new List<TargetTransactionContractEntity> { };
 
-			IEnumerable<DepositAccountReferenceEntity> getActiveDeposits(IVirtualAccountEntity account)
+			IEnumerable<DepositAccountReferenceEntity> getActiveDeposits(VirtualAccountEntity account)
 			{
 				return account.DepositReferences.Where(r => r.IsActive && r.Currency.Id == currency.Id);
 			};
 
-			RealAccountEntity getForwardingAccount(IVirtualAccountEntity account)
+			RealAccountEntity getForwardingAccount(VirtualAccountEntity account)
 			{
 				IEnumerable<DepositAccountReferenceEntity> forwardings = getActiveDeposits(account).Where(r => r.UseAsForwarding);
 				return forwardings.ElementAt(new Random().Next(0, forwardings.Count() - 1)).ReferencedAccount;
@@ -963,25 +1019,25 @@ namespace CBApplication.Services
 			}
 			else if (sourceRelationship != TransactionPartnersRelationship.None)
 			{
-				Lazy<VirtualAccountEntityBase> virtualCreditor = Connection.GetFirstLazily<VirtualAccountEntityBase>(creditor.Id);
-				Lazy<VirtualAccountSettingsEntityBase> virtualCreditorSettings = new Lazy<VirtualAccountSettingsEntityBase>(() => GetSettings<VirtualAccountSettingsEntityBase, AccountEntityBase>(virtualCreditor.Value));
+				Lazy<VirtualAccountEntity> virtualCreditor = new(() => Connection.GetFirst<VirtualAccountEntity>(creditor.Id));
+				Lazy<VirtualAccountSettingsEntity> virtualCreditorSettings = new(() => GetSettings<VirtualAccountSettingsEntity>(virtualCreditor.Value));
 
-				Lazy<VirtualAccountEntityBase> virtualDebtor = Connection.GetFirstLazily<VirtualAccountEntityBase>(debtor.Id);
-				Lazy<VirtualAccountSettingsEntityBase> virtualDebtorSettings = new Lazy<VirtualAccountSettingsEntityBase>(() => GetSettings<VirtualAccountSettingsEntityBase, AccountEntityBase>(virtualDebtor.Value));
+				Lazy<VirtualAccountEntity> virtualDebtor = new(() => Connection.GetFirst<VirtualAccountEntity>(debtor.Id));
+				Lazy<VirtualAccountSettingsEntity> virtualDebtorSettings = new(() => GetSettings<VirtualAccountSettingsEntity>(virtualDebtor.Value));
 
-				Lazy<RealAccountEntity> realCreditor = Connection.GetFirstLazily<RealAccountEntity>(creditor.Id);
-				Lazy<RealAccountSettingsEntity> realCreditorSettings = new Lazy<RealAccountSettingsEntity>(() => GetSettings<RealAccountSettingsEntity, AccountEntityBase>(realCreditor.Value));
+				Lazy<RealAccountEntity> realCreditor = new(() => Connection.GetFirst<RealAccountEntity>(creditor.Id));
+				Lazy<RealAccountSettingsEntity> realCreditorSettings = new Lazy<RealAccountSettingsEntity>(() => GetSettings<RealAccountSettingsEntity>(realCreditor.Value));
 
-				Lazy<RealAccountEntity> realDebtor = Connection.GetFirstLazily<RealAccountEntity>(debtor.Id);
-				Lazy<RealAccountSettingsEntity> realDebtorSettings = new Lazy<RealAccountSettingsEntity>(() => GetSettings<RealAccountSettingsEntity, AccountEntityBase>(realDebtor.Value));
+				Lazy<RealAccountEntity> realDebtor = new(() => Connection.GetFirst<RealAccountEntity>(debtor.Id));
+				Lazy<RealAccountSettingsEntity> realDebtorSettings = new Lazy<RealAccountSettingsEntity>(() => GetSettings<RealAccountSettingsEntity>(realDebtor.Value));
 
-				Lazy<CBData.Abstractions.IAccountSettingsEntity> recipientSettings = GetSettingsLazily<IAccountSettingsEntity, AccountEntityBase>(recipient);
+				Lazy<CBData.Abstractions.IAccountSettingsEntity> recipientSettings = new(() => GetSettings<IAccountSettingsEntity>(recipient));
 
 				additionalUntilDue += recipientSettings.Value.MinimumContractLifeSpan;
 
-				List<Tuple<RealAccountEntity, Decimal>> getDepositCuts(IVirtualAccountEntity account, Decimal value)
+				List<(RealAccountEntity referencedAccount, Decimal cut)> getDepositCuts(VirtualAccountEntity account, Decimal value)
 				{
-					List<Tuple<RealAccountEntity, Decimal>> retVal = new List<Tuple<RealAccountEntity, Decimal>> { };
+					List<(RealAccountEntity referencedAccount, Decimal cut)> retVal = new() { };
 					IEnumerable<DepositAccountReferenceEntity> depositAccounts = getActiveDeposits(account);
 					Decimal absoluteLimit = depositAccounts.Sum(d => d.CalculatedAbsoluteLimit);
 					Decimal sum = 0M;
@@ -995,7 +1051,7 @@ namespace CBApplication.Services
 							val = value - sum;
 						}
 						val = val.RoundCIG();
-						retVal.Add(new Tuple<RealAccountEntity, Decimal>(referencedAccount, val));
+						retVal.Add((referencedAccount: referencedAccount, cut: val));
 						sum += val;
 					}
 					return retVal;
@@ -1020,18 +1076,18 @@ namespace CBApplication.Services
 					case TransactionPartnersRelationship.RealToVirtual:
 						{
 							RealAccountEntity creditorForwardingAccount = getForwardingAccount(virtualCreditor.Value);
-							List<Tuple<RealAccountEntity, Decimal>> creditorDepositCuts = getDepositCuts(virtualCreditor.Value, net);
+							var creditorDepositCuts = getDepositCuts(virtualCreditor.Value, net);
 
-							foreach (Tuple<RealAccountEntity, Decimal> cutData in creditorDepositCuts)
+							foreach (var cutData in creditorDepositCuts)
 							{
 								targetTransactionContracts.Add(new TargetTransactionContractEntity(creator,
 																								   recipient,
-																								   cutData.Item1,
+																								   cutData.referencedAccount,
 																								   creditorForwardingAccount,
 																								   CBCommon.Settings.CitizenBank.DefaultGeneratedMessage,
 																								   currency.IngameTax,
 																								   currency,
-																								   cutData.Item2,
+																								   cutData.cut,
 																								   TransactionPartnersRelationship.ForwardToDeposit,
 																								   virtualCreditorSettings.Value.DepositForwardLifeSpan));
 							}
@@ -1060,17 +1116,17 @@ namespace CBApplication.Services
 																							   net,
 																							   TransactionPartnersRelationship.ForwardToReal,
 																							   additionalUntilDue));
-							List<Tuple<RealAccountEntity, Decimal>> debtorDepositCuts = getDepositCuts(virtualDebtor.Value, targetTransactionContracts.Sum(c => c.Gross));
-							foreach (Tuple<RealAccountEntity, Decimal> cutData in debtorDepositCuts)
+							var debtorDepositCuts = getDepositCuts(virtualDebtor.Value, targetTransactionContracts.Sum(c => c.Gross));
+							foreach (var cutData in debtorDepositCuts)
 							{
 								targetTransactionContracts.Add(new TargetTransactionContractEntity(creator,
 																							   recipient,
 																								   debtorForwardingAccount,
-																								   cutData.Item1,
+																								   cutData.referencedAccount,
 																								   CBCommon.Settings.CitizenBank.DefaultGeneratedMessage,
 																								   currency.IngameTax,
 																								   currency,
-																								   cutData.Item2,
+																								   cutData.cut,
 																								   TransactionPartnersRelationship.DepositToForward,
 																								   virtualDebtorSettings.Value.DepositForwardLifeSpan));
 							}
@@ -1081,17 +1137,17 @@ namespace CBApplication.Services
 							RealAccountEntity debtorForwardingAccount = getForwardingAccount(virtualDebtor.Value);
 							RealAccountEntity creditorForwardingAccount = getForwardingAccount(virtualCreditor.Value);
 
-							List<Tuple<RealAccountEntity, Decimal>> creditorDepositCuts = getDepositCuts(virtualCreditor.Value, net);
-							foreach (Tuple<RealAccountEntity, Decimal> cutData in creditorDepositCuts)
+							var creditorDepositCuts = getDepositCuts(virtualCreditor.Value, net);
+							foreach (var cutData in creditorDepositCuts)
 							{
 								targetTransactionContracts.Add(new TargetTransactionContractEntity(creator,
 																							   recipient,
-																								   cutData.Item1,
+																								   cutData.referencedAccount,
 																								   creditorForwardingAccount,
 																								   CBCommon.Settings.CitizenBank.DefaultGeneratedMessage,
 																								   currency.IngameTax,
 																								   currency,
-																								   cutData.Item2,
+																								   cutData.cut,
 																								   TransactionPartnersRelationship.ForwardToDeposit,
 																								   virtualCreditorSettings.Value.DepositForwardLifeSpan));
 							}
@@ -1107,17 +1163,17 @@ namespace CBApplication.Services
 																							   TransactionPartnersRelationship.ForwardToForward,
 																							   additionalUntilDue));
 
-							List<Tuple<RealAccountEntity, Decimal>> debtorDepositCuts = getDepositCuts(virtualDebtor.Value, targetTransactionContracts.Where(t => t.Relationship == TransactionPartnersRelationship.ForwardToForward).Sum(c => c.Gross));
-							foreach (Tuple<RealAccountEntity, Decimal> cutData in debtorDepositCuts)
+							var debtorDepositCuts = getDepositCuts(virtualDebtor.Value, targetTransactionContracts.Where(t => t.Relationship == TransactionPartnersRelationship.ForwardToForward).Sum(c => c.Gross));
+							foreach (var cutData in debtorDepositCuts)
 							{
 								targetTransactionContracts.Add(new TargetTransactionContractEntity(creator,
 																								   recipient,
 																								   debtorForwardingAccount,
-																								   cutData.Item1,
+																								   cutData.referencedAccount,
 																								   CBCommon.Settings.CitizenBank.DefaultGeneratedMessage,
 																								   currency.IngameTax,
 																								   currency,
-																								   cutData.Item2,
+																								   cutData.cut,
 																								   TransactionPartnersRelationship.DepositToForward,
 																								   virtualDebtorSettings.Value.DepositForwardLifeSpan));
 							}
@@ -1144,7 +1200,7 @@ namespace CBApplication.Services
 			};
 
 		}
-		public void ManipulateTransactionContractOffer(VirtualAccountEntityBase manipulator,
+		public void ManipulateTransactionContractOffer(VirtualAccountEntity manipulator,
 													  DepositAccountReferenceEntity forwardingAccountReference,
 													  ICollection<DepositAccountReferenceEntity> depositAccountReferences,
 													  TransactionOfferEntity offer)
@@ -1172,7 +1228,7 @@ namespace CBApplication.Services
 				return depositCuts;
 			};
 
-			List<Tuple<RealAccountEntity, Decimal>> getOtherCuts(IVirtualAccountEntity account, Decimal value)
+			List<Tuple<RealAccountEntity, Decimal>> getOtherCuts(VirtualAccountEntity account, Decimal value)
 			{
 				List<Tuple<RealAccountEntity, Decimal>> depositCuts = new List<Tuple<RealAccountEntity, Decimal>> { };
 				ICollection<DepositAccountReferenceEntity> baseDepositAccountReferences = account.DepositReferences;
@@ -1194,16 +1250,16 @@ namespace CBApplication.Services
 				return depositCuts;
 			};
 
-			Lazy<IVirtualAccountSettingsEntity> manipulatorSettings = GetSettingsLazily<IVirtualAccountSettingsEntity, AccountEntityBase>(manipulator);
+			Lazy<VirtualAccountSettingsEntity> manipulatorSettings = new(() => GetSettings<VirtualAccountSettingsEntity>(manipulator));
 
 			RealAccountEntity manipulatorForwardingAccount = Connection.GetFirst<RealAccountEntity>(forwardingAccountReference.ReferencedAccount.Id);
 			List<TargetTransactionContractEntity> newTargets = new List<TargetTransactionContractEntity> { };
 
 			if (manipulatorIsCreditor)
 			{
-				if (offer.Debtor.Is<IVirtualAccountEntity>(out IVirtualAccountEntity virtualDebtor, Connection))
+				if (offer.Debtor.Is<VirtualAccountEntity>(out VirtualAccountEntity virtualDebtor, Connection))
 				{
-					Lazy<CBData.Abstractions.IVirtualAccountSettingsEntity> debtorSettings = GetSettingsLazily<IVirtualAccountSettingsEntity, AccountEntityBase>((AccountEntityBase)virtualDebtor);
+					Lazy<VirtualAccountSettingsEntity> debtorSettings = new(() => GetSettings<VirtualAccountSettingsEntity>(virtualDebtor));
 
 					getManipulatorCuts(offer.Net).ForEach(datum => newTargets.Add(new TargetTransactionContractEntity(manipulator,
 																									   newRecipient,
@@ -1267,9 +1323,9 @@ namespace CBApplication.Services
 			}
 			else
 			{
-				if (offer.Creditor.Is<IVirtualAccountEntity>(out IVirtualAccountEntity virtualCreditor, Connection))
+				if (offer.Creditor.Is<VirtualAccountEntity>(out VirtualAccountEntity virtualCreditor, Connection))
 				{
-					Lazy<CBData.Abstractions.IVirtualAccountSettingsEntity> creditorSettings = GetSettingsLazily<IVirtualAccountSettingsEntity, AccountEntityBase>((AccountEntityBase)virtualCreditor);
+					Lazy<VirtualAccountSettingsEntity> creditorSettings = new(() => GetSettings<VirtualAccountSettingsEntity>(virtualCreditor));
 					TargetTransactionContractEntity previousFTFContract = targets.Single(t => t.Relationship == TransactionPartnersRelationship.ForwardToForward);
 					RealAccountEntity creditorForwardingAccount = Connection.GetFirst<RealAccountEntity>(previousFTFContract.Creditor.Id);
 					getOtherCuts(virtualCreditor, offer.Net).ForEach(datum => newTargets.Add(new TargetTransactionContractEntity(manipulator,
@@ -1375,7 +1431,7 @@ namespace CBApplication.Services
 					{
 						DepositAccountReferenceEntity reference = source
 							.Debtor
-							.As<IVirtualAccountEntity>(Connection)
+							.As<VirtualAccountEntity>(Connection)
 							.DepositReferences
 							.Single(r => r.ReferencedAccount.Equals(target.Debtor));
 						return bookingValue <= reference.AbsoluteBalance;
@@ -1384,7 +1440,7 @@ namespace CBApplication.Services
 					{
 						DepositAccountReferenceEntity reference = source
 							.Creditor
-							.As<IVirtualAccountEntity>(Connection)
+							.As<VirtualAccountEntity>(Connection)
 							.DepositReferences
 							.Single(r => r.ReferencedAccount.Equals(target.Creditor));
 						return bookingValue <= reference.CalculatedAbsoluteLimit - reference.AbsoluteBalance;
@@ -1434,7 +1490,7 @@ namespace CBApplication.Services
 		public event ServiceEventHandler<ServiceEventArgs<TargetTransactionContractEntity>> OnTargetExposed;
 		public void Expose(SourceTransactionContractEntity source)
 		{
-			DateTimeOffset now = DateTimeOffset.Now;
+			var now = TimeManager.Now;
 
 			if (!source.IsExposed)
 			{

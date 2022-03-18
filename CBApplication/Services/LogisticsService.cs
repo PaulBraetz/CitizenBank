@@ -79,27 +79,27 @@ namespace CBApplication.Services
 					}
 
 					await FirstCompound(targetCheck,
-										response.Validation.GetField(nameof(request.Parameter.Target)),
-										DefaultCode.Invalid)
+										ValidationField.Create(nameof(request.Parameter.Target)),
+										ValidationCode.Invalid)
 						.NextCompound(detailsCheck,
-										response.Validation.GetField(nameof(request.Parameter.Details)),
-										DefaultCode.Invalid)
+										ValidationField.Create(nameof(request.Parameter.Details)),
+										ValidationCode.Invalid)
 						.NextCompound(deadlineCheck,
-										response.Validation.GetField(nameof(request.Parameter.Deadline)),
-										DefaultCode.Invalid)
+										ValidationField.Create(nameof(request.Parameter.Deadline)),
+										ValidationCode.Invalid)
 						.SetOnCriterionMet(createOrder)
-						.Evaluate();
+						.Evaluate(response);
 				}
 
 				await FirstValidateAsCitizen(request, response)
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.CatchAll(response.Validation.GetField(nameof(request)))
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -112,48 +112,46 @@ namespace CBApplication.Services
 
 			async Task notNullRequest()
 			{
-				var manager = GetCitizenEntityLazily(request);
-				Lazy<LogisticsOrderEntity> order = Connection.GetSingleLazily<LogisticsOrderEntity>(request.Parameter.LogisticsOrderId);
+				var manager = GetCitizenEntity(request);
+				var order = Connection.GetSingle<LogisticsOrderEntity>(request.Parameter.LogisticsOrderId);
 
-				Boolean roleCheck()
-				{
-					return manager.Value.HoldsClaim(Connection, CBCommon.Settings.Logistics.LOGISTICS_MANAGER_RIGHT);
-				}
 				void successAction()
 				{
-					order.Value.Status = request.Parameter.Status;
-					switch (order.Value.Status)
+					order.Status = request.Parameter.Status;
+					switch (order.Status)
 					{
 						case OrderStatus.Underway:
-							order.Value.ExpiryPaused = true;
+							order.ExpiryPaused = true;
 							break;
 						default:
-							order.Value.RefreshNow();
-							order.Value.ExpiryPaused = false;
+							order.RefreshNow();
+							order.ExpiryPaused = false;
 							break;
 					}
 
-					Connection.Update(order.Value);
+					Connection.Update(order);
 					Connection.SaveChanges();
 
-					OnLogisticsOrderEdited.Invoke(Session, order.Value, order.Value.CloneAsT());
+					OnLogisticsOrderEdited.Invoke(Session, order, order.CloneAsT());
 				}
 
 				await FirstValidateAsCitizen(request, response)
-					.NextCompound(roleCheck,
-						response.Validation.GetField(nameof(request.AsUserId)),
-						DefaultCode.Unauthorized.SetMessage("You are not authorized to edit logistics orders."))
+					.NextEntityHoldsClaim(manager,
+						CBCommon.Settings.Logistics.LOGISTICS_MANAGER_RIGHT,
+						Connection,
+						ValidationField.Create(nameof(request.AsUserId)),
+						ValidationCode.Unauthorized.WithMessage("You are not authorized to edit logistics orders."))
 					.NextNullCheck(order,
-						response.Validation.GetField(nameof(request.Parameter.LogisticsOrderId)),
-						DefaultCode.NotFound.SetMessage("The order requested could not be found."))
+						ValidationField.Create(nameof(request.Parameter.LogisticsOrderId)),
+						ValidationCode.NotFound.WithMessage("The order requested could not be found."))
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.CatchAll(response.Validation.GetField(nameof(request)))
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -186,12 +184,12 @@ namespace CBApplication.Services
 				await CachedCriterionChain.Cache.Get()
 					.ThisValidatePagination(request, entities, response.Validation)
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.Evaluate(response);
 
 			return response;
 		}

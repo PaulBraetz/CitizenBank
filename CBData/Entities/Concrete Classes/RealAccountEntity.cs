@@ -1,4 +1,5 @@
-﻿using PBCommon.Encryption.Abstractions;
+﻿using PBCommon.Encryption;
+using PBCommon.Encryption.Abstractions;
 using PBData.Abstractions;
 using PBData.Extensions;
 

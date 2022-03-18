@@ -2,7 +2,13 @@
 
 namespace CBData.Mapping
 {
-	internal class VirtualAccountSettingsMapping : VirtualAccountSettingsMappingBase<VirtualAccountSettingsEntity>
+	internal class VirtualAccountSettingsMapping : AccountSettingsMappingBase<VirtualAccountSettingsEntity>
 	{
+		public VirtualAccountSettingsMapping()
+		{
+			Map(m => m.DepositForwardLifeSpan);
+			Map(m => m.DefaultDepositAccountMapRelativeLimit);
+			Map(m => m.DefaultDepositAccountMapAbsoluteLimit);
+		}
 	}
 }

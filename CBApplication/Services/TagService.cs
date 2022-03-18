@@ -81,13 +81,13 @@ namespace CBApplication.Services.Public
 				await CachedCriterionChain.Cache.Get()
 					.ThisValidatePagination(request, data, response.Validation)
 					.SetOnCriterionMet(setData)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.CatchAll(response.Validation.GetField(nameof(request)))
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -106,7 +106,7 @@ namespace CBApplication.Services.Public
 				TagEntity retVal = Connection.GetSingle<TagEntity>(e => e.Name.Equals(name));
 				if (retVal == null)
 				{
-					name = $"#{name}";
+					name = String.Intern($"#{name}");
 					retVal = new TagEntity(name);
 					Connection.Insert(retVal);
 					Connection.SaveChanges();

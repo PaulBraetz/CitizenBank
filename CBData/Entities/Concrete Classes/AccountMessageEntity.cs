@@ -1,4 +1,5 @@
-﻿using PBData.Entities;
+﻿using PBCommon.Globalization;
+using PBData.Entities;
 
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,8 @@ namespace CBData.Entities
 {
 	public class AccountMessageEntity : MessageEntityBase<AccountEntityBase>
 	{
-		public AccountMessageEntity(AccountEntityBase creator, IEnumerable<AccountEntityBase> recipients, String message, TimeSpan lifeSpan, Boolean expiryPaused) 
+		public AccountMessageEntity(AccountEntityBase creator, IEnumerable<AccountEntityBase> recipients, LocalizableFormattableString
+			message, TimeSpan lifeSpan, Boolean expiryPaused) 
 			: base(creator, recipients, message, lifeSpan, expiryPaused)
 		{
 		}

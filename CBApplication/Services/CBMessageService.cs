@@ -22,6 +22,7 @@ using static CBApplication.Services.Abstractions.IEventfulCBMessageService;
 using static CBApplication.Services.Abstractions.ICBMessageService;
 using PBCommon.Extensions;
 using PBCommon;
+using PBCommon.Globalization;
 
 namespace CBApplication.Services
 {
@@ -56,24 +57,24 @@ namespace CBApplication.Services
 							.CloneAsT()
 							.ToList();
 
-						LogIfAccessingAsDelegate(user, "retrieved account messages");
+						LogIfAccessingAsDelegate(user, "retrieved account messages for {0}", account.Name);
 					}
 
 					await CachedCriterionChain.Cache.Get()
 						.ThisValidatePagination(request, query, response.Validation)
 						.SetOnCriterionMet(setData)
-						.Evaluate();
+						.Evaluate(response);
 				}
 
 				await FirstValidateAsAccount(request, response)
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.CatchAll(response.Validation.GetField(nameof(request)))
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -102,55 +103,55 @@ namespace CBApplication.Services
 							.CloneAsT()
 							.ToList();
 
-						LogIfAccessingAsDelegate(user, "retrieved citizen messages");
+						LogIfAccessingAsDelegate(user, "retrieved citizen messages for {0}", citizen.Name);
 					}
 
 					await CachedCriterionChain.Cache.Get()
 						.ThisValidatePagination(request, query, response.Validation)
 						.SetOnCriterionMet(setData)
-						.Evaluate();
+						.Evaluate(response);
 				}
 
 				await FirstValidateAsCitizen(request, response)
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.CatchAll(response.Validation.GetField(nameof(request)))
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
 
 
 		public event ServiceEventHandler<ServiceEventArgs<CitizenMessageEntity>> OnCitizenMessageCreated;
-		public void CreateCitizenMessages(CitizenEntity creator, ICollection<CitizenEntity> recipients, String message)
+		public void CreateCitizenMessages(CitizenEntity creator, IEnumerable<CitizenEntity> recipients, LocalizableFormattableString message)
 		{
 			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(CreateCitizenMessages));
 
-			CitizenMessageEntity newMessage = new CitizenMessageEntity(creator, recipients, message, TimeSpan.FromDays(3), true);
+			CitizenMessageEntity newMessage = new(creator, recipients, message, TimeSpan.FromDays(3), true);
 			Connection.Insert(newMessage);
 			Connection.SaveChanges();
 
-			List<CitizenEntity> eventRecipients = new List<CitizenEntity> { creator };
+			List<CitizenEntity> eventRecipients = new() { creator };
 			eventRecipients.AddRange(recipients);
 			OnCitizenMessageCreated.Invoke(Session, eventRecipients, newMessage.CloneAsT());
 		}
-		public void CreateCitizenMessage(CitizenEntity creator, CitizenEntity recipient, String message)
+		public void CreateCitizenMessage(CitizenEntity creator, CitizenEntity recipient, LocalizableFormattableString message)
 		{
 			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(CreateCitizenMessage));
 
 			CreateCitizenMessages(creator, new[] { recipient }, message);
 		}
-		public void CreateCitizenSelfMessage(CitizenEntity creator, String message)
+		public void CreateCitizenSelfMessage(CitizenEntity creator, LocalizableFormattableString message)
 		{
 			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(CreateCitizenSelfMessage));
 
 			CreateCitizenMessage(creator, creator, message);
 		}
-		public void CreateCitizenSelfMessages(ICollection<CitizenEntity> creators, String message)
+		public void CreateCitizenSelfMessages(IEnumerable<CitizenEntity> creators, LocalizableFormattableString message)
 		{
 			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(CreateCitizenSelfMessages));
 
@@ -158,33 +159,33 @@ namespace CBApplication.Services
 		}
 
 		public event ServiceEventHandler<ServiceEventArgs<AccountMessageEntity>> OnAccountMessageCreated;
-		public void CreateAccountMessages(AccountEntityBase creator, ICollection<AccountEntityBase> recipients, String message)
+		public void CreateAccountMessages(AccountEntityBase creator, IEnumerable<AccountEntityBase> recipients, LocalizableFormattableString message)
 		{
 			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(CreateAccountMessages));
 
-			AccountMessageEntity newMessage = new AccountMessageEntity(creator, recipients, message, TimeSpan.FromDays(3), false);
+			AccountMessageEntity newMessage = new(creator, recipients, message, TimeSpan.FromDays(3), false);
 			Connection.Insert(newMessage);
 			Connection.SaveChanges();
 
-			List<AccountEntityBase> eventRecipients = new List<AccountEntityBase> { creator };
+			List<AccountEntityBase> eventRecipients = new() { creator };
 			eventRecipients.AddRange(recipients);
 			OnAccountMessageCreated.Invoke(Session,
 								  eventRecipients,
 								  newMessage.CloneAsT());
 		}
-		public void CreateAccountMessage(AccountEntityBase creator, AccountEntityBase recipient, String message)
+		public void CreateAccountMessage(AccountEntityBase creator, AccountEntityBase recipient, LocalizableFormattableString message)
 		{
 			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(CreateAccountMessage));
 
 			CreateAccountMessages(creator, new[] { recipient }, message);
 		}
-		public void CreateAccountSelfMessage(AccountEntityBase creator, String message)
+		public void CreateAccountSelfMessage(AccountEntityBase creator, LocalizableFormattableString message)
 		{
 			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(CreateAccountSelfMessage));
 
 			CreateAccountMessage(creator, creator, message);
 		}
-		public void CreateAccountSelfMessages(ICollection<AccountEntityBase> creators, String message)
+		public void CreateAccountSelfMessages(IEnumerable<AccountEntityBase> creators, LocalizableFormattableString message)
 		{
 			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(CreateAccountSelfMessages));
 

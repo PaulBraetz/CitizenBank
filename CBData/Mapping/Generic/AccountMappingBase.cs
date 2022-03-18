@@ -13,8 +13,6 @@ namespace CBData.Mapping
 			HasManyToMany(m => m.PriorityTags);
 			References(m => m.CreditScore);
 			References(m => m.Creator);
-
-			UseUnionSubclassForInheritanceMapping();
 		}
 	}
 }

@@ -59,8 +59,8 @@ namespace CBApplication.Services
 			IHasPriorityTags priorityTagProvider = GetEntity<IHasPriorityTags>(request.PriorityTagsProviderKey);
 
 			CachedCriterionChain.Cache.Get()
-				.NextNullCheck(priorityTagProvider, response.Validation.GetField(nameof(request.PriorityTagsProviderKey)), DefaultCode.NotFound)
-				.ThisCompound(() => request.ResultsCount >= 1 && request.ResultsCount <= 10, response.Validation.GetField(nameof(request.ResultsCount)), DefaultCode.Invalid)
+				.NextNullCheck(priorityTagProvider, ValidationField.Create(nameof(request.PriorityTagsProviderKey)), ValidationCode.NotFound)
+				.ThisCompound(() => request.ResultsCount >= 1 && request.ResultsCount <= 10, ValidationField.Create(nameof(request.ResultsCount)), ValidationCode.Invalid)
 				.SetOnCriterionMet(() =>
 				{
 					List<TagEntity> priorityTags = priorityTagProvider != null ? priorityTagProvider.PriorityTags
@@ -99,7 +99,7 @@ namespace CBApplication.Services
 							.ToList();
 					}
 				})
-				.Evaluate();
+				.Evaluate(response);
 
 			return response;
 		}
@@ -114,7 +114,7 @@ namespace CBApplication.Services
 			List<Guid> excludeIds = request.ExcludeKeys != null ? request.ExcludeKeys.Select(k => InternalEncryptionService.IdentifiablyDecryptToId(k)).ToList() : new List<Guid> { };
 
 			FirstValidateAsAccount(user, citizen, account, response.Validation)
-				.ThisCompound(() => request.ResultsCount >= 1 && request.ResultsCount <= 10, response.Validation.GetField(nameof(request.ResultsCount)), DefaultCode.Invalid)
+				.ThisCompound(() => request.ResultsCount >= 1 && request.ResultsCount <= 10, ValidationField.Create(nameof(request.ResultsCount)), ValidationCode.Invalid)
 				.SetOnCriterionMet(() =>
 				{
 					IQueryable<DepartmentEntityBase> query = Connection.Query<DepartmentEntityBase>().Where(d => !excludeIds.Contains(d.Id) && account.Value.CanSee(d, Connection));
@@ -182,7 +182,7 @@ namespace CBApplication.Services
 
 					LogIfAccessingAsDelegate(user, "searched for departments");
 				})
-				.Evaluate();
+				.Evaluate(response);
 			return response;
 		}
 		public ISearchService.SearchCitizensResponse SearchCitizens(ISearchService.SearchCitizensRequest request)
@@ -195,7 +195,7 @@ namespace CBApplication.Services
 			IEnumerable<Guid> excludeIds = request.ExcludeKeys != null ? request.ExcludeKeys.Select(k => InternalEncryptionService.IdentifiablyDecryptToId(k)) : new List<Guid> { };
 
 			FirstValidateAsCitizen(user, citizen, response.Validation)
-				.ThisCompound(() => request.ResultsCount >= 1 && request.ResultsCount <= 10, response.Validation.GetField(nameof(request.ResultsCount)), DefaultCode.Invalid)
+				.ThisCompound(() => request.ResultsCount >= 1 && request.ResultsCount <= 10, ValidationField.Create(nameof(request.ResultsCount)), ValidationCode.Invalid)
 				.SetOnCriterionMet(() =>
 				{
 					IQueryable<CitizenEntity> query = Connection.Query<CitizenEntity>().Where(c => !excludeIds.Contains(c.Id));
@@ -214,7 +214,7 @@ namespace CBApplication.Services
 
 					LogIfAccessingAsDelegate(user, "searched for citizens");
 				})
-				.Evaluate();
+				.Evaluate(response);
 			return response;
 		}
 		public ISearchService.SearchAccountsResponse SearchAccounts(ISearchService.SearchAccountsRequestBase request)
@@ -228,7 +228,7 @@ namespace CBApplication.Services
 			List<Guid> excludeIds = request.ExcludeKeys != null ? request.ExcludeKeys.Select(k => InternalEncryptionService.IdentifiablyDecryptToId(k)).ToList() : new List<Guid> { };
 
 			FirstValidateAsAccount(user, citizen, account, response.Validation)
-				.ThisCompound(() => request.ResultsCount >= 1 && request.ResultsCount <= 10, response.Validation.GetField(nameof(request.ResultsCount)), DefaultCode.Invalid)
+				.ThisCompound(() => request.ResultsCount >= 1 && request.ResultsCount <= 10, ValidationField.Create(nameof(request.ResultsCount)), ValidationCode.Invalid)
 				.SetOnCriterionMet(() =>
 				{
 					IQueryable<AccountEntityBase> query = Connection.Query<AccountEntityBase>().Where(a => !excludeIds.Contains(a.Id));
@@ -281,22 +281,22 @@ namespace CBApplication.Services
 						query = query.Where(a => a is VirtualAccountEntity);
 						if (virtualRequest.DepositForwardUntilDue != null)
 						{
-							query = query.Where(a => Connection.Query<IVirtualAccountSettingsEntity>().Single(s => s.Owner.Id == a.Id).DepositForwardLifeSpan == virtualRequest.DepositForwardUntilDue);
+							query = query.Where(a => Connection.Query<VirtualAccountSettingsEntity>().Single(s => s.Owner.Id == a.Id).DepositForwardLifeSpan == virtualRequest.DepositForwardUntilDue);
 
 						}
 						if (virtualRequest.DefaultDepositAccountMapAbsoluteLimit != null)
 						{
-							query = query.Where(a => Connection.Query<IVirtualAccountSettingsEntity>().Single(s => s.Owner.Id == a.Id).DefaultDepositAccountMapAbsoluteLimit == virtualRequest.DefaultDepositAccountMapAbsoluteLimit);
+							query = query.Where(a => Connection.Query<VirtualAccountSettingsEntity>().Single(s => s.Owner.Id == a.Id).DefaultDepositAccountMapAbsoluteLimit == virtualRequest.DefaultDepositAccountMapAbsoluteLimit);
 
 						}
 						if (virtualRequest.DefaultDepositAccountMapAbsoluteLimit != null)
 						{
-							query = query.Where(a => Connection.Query<IVirtualAccountSettingsEntity>().Single(s => s.Owner.Id == a.Id).DefaultDepositAccountMapRelativeLimit == virtualRequest.DefaultDepositAccountMapRelativeLimit);
+							query = query.Where(a => Connection.Query<VirtualAccountSettingsEntity>().Single(s => s.Owner.Id == a.Id).DefaultDepositAccountMapRelativeLimit == virtualRequest.DefaultDepositAccountMapRelativeLimit);
 
 						}
 						if (virtualRequest.Accessibility != null)
 						{
-							query = query.Where(a => Connection.Query<IVirtualAccountSettingsEntity>().Single(s => s.Owner.Id == a.Id).Accessibility == virtualRequest.Accessibility);
+							query = query.Where(a => Connection.Query<VirtualAccountSettingsEntity>().Single(s => s.Owner.Id == a.Id).Accessibility == virtualRequest.Accessibility);
 
 						}
 					}
@@ -336,7 +336,7 @@ namespace CBApplication.Services
 
 					LogIfAccessingAsDelegate(user, "searched for accounts");
 				})
-				.Evaluate();
+				.Evaluate(response);
 			return response;
 		}
 		 */

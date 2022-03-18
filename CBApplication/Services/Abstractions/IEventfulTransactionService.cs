@@ -69,10 +69,10 @@ namespace CBApplication.Services.Abstractions
 			where TDebtor : AccountEntityBase
 			where TCreator : AccountEntityBase
 			where TRecipient : AccountEntityBase;
-		void ManipulateTransactionContractOffer(VirtualAccountEntityBase manipulator,
-									   DepositAccountReferenceEntity forwardingAccountReference,
-									   ICollection<DepositAccountReferenceEntity> depositAccountReferences,
-													  TransactionOfferEntity offer);
+		void ManipulateTransactionContractOffer(VirtualAccountEntity manipulator,
+												DepositAccountReferenceEntity forwardingAccountReference,
+												ICollection<DepositAccountReferenceEntity> depositAccountReferences,
+												TransactionOfferEntity offer);
 		Boolean ValidateBookingValue(SourceTransactionContractEntity source, TargetTransactionContractEntity target, IAccountEntity bookingAccount, Decimal bookingValue);
 		SourceTransactionContractEntity CloneAsAccount(SourceTransactionContractEntity source, IAccountEntity account);
 		ICollection<CurrencyEntity> GetCurrencies();

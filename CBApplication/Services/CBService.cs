@@ -30,29 +30,16 @@ namespace CBApplication.Services
 		{
 			return Connection.GetSingle<CitizenEntity>(request.AsCitizenId);
 		}
-		protected Lazy<CitizenEntity> GetCitizenEntityLazily(IAsCitizenRequest request)
-		{
-			return Connection.GetSingleLazily<CitizenEntity>(request.AsCitizenId);
-		}
 
 		protected TAccount GetAccountEntity<TAccount>(IAsAccountRequest request)
 			where TAccount : IAccountEntity
 		{
 			return Connection.GetSingle<TAccount>(request.AsAccountId);
 		}
-		protected Lazy<TAccount> GetAccountEntityLazily<TAccount>(IAsAccountRequest request)
-			where TAccount : IAccountEntity
-		{
-			return Connection.GetSingleLazily<TAccount>(request.AsAccountId);
-		}
 
 		protected IAccountEntity GetAccountEntity(IAsAccountRequest request)
 		{
 			return GetAccountEntity<IAccountEntity>(request);
-		}
-		protected Lazy<IAccountEntity> GetAccountEntityLazily(IAsAccountRequest request)
-		{
-			return GetAccountEntityLazily<IAccountEntity>(request);
 		}
 
 		protected ISettingsEntity GetSettings(IEntity owner)
@@ -62,42 +49,42 @@ namespace CBApplication.Services
 		protected TSettings GetSettings<TSettings>(IEntity owner)
 			where TSettings : ISettingsEntity
 		{
-			return owner.GetHeldOwnerClaimsValues<TSettings>(Connection).SingleOrDefault();
+			return owner != null ? owner.GetHeldOwnerClaimsValues<TSettings>(Connection).SingleOrDefault() : default;
 		}
 
 		protected IValidationCriterionChain FirstValidateAsCitizen(IAsCitizenRequest request, IResponse response)
 		{
-			var user = GetUserEntityLazily(request);
-			var citizen = GetCitizenEntityLazily(request);
+			var user = GetUserEntity(request);
+			var citizen = GetCitizenEntity(request);
 			Boolean ownerCheck()
 			{
-				return user.Value.HoldsOwnerRight(Connection, citizen.Value);
+				return user.HoldsOwnerRight(Connection, citizen);
 			}
 
 			return FirstValidateAuthenticatedDelegate(request, response)
 				.NextNullCheck(citizen,
-					response.Validation.GetField(nameof(request.AsCitizenId)),
-					DefaultCode.NotFound.SetMessage("The citizen provided could not be found."))
+					ValidationField.Create(nameof(request.AsCitizenId)),
+					ValidationCode.NotFound.WithMessage("The citizen provided could not be found."))
 				.NextCompound(ownerCheck,
-					response.Validation.GetField(nameof(request.AsCitizenId)),
-					DefaultCode.Unauthorized.SetMessage("You are not authorized to access this citizen."));
+					ValidationCode.Unauthorized.WithMessage("You are not authorized to access this citizen."))
+				.InheritField();
 		}
 		protected IValidationCriterionChain FirstValidateAsAccount(IAsAccountRequest request, IResponse response)
 		{
-			var citizen = GetCitizenEntityLazily(request);
-			var account = GetAccountEntityLazily(request);
+			var citizen = GetCitizenEntity(request);
+			var account = GetAccountEntity(request);
 			Boolean adminOrOwnerCheck()
 			{
-				return citizen.Value.HoldsOwnerRight(Connection, account.Value) || citizen.Value.HoldsAdminRight(Connection, account.Value);
+				return citizen.HoldsOwnerRight(Connection, account) || citizen.HoldsAdminRight(Connection, account);
 			}
 
 			return FirstValidateAsCitizen(request, response)
 				.NextNullCheck(account,
-					response.Validation.GetField(nameof(request.AsAccountId)),
-					DefaultCode.NotFound.SetMessage("The account provided could not be found."))
+					ValidationField.Create(nameof(request.AsAccountId)),
+					ValidationCode.NotFound.WithMessage("The account provided could not be found."))
 				.NextCompound(adminOrOwnerCheck,
-					response.Validation.GetField(nameof(request.AsAccountId)),
-					DefaultCode.Unauthorized.SetMessage("You are not authorized to access this account."));
+					ValidationCode.Unauthorized.WithMessage("You are not authorized to access this account."))
+				.InheritField();
 		}
 	}
 }

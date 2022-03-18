@@ -16,31 +16,6 @@ namespace CBApplication.Services.Abstractions
 {
 	public interface IAccountService : IService
 	{
-		sealed class EditAccountAdminshipParameter : EncryptableBase<Guid>
-		{
-			public EditAccountAdminshipParameter()
-			{
-			}
-			public EditAccountAdminshipParameter(Guid adminId)
-			{
-				AdminId = adminId;
-			}
-
-			public Guid AdminId { get; set; }
-
-			protected override async Task DecryptSelf(IDecryptor<Guid> decryptor)
-			{
-				AdminId = await decryptor.Decrypt(AdminId);
-			}
-
-			protected override async Task EncryptSelf(IEncryptor<Guid> encryptor)
-			{
-				AdminId = await encryptor.Encrypt(AdminId);
-			}
-		}
-		Task<IResponse> ResignAdminFromAccount(IAsAccountEncryptableRequest<EditAccountAdminshipParameter> request);
-		Task<IResponse> RecruitAdminIntoAccount(IAsAccountEncryptableRequest<EditAccountAdminshipParameter> request);
-
 		abstract class SetAccountSettingsParameterBase : EncryptableBase<Guid>
 		{
 			public Dictionary<Guid, Boolean> CanReceiveTransactionOffersFor { get; set; }
@@ -81,26 +56,19 @@ namespace CBApplication.Services.Abstractions
 		}
 		Task<IResponse> SetRealAccountSettings(IAsAccountEncryptableRequest<SetRealAccountSettingsParameter> request);
 
-		abstract class SetVirtualAccountSettingsParameterBase : SetAccountSettingsParameterBase
+		sealed class SetVirtualAccountSettingsParameter : SetAccountSettingsParameterBase
 		{
 			public TimeSpan? DepositForwardLifeSpan { get; set; }
 			public Decimal? DefaultDepositAccountMapRelativeLimit { get; set; }
 			public Decimal? DefaultDepositAccountMapAbsoluteLimit { get; set; }
 		}
-		sealed class SetVirtualAccountSettingsParameter : SetVirtualAccountSettingsParameterBase
-		{ }
 		Task<IResponse> SetVirtualAccountSettings(IAsAccountEncryptableRequest<SetVirtualAccountSettingsParameter> request);
-
-		sealed class SetDepartmentAccountSettingsParameter : SetVirtualAccountSettingsParameterBase
-		{ }
-		Task<IResponse> SetDepartmentAccountSettings(IAsAccountEncryptableRequest<SetDepartmentAccountSettingsParameter> request);
 
 		Task<IGetPaginatedEncryptableResponse<DepositAccountReferenceEntity>> GetDepositReferencesForReferencedAccount(IAsAccountRequest request);
 		Task<IGetPaginatedEncryptableResponse<DepositAccountReferenceEntity>> GetDepositReferencesForReferencingAccount(IAsAccountRequest request);
 
 		Task<IEncryptableResponse<RealAccountSettingsEntity>> GetRealAccountSettings(IAsAccountRequest request);
 		Task<IEncryptableResponse<VirtualAccountSettingsEntity>> GetVirtualAccountSettings(IAsAccountRequest request);
-		Task<IEncryptableResponse<DepartmentAccountSettingsEntity>> GetDepartmentAccountSettings(IAsAccountRequest request);
 
 		Task<IGetPaginatedEncryptableResponse<IAccountEntity>> GetAccounts(IAsCitizenRequest request);
 
@@ -139,31 +107,23 @@ namespace CBApplication.Services.Abstractions
 		}
 		Task<IResponse> DeleteDepositAccountReference(IAsAccountEncryptableRequest<DeleteDepositAccountReferenceParameter> request);
 
-		class CreateVirtualAccountParameter
+		class CreateVirtualAccountParameter : EncryptableBase<Guid>
 		{
 			public String Name { get; set; }
-			public AccessibilityType Accessibility { get; set; }
-		}
-		Task<IResponse> CreateVirtualAccount(IAsCitizenRequest<CreateVirtualAccountParameter> request);
-
-		sealed class CreateDepartmentAccountParameter : CreateVirtualAccountParameter, IEncryptable<Guid>
-		{
 			public Guid DepartmentId { get; set; }
-			public Boolean IsEncrypted { get; private set; }
+			public AccessibilityType Accessibility { get; set; }
 
-			public async Task Decrypt(IDecryptor<Guid> decryptor)
+			protected override async Task DecryptSelf(IDecryptor<Guid> decryptor)
 			{
-				IsEncrypted = false;
 				DepartmentId = await decryptor.Decrypt(DepartmentId);
 			}
 
-			public async Task Encrypt(IEncryptor<Guid> encryptor)
+			protected override async Task EncryptSelf(IEncryptor<Guid> encryptor)
 			{
-				IsEncrypted = true;
 				DepartmentId = await encryptor.Encrypt(DepartmentId);
 			}
 		}
-		Task<IResponse> CreateDepartmentAccount(IAsCitizenEncryptableRequest<CreateDepartmentAccountParameter> request);
+		Task<IResponse> CreateVirtualAccount(IAsCitizenRequest<CreateVirtualAccountParameter> request);
 
 		sealed class CreateAccountReferenceParameter : EncryptableBase<Guid>
 		{
@@ -200,7 +160,6 @@ namespace CBApplication.Services.Abstractions
 			public IEnumerable<Guid> ExcludeIds { get; set; }
 			public ICollection<Guid> TagsIds { get; set; }
 			public ICollection<Guid> PriorityTagsIds { get; set; }
-			public ICollection<Guid> MangerIds { get; set; }
 
 			protected override async Task DecryptSelf(IDecryptor<Guid> decryptor)
 			{
@@ -211,7 +170,6 @@ namespace CBApplication.Services.Abstractions
 				ExcludeIds = await decryptor.Decrypt(ExcludeIds);
 				TagsIds = await decryptor.Decrypt(TagsIds);
 				PriorityTagsIds = await decryptor.Decrypt(PriorityTagsIds);
-				MangerIds = await decryptor.Decrypt(MangerIds);
 				CreatorId = await decryptor.Decrypt(CreatorId);
 			}
 
@@ -224,40 +182,47 @@ namespace CBApplication.Services.Abstractions
 				ExcludeIds = await encryptor.Encrypt(ExcludeIds);
 				TagsIds = await encryptor.Encrypt(TagsIds);
 				PriorityTagsIds = await encryptor.Encrypt(PriorityTagsIds);
-				MangerIds = await encryptor.Encrypt(MangerIds);
 				CreatorId = await encryptor.Encrypt(CreatorId);
 			}
 		}
-		Task<IGetPaginatedEncryptableResponse<IAccountEntity>> SearchAccounts(IAsAccountGetPaginatedEncryptableRequest<SearchAccountsParameterBase> request);
-
 		sealed class SearchRealAccountsParameter : SearchAccountsParameterBase
 		{
 			public Dictionary<Guid, Boolean> CanBeDepositAccountFor { get; set; }
+			public Guid? OwnerId { get; set; }
 
 			protected override async Task DecryptSelf(IDecryptor<Guid> decryptor)
 			{
+				OwnerId = await decryptor.Decrypt(OwnerId);
 				await decryptor.DecryptKeys(CanBeDepositAccountFor);
 				await base.DecryptSelf(decryptor);
 			}
 
 			protected override async Task EncryptSelf(IEncryptor<Guid> encryptor)
 			{
+				OwnerId = await encryptor.Encrypt(OwnerId);
 				await encryptor.EncryptKeys(CanBeDepositAccountFor);
 				await base.EncryptSelf(encryptor);
 			}
 		}
 		Task<IGetPaginatedEncryptableResponse<RealAccountEntity>> SearchRealAccounts(IAsAccountGetPaginatedEncryptableRequest<SearchRealAccountsParameter> request);
 
-		abstract class SearchVirtualAccountsParameterBase : SearchAccountsParameterBase
+		sealed class SearchVirtualAccountsParameter : SearchAccountsParameterBase
 		{
 			public TimeSpan? DepositForwardLifeSpan { get; set; }
+			public IEnumerable<Guid> AdminIds { get; set; }
+
+			protected override async Task DecryptSelf(IDecryptor<Guid> decryptor)
+			{
+				AdminIds = await decryptor.Decrypt(AdminIds);
+				await base.DecryptSelf(decryptor);
+			}
+
+			protected override async Task EncryptSelf(IEncryptor<Guid> encryptor)
+			{
+				AdminIds = await encryptor.Encrypt(AdminIds);
+				await base.EncryptSelf(encryptor);
+			}
 		}
-		Task<IGetPaginatedEncryptableResponse<IVirtualAccountEntity>> SearchVirtualAccounts(IAsAccountGetPaginatedEncryptableRequest<SearchVirtualAccountsParameterBase> request);
-
-		sealed class SearchVirtualAccountsParameter : SearchVirtualAccountsParameterBase { }
 		Task<IGetPaginatedEncryptableResponse<VirtualAccountEntity>> SearchVirtualAccounts(IAsAccountGetPaginatedEncryptableRequest<SearchVirtualAccountsParameter> request);
-
-		sealed class SearchDepartmentAccountsParameter : SearchVirtualAccountsParameterBase { }
-		Task<IGetPaginatedEncryptableResponse<DepartmentAccountEntity>> SearchDepartmentAccounts(IAsAccountGetPaginatedEncryptableRequest<SearchDepartmentAccountsParameter> request);
 	}
 }

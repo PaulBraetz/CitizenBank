@@ -3,6 +3,7 @@
 using CBData.Abstractions;
 using PBCommon.Encryption;
 using PBCommon.Encryption.Abstractions;
+using PBCommon.Globalization;
 using PBData.Entities;
 using PBData.Extensions;
 
@@ -97,7 +98,7 @@ namespace CBData.Entities
 		public virtual Decimal Tax { get; set; }
 		public virtual String Usage { get; set; }
 		public virtual TransactionPartnersRelationship Relationship { get; set; }
-		public virtual Boolean IsExposed { get => ExpirationDate > DateTimeOffset.Now; protected set => _ = value; }
+		public virtual Boolean IsExposed { get => ExpirationDate > TimeManager.Now; protected set => _ = value; }
 		public override Boolean ExpiryPaused { get; set; }
 
 		public virtual void Expose(DateTimeOffset start)

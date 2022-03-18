@@ -75,16 +75,16 @@ namespace CBApplication.Services
 
 				await FirstValidateAuthenticatedDelegate(request, response)
 					.NextNullCheck(citizen,
-						response.Validation.GetField(nameof(request.Parameter.Name)),
-						DefaultCode.NotFound.SetMessage("The requested citizen could not be found."))
+						ValidationField.Create(nameof(request.Parameter.Name)),
+						ValidationCode.NotFound.WithMessage("The requested citizen could not be found."))
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.CatchAll(response.Validation.GetField(nameof(request)))
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -98,35 +98,38 @@ namespace CBApplication.Services
 
 			async Task notNullRequest()
 			{
-				var user = GetUserEntityLazily(request);
-				var createRequest = Connection.GetSingleLazily<CitizenLinkRequestEntity>(request.Parameter.RequestId);
+				var user = GetUserEntity(request);
+				var createRequest = Connection.GetSingle<CitizenLinkRequestEntity>(request.Parameter.RequestId);
 
 				Boolean userOwnsRequestCheck()
 				{
-					return user.Value.Id == createRequest.Value.User.Id;
+					return user.Id == createRequest.User.Id;
 				}
 				void successAction()
 				{
-					Connection.Delete(createRequest.Value);
+					Connection.Delete(createRequest);
 					Connection.SaveChanges();
 
-					OnCitizenLinkRequestCancelled.Invoke(createRequest.Value);
+					OnCitizenLinkRequestCancelled.Invoke(createRequest);
 
-					LogIfAccessingAsDelegate(user.Value, "cancelled citizen link request for {0}", createRequest.Value.Citizen.Name);
+					LogIfAccessingAsDelegate(user, "cancelled citizen link request for {0}", createRequest.Citizen.Name);
 				}
 
 				await FirstValidateAuthenticatedDelegate(request, response)
+					.NextNullCheck(createRequest,
+						ValidationField.Create(nameof(request.Parameter.RequestId)),
+						ValidationCode.NotFound.WithMessage("The link request requested could not be found."))
 					.NextCompound(userOwnsRequestCheck,
-						response.Validation.GetField(nameof(request.Parameter.RequestId)),
-						DefaultCode.NotFound.SetMessage("The request requested could not be found."))
+						ValidationCode.Unauthorized.WithMessage("You are not authorized to cancel this link request."))
+					.InheritField()
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.CatchAll(response.Validation.GetField(nameof(request)))
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -142,16 +145,16 @@ namespace CBApplication.Services
 
 			async Task notNullRequest()
 			{
-				var user = GetUserEntityLazily(request);
-				var createRequest = Connection.GetSingleLazily<CitizenLinkRequestEntity>(request.Parameter.RequestId);
+				var user = GetUserEntity(request);
+				var createRequest = Connection.GetSingle<CitizenLinkRequestEntity>(request.Parameter.RequestId);
 
 				Boolean userOwnsRequestCheck()
 				{
-					return user.Value.Id == createRequest.Value.User.Id;
+					return user.Id == createRequest.User.Id;
 				}
 				Boolean validCheck()
 				{
-					String url = "https://robertsspaceindustries.com/citizens/" + createRequest.Value.Citizen.Name;
+					String url = "https://robertsspaceindustries.com/citizens/" + createRequest.Citizen.Name;
 
 					var scraperFactory = new ScraperFactory();
 
@@ -162,7 +165,7 @@ namespace CBApplication.Services
 						.SetTargetPageXPaths(new Dictionary<String, String>
 						{
 						{bio,     "/html/body/div[2]/div[2]/div[2]/div/div/div[2]/div[3]/div/div/div" }
-						}).Go((link, dict) => retVal = dict[bio]?.Contains(createRequest.Value.VerificationCode.ToVerifyLink()) ?? false);
+						}).Go((link, dict) => retVal = dict[bio]?.Contains(createRequest.VerificationCode.ToVerifyLink()) ?? false);
 
 #if DEBUG
 					//TODO: remove if not needed anymore
@@ -173,40 +176,42 @@ namespace CBApplication.Services
 				}
 				void successAction()
 				{
-					var citizen = createRequest.Value.Citizen;
+					var citizen = createRequest.Citizen;
 					var previousOwners = citizen.GetClaims(Connection, PBCommon.Configuration.Settings.OWNER_RIGHT);
 					var claimService = GetService<IEventfulClaimService>();
 					var ownerArray = new[] { PBCommon.Configuration.Settings.OWNER_RIGHT };
 
 					previousOwners.ForEach(c => claimService.UpdateClaim(c, c.Rights.Except(ownerArray)));
-					claimService.EnsureClaim(user.Value, ownerArray, citizen);
-					claimService.EnsureClaim(user.Value, CBCommon.Settings.CitizenBank.CITIZEN_RIGHT);
+					claimService.EnsureClaim(user, ownerArray, citizen);
+					claimService.EnsureClaim(user, CBCommon.Settings.CitizenBank.CITIZEN_RIGHT);
 
-					Connection.Delete(createRequest.Value);
+					Connection.Delete(createRequest);
 					Connection.SaveChanges();
 
-					OnCitizenLinked.Invoke(Session, new IEntity[] { createRequest.Value.User, citizen }, citizen.CloneAsT());
-					OnCitizenLinkRequestVerified.Invoke(createRequest.Value);
+					OnCitizenLinked.Invoke(Session, new IEntity[] { createRequest.User, citizen }, citizen.CloneAsT());
+					OnCitizenLinkRequestVerified.Invoke(createRequest);
 
-					LogIfAccessingAsDelegate(user.Value, "verified citizen link request for {0}", citizen.Name);
+					LogIfAccessingAsDelegate(user, "verified citizen link request for {0}", citizen.Name);
 				}
 
 				await FirstValidateAuthenticatedDelegate(request, response)
 					.NextNullCheck(createRequest,
-						response.Validation.GetField(nameof(request.Parameter.RequestId)),
-						DefaultCode.NotFound.SetMessage("The request requested could not be found."))
+						ValidationField.Create(nameof(request.Parameter.RequestId)),
+						ValidationCode.NotFound.WithMessage("The link request requested could not be found."))
 					.NextCompound(userOwnsRequestCheck,
-						DefaultCode.Unauthorized.SetMessage("You are not authorized to request verification for this request."))
+						ValidationCode.Unauthorized.WithMessage("You are not authorized to request verification for this request."))
+					.InheritField()
 					.NextCompound(validCheck,
-						DefaultCode.Invalid.SetMessage("The request could not be verified."))
+						ValidationCode.Invalid.WithMessage("The request could not be verified."))
+					.InheritField()
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.CatchAll(response.Validation.GetField(nameof(request)))
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -233,10 +238,10 @@ namespace CBApplication.Services
 				{
 					List<CurrencyEntity> currencies = Connection.Query<CurrencyEntity>().Where(c => c.IsActive).ToList();
 
-					CreditScoreEntity creditScore = new CreditScoreEntity();
-					RealAccountEntity account = new RealAccountEntity(citizen, creditScore);
+					CreditScoreEntity creditScore = new();
+					RealAccountEntity account = new(citizen, creditScore);
 					//TODO: set default accessibility to private
-					RealAccountSettingsEntity accountSettings = new RealAccountSettingsEntity(new CurrencyBoolDictionaryEntity(currencies, true),
+					RealAccountSettingsEntity accountSettings = new(new CurrencyBoolDictionaryEntity(currencies, true),
 													  new CurrencyBoolDictionaryEntity(currencies, true),
 													  new CurrencyBoolDictionaryEntity(currencies),
 													  new CurrencyBoolDictionaryEntity(currencies))
@@ -291,19 +296,19 @@ namespace CBApplication.Services
 					await CachedCriterionChain.Cache.Get()
 						.ThisValidatePagination(request, query, response.Validation)
 						.SetOnCriterionMet(setData)
-						.Evaluate();
+						.Evaluate(response);
 				}
 
 				await FirstValidateAuthenticatedDelegate(request, response)
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.CatchAll(response.Validation.GetField(nameof(request)))
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -321,10 +326,10 @@ namespace CBApplication.Services
 					.ToList();
 			}
 
-			await FirstValidateAuthenticated(response.Validation)
+			await FirstValidateAuthenticated()
 				.SetOnCriterionMet(successAction)
-				.CatchAll(response.Validation.GetField("request"))
-				.Evaluate();
+				.CatchAll(ValidationField.Create("request"))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -356,18 +361,18 @@ namespace CBApplication.Services
 					await CachedCriterionChain.Cache.Get()
 						.ThisValidatePagination(request, query, response.Validation)
 						.SetOnCriterionMet(setData)
-						.Evaluate();
+						.Evaluate(response);
 				}
 
 				await FirstValidateAuthenticatedDelegate(request, response)
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.CatchAll(response.Validation.GetField(nameof(request)))
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -384,10 +389,10 @@ namespace CBApplication.Services
 					.ToList();
 			}
 
-			await FirstValidateAuthenticated(response.Validation)
+			await FirstValidateAuthenticated()
 				.SetOnCriterionMet(successAction)
-				.CatchAll(response.Validation.GetField("request"))
-				.Evaluate();
+				.CatchAll(ValidationField.Create("request"))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -412,13 +417,13 @@ namespace CBApplication.Services
 
 				await FirstValidateAsCitizen(request, response)
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.CatchAll(response.Validation.GetField(nameof(request)))
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -461,13 +466,13 @@ namespace CBApplication.Services
 
 				await FirstValidateAsCitizen(request, response)
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.CatchAll(response.Validation.GetField(nameof(request)))
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -505,13 +510,13 @@ namespace CBApplication.Services
 
 				await FirstValidateAsCitizen(request, response)
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.CatchAll(response.Validation.GetField(nameof(request)))
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -524,7 +529,7 @@ namespace CBApplication.Services
 
 			async Task notNullRequest()
 			{
-				Lazy<IEnumerable<CitizenEntity>> query = new Lazy<IEnumerable<CitizenEntity>>(() =>
+				Lazy<IEnumerable<CitizenEntity>> query = new(() =>
 				{
 					var retVal1 = Connection.Query<CitizenSettingsEntity>();
 					if (request.Parameter.Accessibility.HasValue && request.Parameter.Accessibility.Value == AccessibilityType.Private)
@@ -536,7 +541,7 @@ namespace CBApplication.Services
 
 						FirstValidateAuthenticatedDelegate(request, response)
 							.SetOnCriterionMet(accessibilitySuccessAction)
-							.Evaluate();
+							.Evaluate(response);
 					}
 					else
 					{
@@ -577,7 +582,7 @@ namespace CBApplication.Services
 					response.LastPage = query.Value.GetPageCount(request.PerPage) - 1;
 					
 					CitizenEntity newCitizen = await GetCitizen(request.Parameter.Name);
-					if (response.Data.Count() == 0 && newCitizen != null)
+					if (response.Data.Count == 0 && newCitizen != null)
 					{
 						response.Data = new List<CitizenEntity>
 						{
@@ -590,13 +595,13 @@ namespace CBApplication.Services
 				await CachedCriterionChain.Cache.Get()
 					.ThisValidatePagination(request, query.Value, response.Validation)
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.CatchAll(response.Validation.GetField(nameof(request)))
-				.Evaluate();
+				.CatchAll(ValidationField.Create(nameof(request)))
+				.Evaluate(response);
 
 			return response;
 		}
@@ -613,7 +618,7 @@ namespace CBApplication.Services
 				{
 					String url = "https://robertsspaceindustries.com/citizens/" + name;
 					String actualName = String.Empty;
-					ScraperFactory scraperFactory = new ScraperFactory();
+					ScraperFactory scraperFactory = new();
 					scraperFactory.CreateSinglePageScraper(url)
 						.SetTargetPageXPaths(new Dictionary<String, String>
 						{
@@ -645,11 +650,11 @@ namespace CBApplication.Services
 			}
 
 			await FirstNullCheck(citizen,
-					response.Validation.GetField(nameof(name)),
-					DefaultCode.NotFound.SetMessage("The requested citizen could not be found."))
+					ValidationField.Create(nameof(name)),
+					ValidationCode.NotFound.WithMessage("The requested citizen could not be found."))
 				.SetOnCriterionMet(successAction)
-				.CatchAll(response.Validation.GetField("request"))
-				.Evaluate();
+				.CatchAll(ValidationField.Create("request"))
+				.Evaluate(response);
 
 			return response;
 		}

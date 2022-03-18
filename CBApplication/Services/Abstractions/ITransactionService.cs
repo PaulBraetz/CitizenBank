@@ -180,7 +180,7 @@ namespace CBApplication.Services.Abstractions
 			public String PluralName { get; set; }
 			public Decimal IngameTax { get; set; }
 		}
-		Task<IResponse> CreateCurrency(IAsUserRequest<CreateCurrencyParameter> request);
+		Task<IResponse> CreateCurrency(IRequest<CreateCurrencyParameter> request);
 
 		sealed class ToggleCurrencyParameter : EncryptableBase<Guid>
 		{
@@ -195,7 +195,7 @@ namespace CBApplication.Services.Abstractions
 				CurrencyId = await encryptor.Encrypt(CurrencyId);
 			}
 		}
-		Task<IResponse> ToggleCurrency(IAsUserEncryptableRequest<ToggleCurrencyParameter> request);
+		Task<IResponse> ToggleCurrency(IEncryptableRequest<ToggleCurrencyParameter> request);
 
 		sealed class DeleteCurrencyParameter : EncryptableBase<Guid>
 		{
@@ -209,7 +209,7 @@ namespace CBApplication.Services.Abstractions
 				CurrencyId = await encryptor.Encrypt(CurrencyId);
 			}
 		}
-		Task<IResponse> DeleteCurrency(IAsUserEncryptableRequest<DeleteCurrencyParameter> request);
+		Task<IResponse> DeleteCurrency(IEncryptableRequest<DeleteCurrencyParameter> request);
 
 		Task<IResponse> CreateEqualizationTransaction(IAsAccountRequest request);
 	}

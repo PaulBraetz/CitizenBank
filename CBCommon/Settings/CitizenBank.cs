@@ -11,6 +11,7 @@ namespace CBCommon.Settings
 		public static readonly String DefaultGeneratedMessage = "[Generated]";
 		public static readonly Decimal MAX_CURRENCY_VAL = 1000000000000;
 		public static readonly String CITIZEN_RIGHT = "Citizen";
+		public static readonly String MEMBER_RIGHT = "Member";
 		public static readonly Int32 CHARS_MIN_ACCOUNT = 4;
 		public static readonly Int32 CHARS_MAX_ACCOUNT = 60;
 		public static readonly Int32 CHARS_MIN_SUBDEPARTMENT = 5;

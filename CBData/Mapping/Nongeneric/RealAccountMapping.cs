@@ -4,7 +4,7 @@ using FluentNHibernate.Mapping;
 
 namespace CBData.Mapping
 {
-	internal class RealAccountMapping : SubclassMap<RealAccountEntity>
+	internal class RealAccountMapping : AccountMappingBase<RealAccountEntity>
 	{
 	}
 }

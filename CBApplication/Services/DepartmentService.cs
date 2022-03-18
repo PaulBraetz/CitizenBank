@@ -33,6 +33,7 @@ using static PBCommon.Enums;
 using System.Threading.Tasks;
 using static CBApplication.Services.Abstractions.IDepartmentServiceBase;
 using PBApplication.Context.Abstractions;
+using PBApplication.Services.Abstractions;
 
 namespace CBApplication.Services
 {
@@ -50,49 +51,48 @@ namespace CBApplication.Services
 
 			async Task notNullRequest()
 			{
-				UserEntity user = GetUserEntity(request);
-				Lazy<IDepartmentEntity> superDepartment = Connection.GetSingleLazily<IDepartmentEntity>(request.Parameter.SuperDepartmentId);
+				Lazy<IDepartmentEntity> superDepartment = Connection.GetSingle<IDepartmentEntity>(request.Parameter.SuperDepartmentId);
 				Lazy<CitizenEntity> citizen = GetCitizenEntityLazily(request);
 
 				void successAction()
 				{
 					var newDepartment = new SubDepartmentEntity(citizen.Value, request.Parameter.Name);
-					var newSettings = new SubDepartmentSettingsEntity(newDepartment)
+					var newSettings = new SubDepartmentSettingsEntity()
 					{
 						Accessibility = request.Parameter.Accessibility
 					};
-					Connection.Insert(newDepartment);
+					Connection.Insert(newDepartment, newSettings);
+
+					_ = GetService<IEventfulClaimService>().EnsureClaim(newDepartment, PBCommon.Configuration.Settings.OWNER_RIGHT, newSettings);
+
 					superDepartment.Value.SubDepartments.Add(newDepartment);
 					Connection.Update(superDepartment.Value);
 					Connection.SaveChanges();
 
-					OnDepartmentCreated.Invoke(Session, superDepartment.Value.Admins, newDepartment.CloneAsT());
+					var admins = superDepartment.Value.GetAdminClaimsHolders<IEntity>(Connection);
 
-					LogIfAccessingAsDelegate(user, "created department " + newDepartment.Name);
+					OnDepartmentCreated.Invoke(Session, admins, newDepartment.CloneAsT());
+
+					UserEntity user = GetUserEntity(request);
+					LogIfAccessingAsDelegate(user, "created department: {0}", newDepartment.Name);
 				}
 
-				await FirstValidateAsCitizen(user, citizen, response.Validation)
-					.NextManagerManagesProperty(citizen, superDepartment, Connection, response.Validation.GetField(nameof(request.Parameter.SuperDepartmentId)))
+				await FirstValidateAsCitizen(request, response)
+					.NextEntityHoldsManager(citizen, superDepartment, Connection, ValidationField.Create(nameof(request.Parameter.SuperDepartmentId)))
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.Evaluate(response);
 
 			return response;
 		}
 
-		private ICollection<SubDepartmentEntity> GetAllSubDepartments(SubDepartmentEntity department)
+		private IEnumerable<SubDepartmentEntity> GetAllSubDepartments(SubDepartmentEntity department)
 		{
-			if (department.SubDepartments.Any())
-			{
-				List<SubDepartmentEntity> retVal = department.SubDepartments.SelectMany(s => GetAllSubDepartments(s)).ToList();
-				retVal.Add(department);
-				return retVal;
-			}
-			return new List<SubDepartmentEntity> { department };
+			return new[] { department }.Concat(department.SubDepartments.SelectMany(s => GetAllSubDepartments(s)));
 		}
 
 		public event ServiceEventHandler<ServiceEventArgs> OnDepartmentDeleted;
@@ -104,8 +104,8 @@ namespace CBApplication.Services
 			{
 				UserEntity user = GetUserEntity(request);
 				Lazy<CitizenEntity> citizen = GetCitizenEntityLazily(request);
-				Lazy<SubDepartmentEntity> department = Connection.GetSingleLazily<SubDepartmentEntity>(request.Parameter.DepartmentId);
-				Lazy<IDepartmentEntity> superDepartment = Connection.GetFirstLazily<IDepartmentEntity>(d => d.SubDepartments.Any(s => s.Id == department.Value.Id));
+				Lazy<SubDepartmentEntity> department = Connection.GetSingle<SubDepartmentEntity>(request.Parameter.DepartmentId);
+				Lazy<IDepartmentEntity> superDepartment = Connection.GetFirst<IDepartmentEntity>(d => d.SubDepartments.Any(s => s.Id == department.Value.Id));
 
 				void successAction()
 				{
@@ -114,8 +114,12 @@ namespace CBApplication.Services
 					{
 						Connection.Delete(subDepartment);
 						var messageService = GetService<IEventfulCBMessageService>();
-						messageService.CreateAccountSelfMessages(subDepartment.Members, citizen.Value.Name + " has deleted the subDepartmentartment " + subDepartment.Name);
-						messageService.CreateCitizenMessages(citizen.Value, subDepartment.Admins, "I have deleted the subDepartmentartment " + subDepartment.Name);
+
+						var members = subDepartment.GetClaimsHolders<AccountEntityBase>(Connection, CBCommon.Settings.CitizenBank.MEMBER_RIGHT);
+						var admins = subDepartment.GetAdminClaimsHolders<CitizenEntity>(Connection);
+
+						messageService.CreateAccountSelfMessages(members, new("{0} has deleted the subDepartmentartment {1}", citizen.Value.Name, subDepartment.Name));
+						messageService.CreateCitizenMessages(citizen.Value, admins, new("I have deleted the subDepartmentartment {0}", subDepartment.Name));
 
 						OnDepartmentDeleted.Invoke(subDepartment);
 					}
@@ -124,16 +128,16 @@ namespace CBApplication.Services
 					LogIfAccessingAsDelegate(user, "deleted department " + department.Value.Name);
 				}
 
-				await FirstValidateAsCitizen(user, citizen, response.Validation)
-					.NextObserverCanSeeProperty(citizen, department, Connection, response.Validation.GetField(nameof(request.Parameter.DepartmentId)))
-					.NextManagerManagesProperty(citizen, superDepartment, Connection, response.Validation.GetField(nameof(request.Parameter.DepartmentId)))
+				await FirstValidateAsCitizen(request, response)
+					.NextEntityHoldsObserver(citizen, department, Connection, ValidationField.Create(nameof(request.Parameter.DepartmentId)))
+					.NextEntityHoldsManager(citizen, superDepartment, Connection, ValidationField.Create(nameof(request.Parameter.DepartmentId)))
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.Evaluate(response);
 
 			return response;
 		}
@@ -148,14 +152,14 @@ namespace CBApplication.Services
 			{
 				UserEntity user = GetUserEntity(request);
 				Lazy<CitizenEntity> citizen = GetCitizenEntityLazily(request);
-				Lazy<SubDepartmentEntity> department = Connection.GetSingleLazily<SubDepartmentEntity>(request.Parameter.DepartmentId);
-				Lazy<IDepartmentEntity> superDepartment = Connection.GetFirstLazily<IDepartmentEntity>(d => d.SubDepartments.Any(s => s.Id == department.Value.Id));
-				Lazy<CitizenEntity> admin = Connection.GetSingleLazily<CitizenEntity>(request.Parameter.AdminId);
-				Lazy<CitizenSettingsEntity> settings = Connection.GetFirstLazily<CitizenSettingsEntity>(s => s.Owner.Id == admin.Value.Id);
+				Lazy<SubDepartmentEntity> department = Connection.GetSingle<SubDepartmentEntity>(request.Parameter.DepartmentId);
+				Lazy<IDepartmentEntity> superDepartment = Connection.GetFirst<IDepartmentEntity>(d => d.SubDepartments.Any(s => s.Id == department.Value.Id));
+				Lazy<CitizenEntity> admin = Connection.GetSingle<CitizenEntity>(request.Parameter.AdminId);
+				Lazy<CitizenSettingsEntity> settings = GetSettingsLazily<CitizenSettingsEntity, CitizenEntity>(admin);
 
 				Boolean adminCheck()
 				{
-					return !department.Value.Admins.Any(a => a.Id == admin.Value.Id);
+					return !admin.Value.HoldsAdminRight(Connection, department.Value);
 				}
 				Boolean canBeRecruitedCheck()
 				{
@@ -163,34 +167,32 @@ namespace CBApplication.Services
 				}
 				void successAction()
 				{
-					department.Value.Admins.Add(admin.Value);
-					Connection.Update(department);
-					Connection.SaveChanges();
+					GetService<IEventfulClaimService>().EnsureClaim(admin.Value, PBCommon.Configuration.Settings.ADMIN_RIGHT, department.Value);
 
 					OnAdminRecruitedForAdmin.Invoke(Session, admin.Value, department.Value.CloneAsT());
 					OnAdminRecruitedForDepartment.Invoke(Session, department.Value, admin.Value.CloneAsT());
 
-					LogIfAccessingAsDelegate(user, "added admin " + admin.Value.Name + " to department " + department.Value.Name);
+					LogIfAccessingAsDelegate(user, "added admin {0} to department {1}", department.Value.Name, admin.Value.Name);
 				}
 
-				await FirstValidateAsCitizen(user, citizen, response.Validation)
-					.NextObserverCanSeeProperty(citizen, department, Connection, response.Validation.GetField(nameof(request.Parameter.DepartmentId)))
-					.NextManagerManagesProperty(citizen, superDepartment, Connection, response.Validation.GetField(nameof(request.Parameter.DepartmentId)))
+				await FirstValidateAsCitizen(request, response)
+					.NextEntityHoldsObserver(citizen, department, Connection, ValidationField.Create(nameof(request.Parameter.DepartmentId)))
+					.NextEntityHoldsAdmin(citizen, superDepartment, Connection, ValidationField.Create(nameof(request.Parameter.DepartmentId)))
 					.NextNullCheck(admin.Value,
-						response.Validation.GetField(nameof(request.Parameter.AdminId)),
-						  DefaultCode.NotFound.SetMessage("The admin requested could not be found."))
+						ValidationField.Create(nameof(request.Parameter.AdminId)),
+						  ValidationCode.NotFound.WithMessage("The admin requested could not be found."))
 					.NextCompound(adminCheck,
-						response.Validation.GetField(nameof(request.Parameter.AdminId)),
-						DefaultCode.Duplicate.SetMessage("The admin requested has already been recruited into the department."))
-					.NextCompound(canBeRecruitedCheck, 
-						DefaultCode.Invalid.SetMessage("The admin requested can not be recruited into this department."))
+						ValidationField.Create(nameof(request.Parameter.AdminId)),
+						ValidationCode.Duplicate.WithMessage("The admin requested has already been recruited into the department."))
+					.NextCompound(canBeRecruitedCheck,
+						ValidationCode.Invalid.WithMessage("The admin requested can not be recruited into this department."))
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.Evaluate(response);
 
 			return response;
 		}
@@ -205,35 +207,33 @@ namespace CBApplication.Services
 			{
 				UserEntity user = GetUserEntity(request);
 				Lazy<CitizenEntity> citizen = GetCitizenEntityLazily(request);
-				Lazy<SubDepartmentEntity> department = Connection.GetSingleLazily<SubDepartmentEntity>(request.Parameter.DepartmentId);
-				Lazy<IDepartmentEntity> superDepartment = Connection.GetFirstLazily<IDepartmentEntity>(d => d.SubDepartments.Any(s => s.Id == department.Value.Id));
-				Lazy<CitizenEntity> admin = new Lazy<CitizenEntity>(() => department.Value.Admins.SingleOrDefault(a => a.Id == request.Parameter.AdminId));
+				Lazy<SubDepartmentEntity> department = Connection.GetSingle<SubDepartmentEntity>(request.Parameter.DepartmentId);
+				Lazy<IDepartmentEntity> superDepartment = Connection.GetFirst<IDepartmentEntity>(d => d.SubDepartments.Any(s => s.Id == department.Value.Id));
+				Lazy<CitizenEntity> admin = new Lazy<CitizenEntity>(() => department.Value.GetAdminClaimsHolders<CitizenEntity>(Connection).SingleOrDefault(a => a.Id == request.Parameter.AdminId));
 
 				void successAction()
 				{
-					department.Value.Admins.Remove(admin.Value);
-					Connection.Update(department);
-					Connection.SaveChanges();
+					GetService<IEventfulClaimService>().RemoveRight(admin.Value.GetHeldClaims(Connection, PBCommon.Configuration.Settings.ADMIN_RIGHT, department.Value).Single(), PBCommon.Configuration.Settings.ADMIN_RIGHT);
 
 					OnAdminResignedForAdmin.Invoke(Session, admin.Value, department.Value.CloneAsT());
 					OnAdminResignedForDepartment.Invoke(Session, department.Value, admin.Value.CloneAsT());
 
-					LogIfAccessingAsDelegate(user, "removed admin " + admin.Value.Name + " from department " + department.Value.Name);
+					LogIfAccessingAsDelegate(user, "removed admin {0} from department {1}", admin.Value.Name, department.Value.Name);
 				}
 
 				await FirstValidateAsCitizen(user, citizen, response.Validation)
-					.NextObserverCanSeeProperty(citizen, department, Connection, response.Validation.GetField(nameof(request.Parameter.DepartmentId)))
-					.NextManagerManagesProperty(citizen, superDepartment, Connection, response.Validation.GetField(nameof(request.Parameter.DepartmentId)))
+					.NextEntityHoldsObserver(citizen, department, Connection, ValidationField.Create(nameof(request.Parameter.DepartmentId)))
+					.NextEntityHoldsAdmin(citizen, superDepartment, Connection, ValidationField.Create(nameof(request.Parameter.DepartmentId)))
 					.NextNullCheck(admin.Value,
-						response.Validation.GetField(nameof(request.Parameter.AdminId)),
-						DefaultCode.NotFound.SetMessage("The admin requested could be found."))
+						ValidationField.Create(nameof(request.Parameter.AdminId)),
+						ValidationCode.NotFound.WithMessage("The admin requested could be found."))
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.Evaluate(response);
 
 			return response;
 		}
@@ -248,9 +248,9 @@ namespace CBApplication.Services
 			{
 				UserEntity user = GetUserEntity(request);
 				Lazy<CitizenEntity> citizen = GetCitizenEntityLazily(request);
-				Lazy<IDepartmentEntity> department = Connection.GetSingleLazily<IDepartmentEntity>(request.Parameter.DepartmentId);
-				Lazy<AccountEntityBase> member = Connection.GetSingleLazily<AccountEntityBase>(request.Parameter.MemberId);
-				Lazy<IAccountSettingsEntity> settings = Connection.GetFirstLazily<IAccountSettingsEntity>(s => s.Owner.Id == department.Value.Id);
+				Lazy<IDepartmentEntity> department = Connection.GetSingle<IDepartmentEntity>(request.Parameter.DepartmentId);
+				Lazy<AccountEntityBase> member = Connection.GetSingle<AccountEntityBase>(request.Parameter.MemberId);
+				Lazy<IAccountSettingsEntity> settings = Connection.GetFirst<IAccountSettingsEntity>(s => s.Owner.Id == department.Value.Id);
 
 				Boolean memberCheck()
 				{
@@ -273,20 +273,20 @@ namespace CBApplication.Services
 				}
 
 				await FirstValidateAsCitizen(user, citizen, response.Validation)
-					.NextManagerManagesProperty(citizen, department, Connection, response.Validation.GetField(nameof(request.Parameter.DepartmentId)))
-					.NextObserverCanSeeProperty(citizen, member, Connection, response.Validation.GetField(nameof(request.Parameter.MemberId)))
+					.NextManagerManagesProperty(citizen, department, Connection, ValidationField.Create(nameof(request.Parameter.DepartmentId)))
+					.NextObserverCanSeeProperty(citizen, member, Connection, ValidationField.Create(nameof(request.Parameter.MemberId)))
 					.NextCompound(memberCheck,
-						response.Validation.GetField(nameof(request.Parameter.MemberId)),
-						DefaultCode.Duplicate.SetMessage("The member requested has already been recruited into the departmment."))
+						ValidationField.Create(nameof(request.Parameter.MemberId)),
+						ValidationCode.Duplicate.WithMessage("The member requested has already been recruited into the departmment."))
 					.NextCompound(canBeRecruitedCheck,
-						DefaultCode.Invalid.SetMessage("The member requested can not be recruited into this department."))
+						ValidationCode.Invalid.WithMessage("The member requested can not be recruited into this department."))
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.Evaluate(response);
 
 			return response;
 		}
@@ -300,7 +300,7 @@ namespace CBApplication.Services
 			{
 				UserEntity user = GetUserEntity(request);
 				Lazy<CitizenEntity> citizen = GetCitizenEntityLazily(request);
-				Lazy<IDepartmentEntity> department = Connection.GetSingleLazily<IDepartmentEntity>(request.Parameter.DepartmentId);
+				Lazy<IDepartmentEntity> department = Connection.GetSingle<IDepartmentEntity>(request.Parameter.DepartmentId);
 				Lazy<AccountEntityBase> member = new Lazy<AccountEntityBase>(() => department.Value.Members.SingleOrDefault(m => m.Id == request.Parameter.MemberId));
 
 				void successAction()
@@ -316,17 +316,17 @@ namespace CBApplication.Services
 				}
 
 				await FirstValidateAsCitizen(user, citizen, response.Validation)
-					.NextManagerManagesProperty(citizen, department, Connection, response.Validation.GetField(nameof(request.Parameter.DepartmentId)))
-					.NextNullCheck(member, 
-						response.Validation.GetField(nameof(request.Parameter.MemberId)),
-						DefaultCode.NotFound.SetMessage("The member requested could not be found."))
+					.NextManagerManagesProperty(citizen, department, Connection, ValidationField.Create(nameof(request.Parameter.DepartmentId)))
+					.NextNullCheck(member,
+						ValidationField.Create(nameof(request.Parameter.MemberId)),
+						ValidationCode.NotFound.WithMessage("The member requested could not be found."))
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.Evaluate(response);
 
 			return response;
 		}
@@ -340,9 +340,9 @@ namespace CBApplication.Services
 			{
 				UserEntity user = GetUserEntity(request);
 				Lazy<CitizenEntity> citizen = GetCitizenEntityLazily(request);
-				Lazy<IDepartmentEntity> department = Connection.GetSingleLazily<IDepartmentEntity>(request.Parameter.DepartmentId);
+				Lazy<IDepartmentEntity> department = Connection.GetSingle<IDepartmentEntity>(request.Parameter.DepartmentId);
 				TagEntity tag = null;
-				
+
 				async Task<Boolean> tagsCheck()
 				{
 					tag ??= await GetService<IEventfulTagService>().GetTag(request.Parameter.TagName);
@@ -360,17 +360,17 @@ namespace CBApplication.Services
 				}
 
 				await FirstValidateAsCitizen(user, citizen, response.Validation)
-					.NextManagerManagesProperty(citizen, department, Connection, response.Validation.GetField(nameof(request.Parameter.DepartmentId)))
+					.NextManagerManagesProperty(citizen, department, Connection, ValidationField.Create(nameof(request.Parameter.DepartmentId)))
 					.NextCompound(tagsCheck,
-						 response.Validation.GetField(nameof(request.Parameter.TagName)),
-						 DefaultCode.Duplicate.SetMessage("The tag requested has already been added to the department."))
+						 ValidationField.Create(nameof(request.Parameter.TagName)),
+						 ValidationCode.Duplicate.WithMessage("The tag requested has already been added to the department."))
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.Evaluate(response);
 
 			return response;
 		}
@@ -383,7 +383,7 @@ namespace CBApplication.Services
 			{
 				UserEntity user = GetUserEntity(request);
 				Lazy<CitizenEntity> citizen = GetCitizenEntityLazily(request);
-				Lazy<IDepartmentEntity> department = Connection.GetSingleLazily<IDepartmentEntity>(request.Parameter.DepartmentId);
+				Lazy<IDepartmentEntity> department = Connection.GetSingle<IDepartmentEntity>(request.Parameter.DepartmentId);
 				Lazy<TagEntity> tag = new Lazy<TagEntity>(() => department.Value.Tags.SingleOrDefault(t => t.Name.Equals(request.Parameter.TagName)));
 
 				void successAction()
@@ -398,17 +398,17 @@ namespace CBApplication.Services
 				}
 
 				await FirstValidateAsCitizen(user, citizen, response.Validation)
-					.NextManagerManagesProperty(citizen, department, Connection, response.Validation.GetField(nameof(request.Parameter.DepartmentId)))
-					.NextNullCheck(tag, 
-						response.Validation.GetField(nameof(request.Parameter.TagName)),
-						DefaultCode.NotFound.SetMessage("The tag requested could not be found."))
+					.NextManagerManagesProperty(citizen, department, Connection, ValidationField.Create(nameof(request.Parameter.DepartmentId)))
+					.NextNullCheck(tag,
+						ValidationField.Create(nameof(request.Parameter.TagName)),
+						ValidationCode.NotFound.WithMessage("The tag requested could not be found."))
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.Evaluate(response);
 
 			return response;
 		}
@@ -434,14 +434,14 @@ namespace CBApplication.Services
 				}
 
 				await FirstValidateAsCitizen(user, citizen, response.Validation)
-					.NextManagerManagesProperty(citizen, account, Connection, response.Validation.GetField(nameof(request.AsAccountId)))
+					.NextManagerManagesProperty(citizen, account, Connection, ValidationField.Create(nameof(request.AsAccountId)))
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.Evaluate(response);
 
 			return response;
 		}
@@ -466,12 +466,12 @@ namespace CBApplication.Services
 
 				await FirstValidateAsCitizen(user, citizen, response.Validation)
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.Evaluate(response);
 
 			return response;
 		}
@@ -554,10 +554,10 @@ namespace CBApplication.Services
 
 
 #if DEBUG
-								   rank = 5;
+									   rank = 5;
 #endif
 
-								   void insertIntoDepartment()
+									   void insertIntoDepartment()
 									   {
 										   if (rank == 5)
 										   {
@@ -634,12 +634,12 @@ namespace CBApplication.Services
 
 				await FirstValidateAsAccount(user, asCitizen, asAccount, response.Validation)
 					.SetOnCriterionMet(successAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.Evaluate(response);
 
 			return response;
 		}
@@ -665,7 +665,7 @@ namespace CBApplication.Services
 				await FirstValidateAsUser(user, validation)
 					.NextCompound(userIsInRoleCheck)
 					.SetOnCriterionMet(accessibilitySuccessAction)
-					.Evaluate();
+					.Evaluate(response);
 			}
 			else
 			{
@@ -729,12 +729,12 @@ namespace CBApplication.Services
 				await CachedCriterionChain.Cache.Get()
 					.ThisValidatePagination(request, data, response.Validation)
 					.SetOnCriterionMet(setData)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.Evaluate(response);
 
 			return response;
 		}
@@ -759,12 +759,12 @@ namespace CBApplication.Services
 				await CachedCriterionChain.Cache.Get()
 					.ThisValidatePagination(request, data, response.Validation)
 					.SetOnCriterionMet(setData)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.Evaluate(response);
 
 			return response;
 		}
@@ -785,12 +785,12 @@ namespace CBApplication.Services
 				await CachedCriterionChain.Cache.Get()
 					.ThisValidatePagination(request, data, response.Validation)
 					.SetOnCriterionMet(setData)
-					.Evaluate();
+					.Evaluate(response);
 			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
-				.Evaluate();
+				.Evaluate(response);
 
 			return response;
 		}

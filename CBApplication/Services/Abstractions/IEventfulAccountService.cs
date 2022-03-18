@@ -36,9 +36,6 @@ namespace CBApplication.Services.Abstractions
 		//Payload : new settings
 		//Recipients : affected settings
 		event ServiceEventHandler<ServiceEventArgs<VirtualAccountSettingsEntity>> OnVirtualAccountSettingsChanged;
-		//Payload : new settings
-		//Recipients : affected settings
-		event ServiceEventHandler<ServiceEventArgs<DepartmentAccountSettingsEntity>> OnDepartmentAccountSettingsChanged;
 		//Payload : affected reference (advanced details)
 		//Recipients : referencing account
 		event ServiceEventHandler<ServiceEventArgs<DepositAccountReferenceEntity>> OnDepositAccountReferenceChangedForReferencing;
@@ -47,9 +44,6 @@ namespace CBApplication.Services.Abstractions
 		event ServiceEventHandler<ServiceEventArgs<DepositAccountReferenceEntity>> OnDepositAccountReferenceChangedForReferenced;
 		//Recipients : affected reference
 		event ServiceEventHandler<ServiceEventArgs> OnDepositAccountReferenceDeleted;
-		//Payload : new account
-		//Recipients : department admins
-		event ServiceEventHandler<ServiceEventArgs<DepartmentAccountEntity>> OnDepartmentAccountCreated;
 		//Payload : new account
 		//Recipients : creator
 		event ServiceEventHandler<ServiceEventArgs<VirtualAccountEntity>> OnVirtualAccountCreated;
@@ -63,9 +57,9 @@ namespace CBApplication.Services.Abstractions
 		//Recipients : affected deposit
 		event ServiceEventHandler<ServiceEventArgs<Decimal>> OnDepositBalanceUpdated;
 
-		IVirtualAccountSettingsEntity UpdateVirtualAccountSettings(IVirtualAccountEntity account);
+		VirtualAccountSettingsEntity UpdateVirtualAccountSettings(VirtualAccountEntity account);
 
 		void UpdateDepositBalance(DepositAccountReferenceEntity depositAccountReference, Decimal value);
-		void UpdateDepositBalance(IVirtualAccountEntity account, RealAccountEntity mappedAccount, Decimal value);
+		void UpdateDepositBalance(VirtualAccountEntity account, RealAccountEntity mappedAccount, Decimal value);
 	}
 }

@@ -6,6 +6,7 @@ using CBData.Entities;
 using PBApplication.Events;
 using PBApplication.Responses;
 using PBApplication.Services.Abstractions;
+using PBCommon.Globalization;
 using PBData.Entities;
 
 using System;
@@ -18,16 +19,16 @@ namespace CBApplication.Services.Abstractions
 		//Payload : message
 		//Recipients : creator, recipients
 		event ServiceEventHandler<ServiceEventArgs<AccountMessageEntity>> OnAccountMessageCreated;
-		void CreateAccountMessage(AccountEntityBase creator, AccountEntityBase recipient, String message);
-		void CreateAccountMessages(AccountEntityBase creator, ICollection<AccountEntityBase> recipients, String message);
-		void CreateAccountSelfMessage(AccountEntityBase creator, String message);
-		void CreateAccountSelfMessages(ICollection<AccountEntityBase> creators, String message);
+		void CreateAccountMessage(AccountEntityBase creator, AccountEntityBase recipient, LocalizableFormattableString message);
+		void CreateAccountMessages(AccountEntityBase creator, IEnumerable<AccountEntityBase> recipients, LocalizableFormattableString message);
+		void CreateAccountSelfMessage(AccountEntityBase creator, LocalizableFormattableString message);
+		void CreateAccountSelfMessages(IEnumerable<AccountEntityBase> creators, LocalizableFormattableString message);
 		//Payload : message
 		//Recipients : creator, recipients
 		event ServiceEventHandler<ServiceEventArgs<CitizenMessageEntity>> OnCitizenMessageCreated;
-		void CreateCitizenMessage(CitizenEntity creator, CitizenEntity recipient, String message);
-		void CreateCitizenMessages(CitizenEntity creator, ICollection<CitizenEntity> recipients, String message);
-		void CreateCitizenSelfMessage(CitizenEntity creator, String message);
-		void CreateCitizenSelfMessages(ICollection<CitizenEntity> creators, String message);
+		void CreateCitizenMessage(CitizenEntity creator, CitizenEntity recipient, LocalizableFormattableString message);
+		void CreateCitizenMessages(CitizenEntity creator, IEnumerable<CitizenEntity> recipients, LocalizableFormattableString message);
+		void CreateCitizenSelfMessage(CitizenEntity creator, LocalizableFormattableString message);
+		void CreateCitizenSelfMessages(IEnumerable<CitizenEntity> creators, LocalizableFormattableString message);
 	}
 }
