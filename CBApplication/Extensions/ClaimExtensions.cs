@@ -16,5 +16,9 @@ namespace CBApplication.Extensions
 		{
 			return value.GetClaimsHolders<THolder>(connection, CBCommon.Settings.CitizenBank.MEMBER_RIGHT);
 		}
+		public static IEnumerable<IEntity> GetMemberClaimsHolders(this IEntity value, IConnection connection)
+		{
+			return value.GetMemberClaimsHolders<IEntity>(connection);
+		}
 	}
 }

@@ -588,6 +588,8 @@ namespace CBApplication.Services
 					Connection.SaveChanges();
 
 					var claimService = GetService<IEventfulClaimService>();
+					claimService.EnsureClaim(newAccount, PBCommon.Configuration.Settings.OWNER_RIGHT, settings);
+
 					if (department != null)
 					{
 						claimService.EnsureClaim(department, PBCommon.Configuration.Settings.ADMIN_RIGHT, newAccount);
