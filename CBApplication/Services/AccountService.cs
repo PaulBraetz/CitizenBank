@@ -877,31 +877,31 @@ namespace CBApplication.Services
 
 			if (request.Parameter.CanBeRecruitedIntoDepartments.HasValue)
 			{
-				retVal2 = retVal2.Where(s => s.Settings.CanBeRecruitedIntoDepartments == request.Parameter.CanBeRecruitedIntoDepartments.Value);
+				retVal2 = retVal2.Where(t => t.Settings.CanBeRecruitedIntoDepartments == request.Parameter.CanBeRecruitedIntoDepartments.Value);
 			}
 			if (request.Parameter.ForcePriorityTags.HasValue)
 			{
-				retVal2 = retVal2.Where(s => s.Settings.ForcePriorityTags == request.Parameter.ForcePriorityTags.Value);
+				retVal2 = retVal2.Where(t => t.Settings.ForcePriorityTags == request.Parameter.ForcePriorityTags.Value);
 			}
 			if (request.Parameter.MinimumContractLifeSpan.HasValue)
 			{
-				retVal2 = retVal2.Where(s => s.Settings.MinimumContractLifeSpan == request.Parameter.MinimumContractLifeSpan.Value);
+				retVal2 = retVal2.Where(t => t.Settings.MinimumContractLifeSpan == request.Parameter.MinimumContractLifeSpan.Value);
 			}
 			if (request.Parameter.TransactionOfferLifetime.HasValue)
 			{
-				retVal2 = retVal2.Where(s => s.Settings.TransactionOfferLifetime == request.Parameter.TransactionOfferLifetime.Value);
+				retVal2 = retVal2.Where(t => t.Settings.TransactionOfferLifetime == request.Parameter.TransactionOfferLifetime.Value);
 			}
 			if (request.Parameter.CanReceiveTransactionOffersFor?.Any() ?? false)
 			{
-				retVal2 = retVal2.Where(s => request.Parameter.CanReceiveTransactionOffersFor.All(kvp1 => s.Settings.CanReceiveTransactionOffersFor.Any(kvp2 => kvp2.Key.Id == kvp1.Key && kvp2.Value == kvp1.Value)));
+				retVal2 = retVal2.Where(t => request.Parameter.CanReceiveTransactionOffersFor.All(kvp1 => t.Settings.CanReceiveTransactionOffersFor.Any(kvp2 => kvp2.Key.Id == kvp1.Key && kvp2.Value == kvp1.Value)));
 			}
 			if (request.Parameter.CanCreateTransactionOffersFor?.Any() ?? false)
 			{
-				retVal2 = retVal2.Where(s => request.Parameter.CanCreateTransactionOffersFor.All(kvp1 => s.Settings.CanCreateTransactionOffersFor.Any(kvp2 => kvp2.Key.Id == kvp1.Key && kvp2.Value == kvp1.Value)));
+				retVal2 = retVal2.Where(t => request.Parameter.CanCreateTransactionOffersFor.All(kvp1 => t.Settings.CanCreateTransactionOffersFor.Any(kvp2 => kvp2.Key.Id == kvp1.Key && kvp2.Value == kvp1.Value)));
 			}
 			if (request.Parameter.CanBeMiddlemanFor?.Any() ?? false)
 			{
-				retVal2 = retVal2.Where(s => request.Parameter.CanBeMiddlemanFor.All(kvp1 => s.Settings.CanBeMiddlemanFor.Any(kvp2 => kvp2.Key.Id == kvp1.Key && kvp2.Value == kvp1.Value)));
+				retVal2 = retVal2.Where(t => request.Parameter.CanBeMiddlemanFor.All(kvp1 => t.Settings.CanBeMiddlemanFor.Any(kvp2 => kvp2.Key.Id == kvp1.Key && kvp2.Value == kvp1.Value)));
 			}
 
 			return retVal2;

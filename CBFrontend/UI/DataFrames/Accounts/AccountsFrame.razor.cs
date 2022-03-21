@@ -121,7 +121,7 @@ namespace CBFrontend.UI.DataFrames.Accounts
 				}
 				async Task subscribeToDepartmentAccountEvents(DepartmentAccountEntity account)
 				{
-					await SubscribeOnce(new EventSubscription(nameof(IDepartmentService.OnDepartmentDeleted), account.Department.HubId), () => removeDepartment(account));
+					await SubscribeOnce(new EventSubscription(nameof(IEventfulDepartmentService.OnDepartmentDeleted), account.Department.HubId), () => removeDepartment(account));
 				}
 				void removeDepartment(DepartmentAccountEntity account)
 				{

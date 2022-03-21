@@ -22,12 +22,12 @@ namespace CitizenBank.Events
 			RegisterTypeToServices<IEventfulAccountService, AccountService>(new InjectionConstructor(this));
 			RegisterTypeToServices<IEventfulCBMessageService, CBMessageService>(new InjectionConstructor(this));
 			RegisterTypeToServices<IEventfulCitizenService, CitizenService>(new InjectionConstructor(this));
-			RegisterTypeToServices<IDepartmentService, DepartmentService>(new InjectionConstructor(this));
+			RegisterTypeToServices<IEventfulDepartmentService, DepartmentService>(new InjectionConstructor(this));
 			RegisterTypeToServices<IEventfulTransactionService, TransactionService>(new InjectionConstructor(this));
 			RegisterTypeToServices<IEventfulLogisticsService, LogisticsService>(new InjectionConstructor(this));
 
 			RegisterTypeToServices<ICitizenService, CitizenService>(new InjectionConstructor(this));
-			RegisterTypeToServices<IDepartmentServiceBase, DepartmentService>(new InjectionConstructor(this));
+			RegisterTypeToServices<IDepartmentService, DepartmentService>(new InjectionConstructor(this));
 
 			RegisterTypeToServices<IAccountService, AccountService>(new InjectionConstructor(this));
 			RegisterTypeToServices<ICBMessageService, CBMessageService>(new InjectionConstructor(this));

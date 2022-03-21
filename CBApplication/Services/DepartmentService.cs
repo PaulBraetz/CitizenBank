@@ -28,21 +28,21 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 
-using static CBApplication.Services.Abstractions.IDepartmentService;
+using static CBApplication.Services.Abstractions.IEventfulDepartmentService;
 using static PBCommon.Enums;
 using System.Threading.Tasks;
-using static CBApplication.Services.Abstractions.IDepartmentServiceBase;
+using static CBApplication.Services.Abstractions.IDepartmentService;
 using PBApplication.Context.Abstractions;
 using PBApplication.Services.Abstractions;
 using CBApplication.Extensions;
 
 namespace CBApplication.Services
 {
-	public class DepartmentService : CBService, IDepartmentService
+	public class DepartmentService : CBService, IEventfulDepartmentService
 	{
 		public DepartmentService(IServiceContext serviceContext) : base(serviceContext)
 		{
-			Observe<IDepartmentService>(this);
+			Observe<IEventfulDepartmentService>(this);
 		}
 
 		public event ServiceEventHandler<ServiceEventArgs<SubDepartmentEntity>> OnDepartmentCreated;
@@ -239,7 +239,7 @@ namespace CBApplication.Services
 			return response;
 		}
 
-		public event ServiceEventHandler<ServiceEventArgs<AccountEntityBase>> OnMemberRecruitedForDepartment;
+		public event ServiceEventHandler<ServiceEventArgs<IAccountEntity>> OnMemberRecruitedForDepartment;
 		public event ServiceEventHandler<ServiceEventArgs<IDepartmentEntity>> OnMemberRecruitedForMember;
 		public async Task<IResponse> RecruitMemberIntoDepartment(IAsCitizenEncryptableRequest<EditDepartmentMembershipParameter> request)
 		{
@@ -249,7 +249,7 @@ namespace CBApplication.Services
 			{
 				var citizen = GetCitizenEntity(request);
 				var department = Connection.GetSingle<IDepartmentEntity>(request.Parameter.DepartmentId);
-				var member = Connection.GetSingle<AccountEntityBase>(request.Parameter.MemberId);
+				var member = Connection.GetSingle<IAccountEntity>(request.Parameter.MemberId);
 				Lazy<IAccountSettingsEntity> settings = new(() => GetSettings<IAccountSettingsEntity>(department));
 
 				Boolean memberCheck()
@@ -289,7 +289,7 @@ namespace CBApplication.Services
 
 			return response;
 		}
-		public event ServiceEventHandler<ServiceEventArgs<AccountEntityBase>> OnMemberResignedForDepartment;
+		public event ServiceEventHandler<ServiceEventArgs<IAccountEntity>> OnMemberResignedForDepartment;
 		public event ServiceEventHandler<ServiceEventArgs<IDepartmentEntity>> OnMemberResignedForMember;
 		public async Task<IResponse> ResignMemberFromDepartment(IAsCitizenEncryptableRequest<EditDepartmentMembershipParameter> request)
 		{
@@ -303,19 +303,18 @@ namespace CBApplication.Services
 
 				void successAction()
 				{
-					department.Value.Members.Remove(member.Value);
-					Connection.Update(department.Value);
-					Connection.SaveChanges();
+					var memberClaim = member.Value.GetHeldClaims(Connection, CBCommon.Settings.CitizenBank.MEMBER_RIGHT, department).Single();
+					GetService<IEventfulClaimService>().RemoveRight(memberClaim, CBCommon.Settings.CitizenBank.MEMBER_RIGHT);
 
-					OnMemberResignedForDepartment.Invoke(Session, department.Value, member.Value.CloneAsT());
-					OnMemberResignedForMember.Invoke(Session, member.Value, department.Value.CloneAsT());
+					OnMemberResignedForDepartment.Invoke(Session, department, member.Value.CloneAsT());
+					OnMemberResignedForMember.Invoke(Session, member.Value, department.CloneAsT());
 
 					UserEntity user = GetUserEntity(request);
-					LogIfAccessingAsDelegate(user, "removed member " + member.Value.Name + " from department " + department.Value.Name);
+					LogIfAccessingAsDelegate(user, "removed member " + member.Value.Name + " from department " + department.Name);
 				}
 
 				await FirstValidateAsCitizen(request, response)
-					.NextManagerManagesProperty(citizen, department, Connection, ValidationField.Create(nameof(request.Parameter.DepartmentId)))
+					.NextEntityHoldsManagerImplicitlyRecursively(citizen, department, Connection, ValidationField.Create(nameof(request.Parameter.DepartmentId)))
 					.NextNullCheck(member,
 						ValidationField.Create(nameof(request.Parameter.MemberId)),
 						ValidationCode.NotFound.WithMessage("The member requested could not be found."))
@@ -337,29 +336,29 @@ namespace CBApplication.Services
 
 			async Task notNullRequest()
 			{
-				UserEntity user = GetUserEntity(request);
-				Lazy<CitizenEntity> citizen = GetCitizenEntityLazily(request);
-				Lazy<IDepartmentEntity> department = Connection.GetSingle<IDepartmentEntity>(request.Parameter.DepartmentId);
+				var citizen = GetCitizenEntity(request);
+				var department = Connection.GetSingle<IDepartmentEntity>(request.Parameter.DepartmentId);
 				TagEntity tag = null;
 
 				async Task<Boolean> tagsCheck()
 				{
 					tag ??= await GetService<IEventfulTagService>().GetTag(request.Parameter.TagName);
-					return !department.Value.Tags.Any(m => m.Id == tag.Id);
+					return !department.Tags.Any(m => m.Id == tag.Id);
 				}
 				void successAction()
 				{
-					department.Value.Tags.Add(tag);
-					Connection.Update(department.Value);
+					department.Tags.Add(tag);
+					Connection.Update(department);
 					Connection.SaveChanges();
 
-					OnTagAdded.Invoke(Session, department.Value, tag.CloneAsT());
+					OnTagAdded.Invoke(Session, department, tag.CloneAsT());
 
-					LogIfAccessingAsDelegate(user, "added tag " + tag.Name + " to department " + department.Value.Name);
+					UserEntity user = GetUserEntity(request);
+					LogIfAccessingAsDelegate(user, "added tag " + tag.Name + " to department " + department.Name);
 				}
 
-				await FirstValidateAsCitizen(user, citizen, response.Validation)
-					.NextManagerManagesProperty(citizen, department, Connection, ValidationField.Create(nameof(request.Parameter.DepartmentId)))
+				await FirstValidateAsCitizen(request, response)
+					.NextEntityHoldsManagerImplicitlyRecursively(citizen, department, Connection, ValidationField.Create(nameof(request.Parameter.DepartmentId)))
 					.NextCompound(tagsCheck,
 						 ValidationField.Create(nameof(request.Parameter.TagName)),
 						 ValidationCode.Duplicate.WithMessage("The tag requested has already been added to the department."))
@@ -380,24 +379,27 @@ namespace CBApplication.Services
 
 			async Task notNullRequest()
 			{
-				UserEntity user = GetUserEntity(request);
-				Lazy<CitizenEntity> citizen = GetCitizenEntityLazily(request);
-				Lazy<IDepartmentEntity> department = Connection.GetSingle<IDepartmentEntity>(request.Parameter.DepartmentId);
-				Lazy<TagEntity> tag = new Lazy<TagEntity>(() => department.Value.Tags.SingleOrDefault(t => t.Name.Equals(request.Parameter.TagName)));
+				var citizen = GetCitizenEntity(request);
+				var department = Connection.GetSingle<IDepartmentEntity>(request.Parameter.DepartmentId);
+				Lazy<TagEntity> tag = new(() => department.Tags.SingleOrDefault(t => t.Name.Equals(request.Parameter.TagName)));
 
 				void successAction()
 				{
-					department.Value.Tags.Remove(tag.Value);
+					department.Tags.Remove(tag.Value);
 					Connection.Update(department);
 					Connection.SaveChanges();
 
-					OnTagRemoved.Invoke(Session, department.Value, tag.Value.CloneAsT());
+					OnTagRemoved.Invoke(Session, department, tag.Value.CloneAsT());
 
-					LogIfAccessingAsDelegate(user, "removed tag " + tag.Value.Name + " from department " + department.Value.Name);
+					UserEntity user = GetUserEntity(request);
+					LogIfAccessingAsDelegate(user, "removed tag " + tag.Value.Name + " from department " + department.Name);
 				}
 
-				await FirstValidateAsCitizen(user, citizen, response.Validation)
-					.NextManagerManagesProperty(citizen, department, Connection, ValidationField.Create(nameof(request.Parameter.DepartmentId)))
+				await FirstValidateAsCitizen(request, response)
+					.NextEntityHoldsManagerImplicitlyRecursively(citizen,
+						department,
+						Connection,
+						ValidationField.Create(nameof(request.Parameter.DepartmentId)))
 					.NextNullCheck(tag,
 						ValidationField.Create(nameof(request.Parameter.TagName)),
 						ValidationCode.NotFound.WithMessage("The tag requested could not be found."))
@@ -418,22 +420,21 @@ namespace CBApplication.Services
 
 			async Task notNullRequest()
 			{
-				UserEntity user = GetUserEntity(request);
-				Lazy<CitizenEntity> citizen = GetCitizenEntityLazily(request);
-				Lazy<IAccountEntity> account = GetAccountEntityLazily(request);
+				var citizen = GetCitizenEntity(request);
+				var account = GetAccountEntity<IAccountEntity>(request);
 
 				void successAction()
 				{
-					response.Data = Connection.Query<IDepartmentEntity>()
-						.Where(d => d.Members.Any(m => m.Id == account.Value.Id))
+					response.Data = account.GetHeldClaimsValues<IDepartmentEntity>(Connection, CBCommon.Settings.CitizenBank.MEMBER_RIGHT)
 						.CloneAsT()
 						.ToList();
 
+					UserEntity user = GetUserEntity(request);
 					LogIfAccessingAsDelegate(user, "retrieved departments for member");
 				}
 
-				await FirstValidateAsCitizen(user, citizen, response.Validation)
-					.NextManagerManagesProperty(citizen, account, Connection, ValidationField.Create(nameof(request.AsAccountId)))
+				await FirstValidateAsCitizen(request, response)
+					.NextEntityHoldsManagerImplicitlyRecursively(citizen, account, Connection, ValidationField.Create(nameof(request.AsAccountId)))
 					.SetOnCriterionMet(successAction)
 					.Evaluate(response);
 			}
@@ -450,20 +451,19 @@ namespace CBApplication.Services
 
 			async Task notNullRequest()
 			{
-				UserEntity user = GetUserEntity(request);
-				Lazy<CitizenEntity> citizen = GetCitizenEntityLazily(request);
+				var citizen = GetCitizenEntity(request);
 
 				void successAction()
 				{
-					response.Data = Connection.Query<IDepartmentEntity>()
-						.Where(d => d.Admins.Any(a => a.Id == citizen.Value.Id))
+					response.Data = citizen.GetHeldAdminClaimsValues<IDepartmentEntity>(Connection)
 						.CloneAsT()
 						.ToList();
 
+					UserEntity user = GetUserEntity(request);
 					LogIfAccessingAsDelegate(user, "retrieved departments for admin");
 				}
 
-				await FirstValidateAsCitizen(user, citizen, response.Validation)
+				await FirstValidateAsCitizen(request, response)
 					.SetOnCriterionMet(successAction)
 					.Evaluate(response);
 			}
@@ -486,12 +486,12 @@ namespace CBApplication.Services
 				void successAction()
 				{
 					var account = GetAccountEntity<RealAccountEntity>(request);
-					Lazy<CitizenEntity> asCitizen = new Lazy<CitizenEntity>(() => account.GetOwnerClaimsHolders<CitizenEntity>(Connection).Single());
+					Lazy<CitizenEntity> asCitizen = new(() => account.GetOwnerClaimsHolders<CitizenEntity>(Connection).Single());
 
 					ScrapeX.Interfaces.IScraper scraper = new ScraperFactory()
 					.CreateSinglePageScraper("https://robertsspaceindustries.com/citizens/" + account.Name + "/organizations");
 
-					Dictionary<String, String> paths = new Dictionary<String, String>();
+					Dictionary<String, String> paths = new();
 
 					var items = new List<IEntity>();
 
@@ -501,6 +501,8 @@ namespace CBApplication.Services
 
 					var oldAdminIn = account.GetHeldAdminClaimsValues<OrgEntity>(Connection).ToList();
 					var newAdminIn = new List<OrgEntity>();
+
+					var claimService = GetService<IEventfulClaimService>();
 
 					for (Int32 i = 1; i < 11; i++)
 					{
@@ -546,11 +548,6 @@ namespace CBApplication.Services
 
 										 Int32 rank = dict.Skip(((i - 1) * 7) + 2).Take(5).ToList().Count(kvp => kvp.Value != null);
 
-
-#if DEBUG
-										 rank = 5;
-#endif
-
 										 void insertIntoDepartment()
 										 {
 											 if (rank == 5)
@@ -558,13 +555,13 @@ namespace CBApplication.Services
 												 org.Creator = asCitizen.Value;
 												 if (!oldAdminIn.Any(d => d.Id == org.Id))
 												 {
-													 org.Admins.Add(asCitizen.Value);
+													 claimService.EnsureClaim(asCitizen.Value, PBCommon.Configuration.Settings.ADMIN_RIGHT, org);
 												 }
 												 newAdminIn.Add(org);
 											 }
 											 if (!oldMemberIn.Any(d => d.Id == org.Id))
 											 {
-												 org.Members.Add(account.Value);
+												 claimService.EnsureClaim(account, CBCommon.Settings.CitizenBank.MEMBER_RIGHT, org);
 											 }
 											 newMemberIn.Add(org);
 										 }
@@ -573,11 +570,14 @@ namespace CBApplication.Services
 										 {
 											 org = new OrgEntity(name, sid);
 											 insertIntoDepartment();
-											 items.Add(org);
-											 items.Add(new OrgSettingsEntity(org)
+											 var settings = new OrgSettingsEntity()
 											 {
 												 Accessibility = AccessibilityType.Public
-											 });
+											 };
+											 Connection.Insert(org);
+											 Connection.Insert(settings);
+
+											 claimService.EnsureClaim(org, PBCommon.Configuration.Settings.ADMIN_RIGHT, settings);
 										 }
 										 else
 										 {
@@ -588,40 +588,34 @@ namespace CBApplication.Services
 								 }
 							 });
 
-					items.ForEach(i => Connection.Insert(i));
+					Connection.Insert(items);
 
 					oldMemberIn
 						.Where(o => !newMemberIn.Any(d => d.Id == o.Id))
-						.ToList()
-						.ForEach(o =>
+						.Select(o => (Org: o, MemberClaim: o.GetClaims(Connection, account, CBCommon.Settings.CitizenBank.MEMBER_RIGHT).Single()))
+						.ForEach(data =>
 						{
-							o.Members.Remove(o.Members.Single(m => m.Id == account.Value.Id));
-							Connection.Update(o);
+							claimService.RemoveRight(data.MemberClaim, CBCommon.Settings.CitizenBank.MEMBER_RIGHT);
 						});
 					oldAdminIn
 						.Where(o => !newAdminIn.Any(d => d.Id == o.Id))
-						.ToList()
-						.ForEach(o =>
+						.Select(o => (Org: o, AdminClaim: o.GetClaims(Connection, account, PBCommon.Configuration.Settings.ADMIN_RIGHT).Single()))
+						.ForEach(data =>
 						{
-							o.Admins.Remove(o.Admins.Single(a => a.Id == asCitizen.Value.Id));
-							Connection.Update(o);
+							claimService.RemoveRight(data.AdminClaim, CBCommon.Settings.CitizenBank.MEMBER_RIGHT);
 						});
 
 					Connection.SaveChanges();
 
-					var adminIn = Connection.Query<OrgEntity>()
-						.Where(o => o.Admins.Any(a => a.Id == asCitizen.Value.Id))
-						.CloneAsT()
-						.ToArray();
+					var adminIn = asCitizen.Value.GetHeldAdminClaimsValues<OrgEntity>(Connection).CloneAsT().ToList();
 
 					OnOrgsAdminsUpdated.Invoke(Session, asCitizen.Value, new OnOrgsUpdatedData() { Orgs = adminIn });
 
-					var memberIn = Connection.Query<OrgEntity>()
-						.Where(o => o.Members.Any(m => m.Id == account.Value.Id))
+					var memberIn = asCitizen.Value.GetHeldClaimsValues<OrgEntity>(Connection, CBCommon.Settings.CitizenBank.MEMBER_RIGHT)
 						.CloneAsT()
 						.ToArray();
 
-					OnOrgsMembersUpdated.Invoke(Session, account.Value, new OnOrgsUpdatedData() { Orgs = memberIn });
+					OnOrgsMembersUpdated.Invoke(Session, account, new OnOrgsUpdatedData() { Orgs = memberIn });
 
 					UserEntity user = GetUserEntity(request);
 					LogIfAccessingAsDelegate(user, "updated orgs");
@@ -639,99 +633,77 @@ namespace CBApplication.Services
 			return response;
 		}
 
-		private async Task<IEnumerable<TDepartment>> SearchDepartments<TDepartment, TDepartmentSettings, TParameter>(IAsAccountGetPaginatedEncryptableRequest<TParameter> request, IValidationFieldCollection validation)
+		private async Task<IEnumerable<(TDepartment Department, TDepartmentSettings Settings)>> SearchDepartments<TDepartment, TDepartmentSettings, TParameter>(IAsAccountGetPaginatedEncryptableRequest<TParameter> request, IResponse response)
 			where TDepartment : IDepartmentEntity
-			where TDepartmentSettings : IDepartmentSettingsEntity<TDepartment>
+			where TDepartmentSettings : IDepartmentSettingsEntity
 			where TParameter : SearchDepartmentsParameterBase
 		{
-			var retVal1 = Connection.Query<TDepartmentSettings>();
+			//Sort by account first, since most common search parameter will likely be name
+			//Since results have to be instanciated (.ToList()), most of the result set should have been filtered beforehand, so as not to query too many datasets.
+
+			IEnumerable<TDepartment> retVal1 = Connection.Query<TDepartment>();
+			if (!String.IsNullOrWhiteSpace(request.Parameter.Name))
+			{
+				var name = request.Parameter.Name.Trim().ToLower();
+				retVal1 = retVal1.Where(d => d.Name.ToLower().Contains(name));
+			}
+			if (request.Parameter.CreatorId.HasValue)
+			{
+				retVal1 = retVal1.Where(d => d.Creator.Id == request.Parameter.CreatorId.Value);
+			}
+			if (request.Parameter.ExcludeIds?.Any() ?? false)
+			{
+				retVal1 = retVal1.Where(d => !request.Parameter.ExcludeIds.Contains(d.Id));
+			}
+			if (request.Parameter.ExcludeNames?.Any() ?? false)
+			{
+				retVal1 = retVal1.Where(d => !request.Parameter.ExcludeNames.Contains(d.Name.ToLower()));
+			}
+			if (request.Parameter.TagsIds?.Any() ?? false)
+			{
+				retVal1 = retVal1.Where(d => !request.Parameter.TagsIds.All(id => d.Tags.Any(t => t.Id == id)));
+			}
+			if (request.Parameter.PriorityTagsIds?.Any() ?? false)
+			{
+				retVal1 = retVal1.Where(d => !request.Parameter.PriorityTagsIds.All(id => d.PriorityTags.Any(t => t.Id == id)));
+			}
+
+			retVal1 = retVal1.ToList();
+
+			var retVal2 = retVal1.Select(d => (Department: d, Settings: GetSettings<TDepartmentSettings>(d)));
+
 			if (request.Parameter.Accessibility.HasValue && request.Parameter.Accessibility.Value == AccessibilityType.Private)
 			{
 				var user = GetUserEntity(request);
 				Boolean userIsInRoleCheck()
 				{
-					return user.IsInRole(PBCommon.Settings.ADMIN_ROLE) || user.IsInRole(PBCommon.Settings.SUPERADMIN_ROLE);
+					return user.HoldsAdminRight(Connection) || user.HoldsOwnerRight(Connection);
 				}
-				void accessibilitySuccessAction()
+				void isAdminOrOwner()
 				{
-					retVal1 = retVal1.Where(s => s.Accessibility == request.Parameter.Accessibility.Value);
+					retVal2 = retVal2.Where(t => t.Settings.Accessibility == request.Parameter.Accessibility.Value);
+				}
+				void isNeitherAdminNorOwner()
+				{
+					retVal2 = retVal2.Where(t => t.Settings.Accessibility == request.Parameter.Accessibility.Value && (user.HoldsOwnerRightRecursively(Connection, t.Department) || user.HoldsAdminRightRecursively(Connection, t.Department) || user.HoldsObserverRightRecursively(Connection, t.Department)));
 				}
 
-				await FirstValidateAsUser(user, validation)
+				await FirstValidateAuthenticatedDelegate(request, response)
 					.NextCompound(userIsInRoleCheck)
-					.SetOnCriterionMet(accessibilitySuccessAction)
+					.SetOnCriterionMet(isAdminOrOwner)
+					.SetOnCriterionFailed(isNeitherAdminNorOwner)
 					.Evaluate(response);
 			}
 			else
 			{
-				retVal1 = retVal1.Where(s => s.Accessibility == AccessibilityType.Public);
+				retVal2 = retVal2.Where(t => t.Settings.Accessibility == AccessibilityType.Public);
 			}
 			if (request.Parameter.InviteOnly.HasValue)
 			{
-				retVal1 = retVal1.Where(s => s.InviteOnly == request.Parameter.InviteOnly.Value);
-			}
-			var retVal2 = retVal1.Select(s => s.Owner);
-			if (!String.IsNullOrWhiteSpace(request.Parameter.Name))
-			{
-				var name = request.Parameter.Name.Trim().ToLower();
-				retVal2 = retVal2.Where(d => d.Name.ToLower().Contains(name));
-			}
-			if (request.Parameter.CreatorId.HasValue)
-			{
-				retVal2 = retVal2.Where(d => d.Creator.Id == request.Parameter.CreatorId.Value);
-			}
-			if (request.Parameter.ExcludeIds?.Any() ?? false)
-			{
-				retVal2 = retVal2.Where(d => !request.Parameter.ExcludeIds.Contains(d.Id));
-			}
-			if (request.Parameter.ExcludeNames?.Any() ?? false)
-			{
-				retVal2 = retVal2.Where(d => !request.Parameter.ExcludeNames.Contains(d.Name.ToLower()));
-			}
-			if (request.Parameter.TagsIds?.Any() ?? false)
-			{
-				retVal2 = retVal2.Where(d => !request.Parameter.TagsIds.All(id => d.Tags.Any(t => t.Id == id)));
-			}
-			if (request.Parameter.PriorityTagsIds?.Any() ?? false)
-			{
-				retVal2 = retVal2.Where(d => !request.Parameter.PriorityTagsIds.All(id => d.PriorityTags.Any(t => t.Id == id)));
-			}
-			if (request.Parameter.MembersIds?.Any() ?? false)
-			{
-				retVal2 = retVal2.Where(d => !request.Parameter.MembersIds.All(id => d.Members.Any(m => m.Id == id)));
-			}
-			if (request.Parameter.AdminsIds?.Any() ?? false)
-			{
-				retVal2 = retVal2.Where(d => !request.Parameter.AdminsIds.All(id => d.Admins.Any(a => a.Id == id)));
+				retVal2 = retVal2.Where(t => t.Settings.InviteOnly == request.Parameter.InviteOnly.Value);
 			}
 
 			return retVal2;
-		}
-
-		public async Task<IGetPaginatedEncryptableResponse<IDepartmentEntity>> SearchDepartments(IAsAccountGetPaginatedEncryptableRequest<SearchDepartmentsParameterBase> request)
-		{
-			var response = new GetPaginatedEncryptableResponse<IDepartmentEntity>();
-
-			async Task notNullRequest()
-			{
-				var data = await SearchDepartments<IDepartmentEntity, IDepartmentSettingsEntity<IDepartmentEntity>, SearchDepartmentsParameterBase>(request, response.Validation);
-
-				void setData()
-				{
-					response.LastPage = data.GetPageCount(request.PerPage) - 1;
-					response.Data = data.Paginate(request.PerPage, request.Page).Select(a => a.CloneAsT()).ToList();
-				}
-				await CachedCriterionChain.Cache.Get()
-					.ThisValidatePagination(request, data, response.Validation)
-					.SetOnCriterionMet(setData)
-					.Evaluate(response);
-			}
-
-			await FirstParameterizedRequestNullCheck(request, response)
-				.SetOnCriterionMet(notNullRequest)
-				.Evaluate(response);
-
-			return response;
 		}
 
 		public async Task<IGetPaginatedEncryptableResponse<OrgEntity>> SearchOrgs(IAsAccountGetPaginatedEncryptableRequest<SearchOrgsParameter> request)
@@ -740,16 +712,19 @@ namespace CBApplication.Services
 
 			async Task notNullRequest()
 			{
-				var data = await SearchDepartments<OrgEntity, OrgSettingsEntity, SearchOrgsParameter>(request, response.Validation);
+				var data = await SearchDepartments<OrgEntity, OrgSettingsEntity, SearchOrgsParameter>(request, response);
 				if (!String.IsNullOrWhiteSpace(request.Parameter.SID))
 				{
-					data = data.Where(d => String.Equals(request.Parameter.SID, d.SID));
+					data = data.Where(t => String.Equals(request.Parameter.SID, t.Department.SID));
 				}
 
 				void setData()
 				{
 					response.LastPage = data.GetPageCount(request.PerPage) - 1;
-					response.Data = data.Paginate(request.PerPage, request.Page).Select(a => a.CloneAsT()).ToList();
+					response.Data = data.Paginate(request.PerPage, request.Page)
+						.Select(t=>t.Department)
+						.CloneAsT()
+						.ToList();
 				}
 				await CachedCriterionChain.Cache.Get()
 					.ThisValidatePagination(request, data, response.Validation)
@@ -770,12 +745,15 @@ namespace CBApplication.Services
 
 			async Task notNullRequest()
 			{
-				var data = await SearchDepartments<SubDepartmentEntity, SubDepartmentSettingsEntity, SearchSubDepartmentsParameter>(request, response.Validation);
+				var data = await SearchDepartments<SubDepartmentEntity, SubDepartmentSettingsEntity, SearchSubDepartmentsParameter>(request, response);
 
 				void setData()
 				{
 					response.LastPage = data.GetPageCount(request.PerPage) - 1;
-					response.Data = data.Paginate(request.PerPage, request.Page).Select(a => a.CloneAsT()).ToList();
+					response.Data = data.Paginate(request.PerPage, request.Page)
+						.Select(t => t.Department)
+						.CloneAsT()
+						.ToList();
 				}
 				await CachedCriterionChain.Cache.Get()
 					.ThisValidatePagination(request, data, response.Validation)
