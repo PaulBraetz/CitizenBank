@@ -159,7 +159,7 @@ namespace CBApplication.Services
 
 					if (recipientSettings.TransactionOfferLifetime > TimeSpan.Zero)
 					{
-						TransactionOfferEntity newOffer = new TransactionOfferEntity(source, recipientSettings.TransactionOfferLifetime);
+						TransactionOfferEntity newOffer = new(source, recipientSettings.TransactionOfferLifetime);
 						newOffer.RefreshNow();
 						Connection.Insert(newOffer);
 
@@ -206,7 +206,7 @@ namespace CBApplication.Services
 				{
 					return targetContract.Creditor.Id == account.Id;
 				}
-				Lazy<Decimal> valueSubAccountBookingsSum = new Lazy<Decimal>(() =>
+				Lazy<Decimal> valueSubAccountBookingsSum = new(() =>
 				{
 					ICollection<BookingEntity> creditorBookings = targetContract.CreditorBookings;
 
@@ -562,7 +562,7 @@ namespace CBApplication.Services
 
 				void successAction()
 				{
-					CurrencyEntity newCurrency = new CurrencyEntity(Session.User, request.Parameter.Name, request.Parameter.PluralName, request.Parameter.IngameTax);
+					CurrencyEntity newCurrency = new(Session.User, request.Parameter.Name, request.Parameter.PluralName, request.Parameter.IngameTax);
 					Connection.Insert(newCurrency);
 
 					var dictionaries = Connection.Query<CurrencyBoolDictionaryEntity>();
@@ -994,7 +994,7 @@ namespace CBApplication.Services
 			}
 
 			TransactionPartnersRelationship sourceRelationship = GetSuperficialRelationship(creditor, debtor);
-			List<TargetTransactionContractEntity> targetTransactionContracts = new List<TargetTransactionContractEntity> { };
+			List<TargetTransactionContractEntity> targetTransactionContracts = new() { };
 
 			IEnumerable<DepositAccountReferenceEntity> getActiveDeposits(VirtualAccountEntity account)
 			{
@@ -1020,10 +1020,10 @@ namespace CBApplication.Services
 				Lazy<VirtualAccountSettingsEntity> virtualDebtorSettings = new(() => GetSettings<VirtualAccountSettingsEntity>(virtualDebtor.Value));
 
 				Lazy<RealAccountEntity> realCreditor = new(() => Connection.GetFirst<RealAccountEntity>(creditor.Id));
-				Lazy<RealAccountSettingsEntity> realCreditorSettings = new Lazy<RealAccountSettingsEntity>(() => GetSettings<RealAccountSettingsEntity>(realCreditor.Value));
+				Lazy<RealAccountSettingsEntity> realCreditorSettings = new(() => GetSettings<RealAccountSettingsEntity>(realCreditor.Value));
 
 				Lazy<RealAccountEntity> realDebtor = new(() => Connection.GetFirst<RealAccountEntity>(debtor.Id));
-				Lazy<RealAccountSettingsEntity> realDebtorSettings = new Lazy<RealAccountSettingsEntity>(() => GetSettings<RealAccountSettingsEntity>(realDebtor.Value));
+				Lazy<RealAccountSettingsEntity> realDebtorSettings = new(() => GetSettings<RealAccountSettingsEntity>(realDebtor.Value));
 
 				Lazy<CBData.Abstractions.IAccountSettingsEntity> recipientSettings = new(() => GetSettings<IAccountSettingsEntity>(recipient));
 
@@ -1045,7 +1045,7 @@ namespace CBApplication.Services
 							val = value - sum;
 						}
 						val = val.RoundCIG();
-						retVal.Add((referencedAccount: referencedAccount, cut: val));
+						retVal.Add((referencedAccount, cut: val));
 						sum += val;
 					}
 					return retVal;
@@ -1072,16 +1072,16 @@ namespace CBApplication.Services
 							RealAccountEntity creditorForwardingAccount = getForwardingAccount(virtualCreditor.Value);
 							var creditorDepositCuts = getDepositCuts(virtualCreditor.Value, net);
 
-							foreach (var cutData in creditorDepositCuts)
+							foreach (var (referencedAccount, cut) in creditorDepositCuts)
 							{
 								targetTransactionContracts.Add(new TargetTransactionContractEntity(creator,
 																								   recipient,
-																								   cutData.referencedAccount,
+																								   referencedAccount,
 																								   creditorForwardingAccount,
 																								   CBCommon.Settings.CitizenBank.DefaultGeneratedMessage,
 																								   currency.IngameTax,
 																								   currency,
-																								   cutData.cut,
+																								   cut,
 																								   TransactionPartnersRelationship.ForwardToDeposit,
 																								   virtualCreditorSettings.Value.DepositForwardLifeSpan));
 							}
@@ -1111,16 +1111,16 @@ namespace CBApplication.Services
 																							   TransactionPartnersRelationship.ForwardToReal,
 																							   additionalUntilDue));
 							var debtorDepositCuts = getDepositCuts(virtualDebtor.Value, targetTransactionContracts.Sum(c => c.Gross));
-							foreach (var cutData in debtorDepositCuts)
+							foreach (var (referencedAccount, cut) in debtorDepositCuts)
 							{
 								targetTransactionContracts.Add(new TargetTransactionContractEntity(creator,
 																							   recipient,
 																								   debtorForwardingAccount,
-																								   cutData.referencedAccount,
+																								   referencedAccount,
 																								   CBCommon.Settings.CitizenBank.DefaultGeneratedMessage,
 																								   currency.IngameTax,
 																								   currency,
-																								   cutData.cut,
+																								   cut,
 																								   TransactionPartnersRelationship.DepositToForward,
 																								   virtualDebtorSettings.Value.DepositForwardLifeSpan));
 							}
@@ -1132,16 +1132,16 @@ namespace CBApplication.Services
 							RealAccountEntity creditorForwardingAccount = getForwardingAccount(virtualCreditor.Value);
 
 							var creditorDepositCuts = getDepositCuts(virtualCreditor.Value, net);
-							foreach (var cutData in creditorDepositCuts)
+							foreach (var (referencedAccount, cut) in creditorDepositCuts)
 							{
 								targetTransactionContracts.Add(new TargetTransactionContractEntity(creator,
 																							   recipient,
-																								   cutData.referencedAccount,
+																								   referencedAccount,
 																								   creditorForwardingAccount,
 																								   CBCommon.Settings.CitizenBank.DefaultGeneratedMessage,
 																								   currency.IngameTax,
 																								   currency,
-																								   cutData.cut,
+																								   cut,
 																								   TransactionPartnersRelationship.ForwardToDeposit,
 																								   virtualCreditorSettings.Value.DepositForwardLifeSpan));
 							}
@@ -1158,16 +1158,16 @@ namespace CBApplication.Services
 																							   additionalUntilDue));
 
 							var debtorDepositCuts = getDepositCuts(virtualDebtor.Value, targetTransactionContracts.Where(t => t.Relationship == TransactionPartnersRelationship.ForwardToForward).Sum(c => c.Gross));
-							foreach (var cutData in debtorDepositCuts)
+							foreach (var (referencedAccount, cut) in debtorDepositCuts)
 							{
 								targetTransactionContracts.Add(new TargetTransactionContractEntity(creator,
 																								   recipient,
 																								   debtorForwardingAccount,
-																								   cutData.referencedAccount,
+																								   referencedAccount,
 																								   CBCommon.Settings.CitizenBank.DefaultGeneratedMessage,
 																								   currency.IngameTax,
 																								   currency,
-																								   cutData.cut,
+																								   cut,
 																								   TransactionPartnersRelationship.DepositToForward,
 																								   virtualDebtorSettings.Value.DepositForwardLifeSpan));
 							}
@@ -1213,7 +1213,7 @@ namespace CBApplication.Services
 
 			List<Tuple<RealAccountEntity, Decimal>> getManipulatorCuts(Decimal value)
 			{
-				List<Tuple<RealAccountEntity, Decimal>> depositCuts = new List<Tuple<RealAccountEntity, Decimal>> { };
+				List<Tuple<RealAccountEntity, Decimal>> depositCuts = new() { };
 				Decimal absoluteLimit = depositAccountReferences.Sum(d => d.CalculatedAbsoluteLimit);
 				foreach (DepositAccountReferenceEntity d in depositAccountReferences)
 				{
@@ -1224,7 +1224,7 @@ namespace CBApplication.Services
 
 			List<Tuple<RealAccountEntity, Decimal>> getOtherCuts(VirtualAccountEntity account, Decimal value)
 			{
-				List<Tuple<RealAccountEntity, Decimal>> depositCuts = new List<Tuple<RealAccountEntity, Decimal>> { };
+				List<Tuple<RealAccountEntity, Decimal>> depositCuts = new() { };
 				ICollection<DepositAccountReferenceEntity> baseDepositAccountReferences = account.DepositReferences;
 				IEnumerable<DepositAccountReferenceEntity> otherDepositAccountReferences = manipulatorIsCreditor ?
 				targets
@@ -1247,7 +1247,7 @@ namespace CBApplication.Services
 			Lazy<VirtualAccountSettingsEntity> manipulatorSettings = new(() => GetSettings<VirtualAccountSettingsEntity>(manipulator));
 
 			RealAccountEntity manipulatorForwardingAccount = Connection.GetFirst<RealAccountEntity>(forwardingAccountReference.ReferencedAccount.Id);
-			List<TargetTransactionContractEntity> newTargets = new List<TargetTransactionContractEntity> { };
+			List<TargetTransactionContractEntity> newTargets = new() { };
 
 			if (manipulatorIsCreditor)
 			{
@@ -1267,7 +1267,7 @@ namespace CBApplication.Services
 																									   manipulatorSettings.Value.DepositForwardLifeSpan)));
 					TargetTransactionContractEntity previousFTFContract = targets.Single(t => t.Relationship == TransactionPartnersRelationship.ForwardToForward);
 					RealAccountEntity debtorForwardingAccount = Connection.GetFirst<RealAccountEntity>(previousFTFContract.Debtor.Id);
-					TargetTransactionContractEntity newFTFContract = new TargetTransactionContractEntity(manipulator,
+					TargetTransactionContractEntity newFTFContract = new(manipulator,
 															  newRecipient,
 															  manipulatorForwardingAccount,
 															  debtorForwardingAccount,
@@ -1302,7 +1302,7 @@ namespace CBApplication.Services
 																									   TransactionPartnersRelationship.ForwardToDeposit,
 																									   manipulatorSettings.Value.DepositForwardLifeSpan)));
 					TargetTransactionContractEntity previousRTFContract = targets.Single(t => t.Relationship == TransactionPartnersRelationship.RealToForward);
-					TargetTransactionContractEntity newRTFContract = new TargetTransactionContractEntity(manipulator,
+					TargetTransactionContractEntity newRTFContract = new(manipulator,
 															  newRecipient,
 															  manipulatorForwardingAccount,
 															  realDebtor,
@@ -1333,7 +1333,7 @@ namespace CBApplication.Services
 																												  TransactionPartnersRelationship.DepositToForward,
 																												  creditorSettings.Value.DepositForwardLifeSpan)));
 
-					TargetTransactionContractEntity newFTFContract = new TargetTransactionContractEntity(manipulator,
+					TargetTransactionContractEntity newFTFContract = new(manipulator,
 															  newRecipient,
 															  creditorForwardingAccount,
 															  manipulatorForwardingAccount,
@@ -1359,7 +1359,7 @@ namespace CBApplication.Services
 				else if (offer.Creditor is RealAccountEntity realCreditor)
 				{
 					TargetTransactionContractEntity previousFTRContract = targets.Single(t => t.Relationship == TransactionPartnersRelationship.ForwardToReal);
-					TargetTransactionContractEntity newFTRContract = new TargetTransactionContractEntity(manipulator,
+					TargetTransactionContractEntity newFTRContract = new(manipulator,
 															  newRecipient,
 															  realCreditor,
 															  manipulatorForwardingAccount,
@@ -1383,7 +1383,7 @@ namespace CBApplication.Services
 
 				}
 			}
-			SourceTransactionContractEntity newSource = new SourceTransactionContractEntity(manipulator,
+			SourceTransactionContractEntity newSource = new(manipulator,
 													   newRecipient,
 													   offer.Creditor,
 													   offer.Debtor,
@@ -1504,7 +1504,7 @@ namespace CBApplication.Services
 					if (!t.IsExposed)
 					{
 						t.Expose(now);
-						List<Guid> recipients = new List<Guid>
+						List<Guid> recipients = new()
 						{
 							source.HubId,
 							t.HubId

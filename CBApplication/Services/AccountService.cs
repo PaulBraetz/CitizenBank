@@ -44,10 +44,6 @@ namespace CBApplication.Services
 			Observe<IEventfulAccountService>(this);
 		}
 
-		public event ServiceEventHandler<ServiceEventArgs<CitizenEntity>> OnAdminRecruitedForAccount;
-		public event ServiceEventHandler<ServiceEventArgs<VirtualAccountEntity>> OnAdminRecruitedForAdmin;
-		public event ServiceEventHandler<ServiceEventArgs<CitizenEntity>> OnAdminResignedForAccount;
-		public event ServiceEventHandler<ServiceEventArgs<VirtualAccountEntity>> OnAdminResignedForAdmin;
 		public event ServiceEventHandler<ServiceEventArgs<RealAccountSettingsEntity>> OnRealAccountSettingsChanged;
 		public event ServiceEventHandler<ServiceEventArgs<VirtualAccountSettingsEntity>> OnVirtualAccountSettingsChanged;
 		public event ServiceEventHandler<ServiceEventArgs<DepositAccountReferenceEntity>> OnDepositAccountReferenceChangedForReferencing;

@@ -24,7 +24,7 @@ namespace CBFrontend.UI.DataFrames.Citizens
 
 		public IReadOnlyList<CitizenEntity> Citizens => citizens.AsReadOnly();
 
-		private List<CitizenEntity> citizens = new List<CitizenEntity>();
+		private List<CitizenEntity> citizens = new();
 		public CitizenEntity CurrentCitizen
 		{
 			get => currentCitizen ??= Citizens.FirstOrDefault();
@@ -39,18 +39,18 @@ namespace CBFrontend.UI.DataFrames.Citizens
 
 		protected override async Task OnParametersSetAndSessionInitializedAsync()
 		{
-			if (previousUser == null || previousUser.Id != SessionParent.Session.Owner.Id)
+			if (previousUser == null || previousUser.Id != SessionParent.Session.User.Id)
 			{
 				if (previousUser != null)
 				{
 					await generalUnsubscribe();
 				}
 
-				previousUser = SessionParent.Session.Owner;
+				previousUser = SessionParent.Session.User;
 
 				citizens = (await SessionParent.ServiceContext.GetService<IEventfulCitizenService>().GetCitizens()).Data.ToList();
 				await Task.WhenAll(citizens.Select(c => new EventSubscription(nameof(IEventfulCitizenService.OnCitizenUnlinked), c.HubId)).Select(s => SubscribeOnce<IEventfulCitizenService.OnCitizenUnlinkedData>(s, remove)));
-				await SubscribeOnce<CitizenEntity>(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenLinked), SessionParent.Session.Owner.HubId), add);
+				await SubscribeOnce<CitizenEntity>(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenLinked), SessionParent.Session.User.HubId), add);
 
 				async Task generalUnsubscribe()
 				{

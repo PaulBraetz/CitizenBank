@@ -27,7 +27,7 @@ namespace CitizenBank.Pages.Citizen.Components.Requests
 		{
 			linkNewResponse = await LoadingParent.Load(() => SessionParent.ServiceContext.GetService<IEventfulCitizenService>().CreateCitizenLinkRequest(new AsUserRequest<CreateCitizenLinkRequestParameter>()
 			{
-				AsUserId = SessionParent.Session.Owner.Id,
+				AsUserId = SessionParent.Session.User.Id,
 				Parameter = new()
 				{
 					Name = name

@@ -4,7 +4,7 @@ using CBData.Entities;
 
 using PBApplication.Responses;
 using PBApplication.Responses.Abstractions;
-
+using PBCommon.Globalization;
 using PBFrontend.Extensions;
 using PBFrontend.UI.Authorization;
 using PBFrontend.UI.Input;
@@ -29,12 +29,11 @@ namespace CBFrontend.UI.Logistics
 
 		private LoadingFrame loadingFrameRef;
 
-
 		private DateTimeOffset deadlineDate = TimeManager.Now + TimeSpan.FromDays(1);
 
 		private DateTimeOffset deadlineTime;
 
-		private CitizenEntity client = new CitizenEntity();
+		private CitizenEntity client = new();
 
 		private DateTimeOffset TotalDeadline => deadlineDate.Date + deadlineTime.TimeOfDay;
 

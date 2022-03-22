@@ -16,9 +16,8 @@ namespace CBFrontend.UI.DataFrames.Requests
 		[Parameter]
 		public RenderFragment ChildContent { get; set; }
 
-
 		public IReadOnlyList<CitizenLinkRequestEntity> Requests => requests.AsReadOnly();
-		private List<CitizenLinkRequestEntity> requests { get; set; } = new();
+		private List<CitizenLinkRequestEntity> requests = new();
 
 		protected override async Task OnParametersSetAndSessionInitializedAsync()
 		{
@@ -28,7 +27,7 @@ namespace CBFrontend.UI.DataFrames.Requests
 				await SubscribeOnce(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenLinkRequestVerified), request.HubId), () => remove(request));
 				await SubscribeOnce(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenLinkRequestCancelled), request.HubId), () => remove(request));
 			}
-			await SubscribeOnce<CitizenLinkRequestEntity>(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenLinkRequestCreated), SessionParent.Session.Owner.HubId), add);
+			await SubscribeOnce<CitizenLinkRequestEntity>(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenLinkRequestCreated), SessionParent.Session.User.HubId), add);
 
 			void add(CitizenLinkRequestEntity response)
 			{

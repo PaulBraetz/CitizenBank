@@ -15,7 +15,7 @@ namespace CBFrontend.UI.Details
 		[Parameter]
 		public CitizenEntity Citizen { get; set; }
 
-		private readonly Dictionary<String, Object> attributes = new Dictionary<String, Object>
+		private readonly Dictionary<String, Object> attributes = new()
 		{
 			{"class","text-success clickable" }
 		};

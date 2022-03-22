@@ -33,7 +33,7 @@ namespace CBFrontend.UI.Transactions
 		{
 			request = new AsAccountGetPaginatedRequest<ITransactionService.GetTransactionOffersParameter>()
 			{
-				AsUserId = SessionParent.Session.Owner.Id,
+				AsUserId = SessionParent.Session.User.Id,
 				AsAccountId = AccountsParent.CurrentAccount.Id,
 				AsCitizenId = (AccountsParent.CurrentAccount as RealAccountEntity).Owner.Id,
 				Page = 0,
@@ -50,7 +50,7 @@ namespace CBFrontend.UI.Transactions
 		{
 			var request = new AsAccountEncryptableRequest<ITransactionService.AnswerTransactionOfferParameter>()
 			{
-				AsUserId = SessionParent.Session.Owner.Id,
+				AsUserId = SessionParent.Session.User.Id,
 				AsAccountId = AccountsParent.CurrentAccount.Id,
 				AsCitizenId = (AccountsParent.CurrentAccount as RealAccountEntity).Owner.Id,
 				Parameter = new ITransactionService.AnswerTransactionOfferParameter()

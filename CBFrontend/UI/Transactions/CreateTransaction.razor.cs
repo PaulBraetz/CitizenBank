@@ -56,7 +56,7 @@ namespace CBFrontend.UI.Transactions
 			var request = new AsAccountEncryptableRequest<ITransactionService.CreateTransactionOfferParameter>()
 			{
 				Parameter = parameter,
-				AsUserId = SessionParent.Session.Owner.Id,
+				AsUserId = SessionParent.Session.User.Id,
 				AsCitizenId = (creator as RealAccountEntity)?.Owner?.Id ?? Guid.Empty,
 				AsAccountId = creator?.Id ?? Guid.Empty
 			};

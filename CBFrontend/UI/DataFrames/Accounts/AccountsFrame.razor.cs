@@ -60,7 +60,7 @@ namespace CBFrontend.UI.DataFrames.Accounts
 					.GetAccounts(new AsCitizenRequest()
 					{
 						AsCitizenId = CitizensParent.CurrentCitizen.Id,
-						AsUserId = SessionParent.Session.Owner.Id
+						AsUserId = SessionParent.Session.User.Id
 					})).Data;
 
 				virtualAccounts = accounts.OfType<VirtualAccountEntity>().ToList();

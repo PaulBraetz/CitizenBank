@@ -18,18 +18,6 @@ namespace CBApplication.Services.Abstractions
 {
 	public interface IEventfulAccountService : IAccountService, IEventfulService
 	{
-		//Payload : admin
-		//Recipients : affected account
-		event ServiceEventHandler<ServiceEventArgs<CitizenEntity>> OnAdminResignedForAccount;
-		//Payload : affected account
-		//Recipients : admin
-		event ServiceEventHandler<ServiceEventArgs<VirtualAccountEntity>> OnAdminResignedForAdmin;
-		//Payload : new admin
-		//Recipients : affected account
-		event ServiceEventHandler<ServiceEventArgs<CitizenEntity>> OnAdminRecruitedForAccount;
-		//Payload : affected account
-		//Recipients : new admin
-		event ServiceEventHandler<ServiceEventArgs<VirtualAccountEntity>> OnAdminRecruitedForAdmin;
 		//Payload : new settings
 		//Recipients : affected settings
 		event ServiceEventHandler<ServiceEventArgs<RealAccountSettingsEntity>> OnRealAccountSettingsChanged;

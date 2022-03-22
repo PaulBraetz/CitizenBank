@@ -31,9 +31,9 @@
 						</NotAuthorized>
 						<Authorized>
 							<div class="my-1">
-								<UserDetails User="@SessionParent.Session.Owner" />
+								<UserDetails User="@SessionParent.Session.User" />
 							</div>
-							<AuthorizeView ForRole="@PBCommon.Settings.SUPERADMIN_ROLE">
+							<AuthorizeView ForRight="@PBCommon.Configuration.Settings.OWNER_RIGHT">
 								<Authorized>
 									<div class="my-1">
 										<CollapseFrame>
@@ -82,30 +82,6 @@
 						</Header>
 						<ChildContent>
 							<Settings />
-						</ChildContent>
-					</ShadowPageFormBox>
-					<ShadowPageFormBox>
-						<Header>
-							<PBTitle>
-								<Localize Value="Manage Delegates"/>
-							</PBTitle>
-						</Header>
-						<ChildContent>
-							<ManageDelegates/>
-						</ChildContent>
-					</ShadowPageFormBox>
-				</Authorized>
-			</AuthorizeView>
-			<AuthorizeView ForRole="@PBCommon.Settings.ADMIN_ROLE">
-				<Authorized>
-					<ShadowPageFormBox>
-						<Header>
-							<PBTitle>
-								<Localize Value="Roles" />
-							</PBTitle>
-						</Header>
-						<ChildContent>
-							<PBFrontend.UI.User.Roles.EditUserRoles />
 						</ChildContent>
 					</ShadowPageFormBox>
 				</Authorized>

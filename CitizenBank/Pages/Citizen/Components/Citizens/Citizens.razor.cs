@@ -14,7 +14,7 @@ namespace CitizenBank.Pages.Citizen.Components.Citizens
 				.UnlinkCitizen(new CBApplication.Requests.AsCitizenRequest()
 				{
 					AsCitizenId = response.Id,
-					AsUserId = SessionParent.Session.Owner.Id
+					AsUserId = SessionParent.Session.User.Id
 				});
 		}
 	}

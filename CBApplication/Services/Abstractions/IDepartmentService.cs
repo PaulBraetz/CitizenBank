@@ -126,8 +126,6 @@ namespace CBApplication.Services.Abstractions
 				ExcludeIds = await decryptor.Decrypt(ExcludeIds);
 				TagsIds = await decryptor.Decrypt(TagsIds);
 				PriorityTagsIds = await decryptor.Decrypt(PriorityTagsIds);
-				MembersIds = await decryptor.Decrypt(MembersIds);
-				AdminsIds = await decryptor.Decrypt(AdminsIds);
 			}
 			protected override async Task EncryptSelf(IEncryptor<Guid> encryptor)
 			{
@@ -135,8 +133,6 @@ namespace CBApplication.Services.Abstractions
 				ExcludeIds = await encryptor.Encrypt(ExcludeIds);
 				TagsIds = await encryptor.Encrypt(TagsIds);
 				PriorityTagsIds = await encryptor.Encrypt(PriorityTagsIds);
-				MembersIds = await encryptor.Encrypt(MembersIds);
-				AdminsIds = await encryptor.Encrypt(AdminsIds);
 			}
 		}
 		sealed class SearchOrgsParameter : SearchDepartmentsParameterBase

@@ -32,7 +32,7 @@ namespace CitizenBank.Pages.Citizen.Components.Requests
 						   {
 							   RequestId = request.Id
 						   },
-						   AsUserId = SessionParent.Session.Owner.Id
+						   AsUserId = SessionParent.Session.User.Id
 					   });
 		}
 		private async Task Delete(Guid requestId)
@@ -47,7 +47,7 @@ namespace CitizenBank.Pages.Citizen.Components.Requests
 						   {
 							   RequestId = requestId
 						   },
-						   AsUserId = SessionParent.Session.Owner.Id
+						   AsUserId = SessionParent.Session.User.Id
 					   });
 		}
 	}

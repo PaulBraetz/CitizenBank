@@ -1,7 +1,8 @@
-﻿using CBApplication.Services.Abstractions;
+﻿using CBApplication.Requests;
+using CBApplication.Services.Abstractions;
 
 using CBData.Entities;
-
+using CBFrontend.UI.DataFrames.Citizens.Children;
 using Microsoft.AspNetCore.Components;
 
 using PBApplication.Requests;
@@ -19,7 +20,7 @@ using static CBFrontend.Classes.Formatting.Enums;
 
 namespace CBFrontend.UI.Logistics
 {
-	public partial class LogisticsOrderDetails : SessionChild
+	public partial class LogisticsOrderDetails : CitizensFrameChild
 	{
 		[Parameter]
 		public LogisticsOrderEntity Order { get; set; }
@@ -28,22 +29,16 @@ namespace CBFrontend.UI.Logistics
 		{
 			get
 			{
-				switch (Order.Status)
+				return Order.Status switch
 				{
-					case OrderStatus.Open:
-						return CssColor.Blau;
-					case OrderStatus.Delete:
-						return CssColor.Pink;
-					case OrderStatus.Underway:
-						return CssColor.Orange;
-					case OrderStatus.Error:
-						return CssColor.Grau;
-					case OrderStatus.Completed:
-						return CssColor.Gruen;
-					case OrderStatus.Cancelled:
-						return CssColor.Rot;
-				}
-				return CssColor.Grau;
+					OrderStatus.Open => CssColor.Blau,
+					OrderStatus.Delete => CssColor.Pink,
+					OrderStatus.Underway => CssColor.Orange,
+					OrderStatus.Error => CssColor.Grau,
+					OrderStatus.Completed => CssColor.Gruen,
+					OrderStatus.Cancelled => CssColor.Rot,
+					_ => CssColor.Grau,
+				};
 			}
 		}
 
@@ -61,9 +56,10 @@ namespace CBFrontend.UI.Logistics
 
 		private async Task Edit(OrderStatus status)
 		{
-			await SessionParent.ServiceContext.GetService<IEventfulLogisticsService>().EditLogisticsOrder(new AsUserEncryptableRequest<IEventfulLogisticsService.EditLogisticsOrderParameter>()
+			await SessionParent.ServiceContext.GetService<IEventfulLogisticsService>().EditLogisticsOrder(new AsCitizenEncryptableRequest<IEventfulLogisticsService.EditLogisticsOrderParameter>()
 			{
-				AsUserId = SessionParent.Session.Owner.Id,
+				AsUserId = SessionParent.Session.User.Id,
+				AsCitizenId = CitizensParent.CurrentCitizen.Id,
 				Parameter = new()
 				{
 					LogisticsOrderId = Order.Id,

@@ -2,6 +2,6 @@
 @code{ protected override void OnParametersSetAndSessionInitialized()
 			{
 				base.OnParametersSetAndSessionInitialized();
-				SearchAccountParent.Request.AsUserId = SessionParent.Session.Owner.Id;
+				SearchAccountParent.Request.AsUserId = SessionParent.Session.User.Id;
 			}
 }
