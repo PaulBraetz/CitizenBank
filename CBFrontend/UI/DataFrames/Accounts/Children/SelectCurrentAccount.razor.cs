@@ -23,8 +23,7 @@ namespace CBFrontend.UI.DataFrames.Accounts.Children
 		{
 			get => AccountsParent.CurrentAccount.Id;
 			set => AccountsParent.CurrentAccount = AccountsParent.VirtualAccounts.SingleOrDefault(a => a.Id == value) as IAccountEntity ??
-				AccountsParent.RealAccounts.SingleOrDefault(a => a.Id == value) as IAccountEntity ??
-				AccountsParent.DepartmentAccounts.SingleOrDefault(a => a.Id == value) as IAccountEntity;
+				AccountsParent.RealAccounts.SingleOrDefault(a => a.Id == value) as IAccountEntity;
 		}
 
 		private CitizenEntity previousCitizen;
@@ -35,7 +34,7 @@ namespace CBFrontend.UI.DataFrames.Accounts.Children
 			if (previousCitizen == null || previousCitizen.Id != CitizensParent.CurrentCitizen.Id)
 			{
 				previousCitizen = CitizensParent.CurrentCitizen;
-				options = AccountsParent.RealAccounts.Cast<IAccountEntity>().Concat(AccountsParent.VirtualAccounts.Cast<IAccountEntity>().Concat(AccountsParent.DepartmentAccounts.Cast<IAccountEntity>()))
+				options = AccountsParent.RealAccounts.Cast<IAccountEntity>().Concat(AccountsParent.VirtualAccounts.Cast<IAccountEntity>())
 					.Select(a => new SelectInput<Guid>.OptionModel(a.Id, a.Name, false));
 			}
 		}

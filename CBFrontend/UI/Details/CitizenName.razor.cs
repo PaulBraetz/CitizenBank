@@ -48,7 +48,7 @@ namespace CBFrontend.UI.Details
 			void onUnlinked(IEventfulCitizenService.OnCitizenUnlinkedData data)
 			{
 				Citizen = data.Citizen;
-				isVerified = data.CurrentOwner is not null;
+				isVerified = false;
 				InvokeAsync(StateHasChanged);
 			}
 			void onLinked(CitizenEntity citizen)

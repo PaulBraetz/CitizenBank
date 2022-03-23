@@ -42,23 +42,20 @@ namespace CBApplication.Services.Abstractions
 		sealed class OnCitizenUnlinkedData : EncryptableBase<Guid>
 		{
 			public OnCitizenUnlinkedData() { }
-			public OnCitizenUnlinkedData(CitizenEntity citizen, UserEntity previousOwner, UserEntity currentOwner)
+			public OnCitizenUnlinkedData(CitizenEntity citizen, UserEntity previousOwner)
 			{
 				RaisedAt = TimeManager.Now;
 				PreviousOwner = previousOwner;
-				CurrentOwner = currentOwner;
 				Citizen = citizen;
 			}
 			public DateTimeOffset RaisedAt { get; set; }
 			public UserEntity PreviousOwner { get; set; }
-			public UserEntity CurrentOwner { get; set; }
 			public CitizenEntity Citizen { get; set; }
 
 			protected override async Task DecryptSelf(IDecryptor<Guid> decryptor)
 			{
 				await Task.WhenAll(
 					PreviousOwner.SafeDecrypt(decryptor),
-					CurrentOwner.SafeDecrypt(decryptor),
 					Citizen.SafeDecrypt(decryptor));
 			}
 
@@ -66,7 +63,6 @@ namespace CBApplication.Services.Abstractions
 			{
 				await Task.WhenAll(
 					PreviousOwner.SafeEncrypt(encryptor),
-					CurrentOwner.SafeEncrypt(encryptor),
 					Citizen.SafeEncrypt(encryptor));
 			}
 		}

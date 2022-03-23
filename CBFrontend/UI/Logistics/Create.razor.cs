@@ -1,4 +1,5 @@
-﻿using CBApplication.Services.Abstractions;
+﻿using CBApplication.Requests;
+using CBApplication.Services.Abstractions;
 
 using CBData.Entities;
 
@@ -21,9 +22,12 @@ namespace CBFrontend.UI.Logistics
 {
 	public partial class Create : SessionChild
 	{
-		private IEventfulLogisticsService.CreateLogisticsOrderRequest request = new()
+		private AsCitizenRequest<ILogisticsService.CreateLogisticsOrderParameter> request = new()
 		{
-			Deadline = TimeManager.Now + TimeSpan.FromDays(1)
+            Parameter = new()
+            {
+				Deadline = TimeManager.Now + TimeSpan.FromDays(1)
+			}
 		};
 		private IResponse response = new Response();
 
@@ -41,8 +45,8 @@ namespace CBFrontend.UI.Logistics
 		{
 			async Task run()
 			{
-				request.Deadline = TotalDeadline;
-				request.ClientId = client.Id;
+				request.Parameter.Deadline = TotalDeadline;
+				request.AsCitizenId = client.Id;
 				response = await SessionParent.ServiceContext.GetService<IEventfulLogisticsService>().CreateLogisticsOrder(request);
 				if (response.Validation.NoneInvalid)
 				{

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-
 using PBFrontend.UI.Authorization;
 
 namespace CBFrontend.UI.DataFrames.Citizens.Children

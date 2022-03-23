@@ -6,6 +6,7 @@ using CBData.Entities;
 using CBFrontend.UI.DataFrames.Accounts.Children;
 using PBApplication.Requests;
 using PBApplication.Responses.Abstractions;
+using PBCommon.Validation;
 using PBCommon.Validation.Abstractions;
 using PBFrontend.UI.Input;
 using System;
@@ -24,7 +25,7 @@ namespace CBFrontend.UI.Transactions
 
 		private ITransactionService.CreateTransactionOfferParameter parameter;
 
-		private IValidationFieldCollection validation;
+		private ValidationFieldSet validation;
 
 		private IResponse<SourceTransactionContractEntity> preview;
 
@@ -57,7 +58,7 @@ namespace CBFrontend.UI.Transactions
 			{
 				Parameter = parameter,
 				AsUserId = SessionParent.Session.User.Id,
-				AsCitizenId = (creator as RealAccountEntity)?.Owner?.Id ?? Guid.Empty,
+				AsCitizenId = SessionParent.Session.User?.Id ?? Guid.Empty,
 				AsAccountId = creator?.Id ?? Guid.Empty
 			};
 
@@ -79,7 +80,7 @@ namespace CBFrontend.UI.Transactions
 		}
 		private void Reset()
 		{
-			validation = null;
+			validation = ValidationFieldSet.Empty;
 			preview = null;
 		}
 	}
