@@ -144,7 +144,7 @@ namespace CBApplication.Services.Abstractions
 		}
 		Task<IResponse> CreateDepositAccountReference(IAsAccountEncryptableRequest<CreateAccountReferenceParameter> request);
 
-		class SearchAccountsParameterBase : EncryptableBase<Guid>
+		abstract class SearchAccountsParameterBase : EncryptableBase<Guid>
 		{
 			public String Name { get; set; }
 			public ICollection<String> ExcludeNames { get; set; }
