@@ -3,6 +3,7 @@ using CBApplication.Requests.Abstractions;
 using CBApplication.Services.Abstractions;
 using CBData.Entities;
 using CBFrontend.UI.DataFrames.Accounts.Children;
+using PBApplication.Requests;
 using PBApplication.Requests.Abstractions;
 using PBApplication.Responses.Abstractions;
 using PBFrontend.UI.Miscellaneous.Loading;
@@ -31,11 +32,23 @@ namespace CBFrontend.UI.Transactions
 
 		private async Task Refresh()
 		{
+			var accountClaims = await SessionParent.ServiceContext.GetService<ICBClaimService>()
+				.GetClaims(new AsUserEncryptableRequest<ICBClaimService.GetClaimsRequestParameter>()
+				{
+					Parameter = new ICBClaimService.GetClaimsRequestParameter()
+					{
+						EntityId = AccountsParent.CurrentAccount.Id
+					}
+				});
+
+			var owner = accountClaims.Data.Claims
+				.Single(c => c.Rights.Contains(PBCommon.Configuration.Settings.OWNER_RIGHT));
+
 			request = new AsAccountGetPaginatedRequest<ITransactionService.GetTransactionOffersParameter>()
 			{
 				AsUserId = SessionParent.Session.User.Id,
 				AsAccountId = AccountsParent.CurrentAccount.Id,
-				AsCitizenId = (AccountsParent.CurrentAccount as RealAccountEntity).Owner.Id,
+				AsCitizenId = owner.Id,
 				Page = 0,
 				PerPage = 100,
 				Parameter = new ITransactionService.GetTransactionOffersParameter()
@@ -48,11 +61,23 @@ namespace CBFrontend.UI.Transactions
 		private async Task Reject(TransactionOfferEntity offer) => await Answer(offer, TransactionOfferAnswer.Rejected);
 		private async Task Answer(TransactionOfferEntity offer, TransactionOfferAnswer answer)
 		{
+			var accountClaims = await SessionParent.ServiceContext.GetService<ICBClaimService>()
+				.GetClaims(new AsUserEncryptableRequest<ICBClaimService.GetClaimsRequestParameter>()
+				{
+					Parameter = new ICBClaimService.GetClaimsRequestParameter()
+                    {
+						EntityId = AccountsParent.CurrentAccount.Id
+                    }
+				});
+
+			var owner = accountClaims.Data.Claims
+				.Single(c => c.Rights.Contains(PBCommon.Configuration.Settings.OWNER_RIGHT));
+
 			var request = new AsAccountEncryptableRequest<ITransactionService.AnswerTransactionOfferParameter>()
 			{
 				AsUserId = SessionParent.Session.User.Id,
 				AsAccountId = AccountsParent.CurrentAccount.Id,
-				AsCitizenId = (AccountsParent.CurrentAccount as RealAccountEntity).Owner.Id,
+				AsCitizenId = owner.Id,
 				Parameter = new ITransactionService.AnswerTransactionOfferParameter()
 				{
 					Answer = answer,
