@@ -31,6 +31,7 @@ namespace CitizenBank.Events
 
 			RegisterTypeToServices<IAccountService, AccountService>(new InjectionConstructor(this));
 			RegisterTypeToServices<ICBMessageService, CBMessageService>(new InjectionConstructor(this));
+			RegisterTypeToServices<ICBClaimService, CBClaimService>(new InjectionConstructor(this));
 			RegisterTypeToServices<IService, CitizenService>(new InjectionConstructor(this));
 			RegisterTypeToServices<ITransactionService, TransactionService>(new InjectionConstructor(this));
 			RegisterTypeToServices<ILogisticsService, LogisticsService>(new InjectionConstructor(this));
