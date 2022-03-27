@@ -79,7 +79,7 @@ namespace CBApplication.Services.Public
 				}
 
 				await CachedCriterionChain.Cache.Get()
-					.ThisValidatePagination(request, data, response.Validation)
+					.ThisValidatePagination(request, data)
 					.SetOnCriterionMet(setData)
 					.Evaluate(response);
 			}

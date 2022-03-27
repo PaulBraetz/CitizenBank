@@ -533,7 +533,7 @@ namespace CBApplication.Services
 					response.Data = data.Paginate(request.PerPage, request.Page).Select(a => a.CloneAsT()).ToList();
 				}
 				await CachedCriterionChain.Cache.Get()
-					.ThisValidatePagination(request, data, response.Validation)
+					.ThisValidatePagination(request, data)
 					.SetOnCriterionMet(setData)
 					.Evaluate(response);
 			}
@@ -787,7 +787,7 @@ namespace CBApplication.Services
 					}
 
 					await CachedCriterionChain.Cache.Get()
-						.ThisValidatePagination(request, data, response.Validation)
+						.ThisValidatePagination(request, data)
 						.SetOnCriterionMet(setData)
 						.Evaluate(response);
 				}
@@ -828,7 +828,7 @@ namespace CBApplication.Services
 					}
 
 					await CachedCriterionChain.Cache.Get()
-						.ThisValidatePagination(request, data, response.Validation)
+						.ThisValidatePagination(request, data)
 						.SetOnCriterionMet(setData)
 						.Evaluate(response);
 				}
@@ -870,7 +870,7 @@ namespace CBApplication.Services
 					}
 
 					await CachedCriterionChain.Cache.Get()
-						.ThisValidatePagination(request, data, response.Validation)
+						.ThisValidatePagination(request, data)
 						.SetOnCriterionMet(setData)
 						.Evaluate(response);
 				}

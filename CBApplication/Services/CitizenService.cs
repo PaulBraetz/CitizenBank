@@ -294,7 +294,7 @@ namespace CBApplication.Services
 					}
 
 					await CachedCriterionChain.Cache.Get()
-						.ThisValidatePagination(request, query, response.Validation)
+						.ThisValidatePagination(request, query)
 						.SetOnCriterionMet(setData)
 						.Evaluate(response);
 				}
@@ -359,7 +359,7 @@ namespace CBApplication.Services
 					}
 
 					await CachedCriterionChain.Cache.Get()
-						.ThisValidatePagination(request, query, response.Validation)
+						.ThisValidatePagination(request, query)
 						.SetOnCriterionMet(setData)
 						.Evaluate(response);
 				}
@@ -593,7 +593,7 @@ namespace CBApplication.Services
 				}
 
 				await CachedCriterionChain.Cache.Get()
-					.ThisValidatePagination(request, query.Value, response.Validation)
+					.ThisValidatePagination(request, query.Value)
 					.SetOnCriterionMet(successAction)
 					.Evaluate(response);
 			}

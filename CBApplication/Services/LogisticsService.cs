@@ -182,7 +182,7 @@ namespace CBApplication.Services
 				}
 
 				await CachedCriterionChain.Cache.Get()
-					.ThisValidatePagination(request, entities, response.Validation)
+					.ThisValidatePagination(request, entities)
 					.SetOnCriterionMet(successAction)
 					.Evaluate(response);
 			}

@@ -113,7 +113,7 @@ namespace CBApplication.Services
 
 			List<Guid> excludeIds = request.ExcludeKeys != null ? request.ExcludeKeys.Select(k => InternalEncryptionService.IdentifiablyDecryptToId(k)).ToList() : new List<Guid> { };
 
-			FirstValidateAsAccount(user, citizen, account, response.Validation)
+			FirstValidateAsAccount(user, citizen, account)
 				.ThisCompound(() => request.ResultsCount >= 1 && request.ResultsCount <= 10, ValidationField.Create(nameof(request.ResultsCount)), ValidationCode.Invalid)
 				.SetOnCriterionMet(() =>
 				{
@@ -194,7 +194,7 @@ namespace CBApplication.Services
 
 			IEnumerable<Guid> excludeIds = request.ExcludeKeys != null ? request.ExcludeKeys.Select(k => InternalEncryptionService.IdentifiablyDecryptToId(k)) : new List<Guid> { };
 
-			FirstValidateAsCitizen(user, citizen, response.Validation)
+			FirstValidateAsCitizen(user, citizen)
 				.ThisCompound(() => request.ResultsCount >= 1 && request.ResultsCount <= 10, ValidationField.Create(nameof(request.ResultsCount)), ValidationCode.Invalid)
 				.SetOnCriterionMet(() =>
 				{
@@ -227,7 +227,7 @@ namespace CBApplication.Services
 
 			List<Guid> excludeIds = request.ExcludeKeys != null ? request.ExcludeKeys.Select(k => InternalEncryptionService.IdentifiablyDecryptToId(k)).ToList() : new List<Guid> { };
 
-			FirstValidateAsAccount(user, citizen, account, response.Validation)
+			FirstValidateAsAccount(user, citizen, account)
 				.ThisCompound(() => request.ResultsCount >= 1 && request.ResultsCount <= 10, ValidationField.Create(nameof(request.ResultsCount)), ValidationCode.Invalid)
 				.SetOnCriterionMet(() =>
 				{
