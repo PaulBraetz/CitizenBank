@@ -1,7 +1,7 @@
 ﻿@inherits SessionChild
 <span>
 	@Citizen.Name
-	@if (Citizen.Owner != null)
+	@if (isVerified)
 	{
 		<span style="cursor:help" title="@SessionParent.Localize("Verified Citizen")"> (✓)</span>
 	}

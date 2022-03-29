@@ -24,12 +24,6 @@ namespace CitizenBank.Events.Observers
 		public override void Observe(IEventfulAccountService service)
 		{
 			base.Observe(service);
-			service.OnAdminRecruitedForAccount += async (args) => await SendGuidEncryptable(nameof(IEventfulAccountService.OnAdminRecruitedForAccount), args);
-			service.OnAdminRecruitedForAdmin += async (args) => await SendGuidEncryptable(nameof(IEventfulAccountService.OnAdminRecruitedForAdmin), args);
-			service.OnAdminResignedForAccount += async (args) => await SendGuidEncryptable(nameof(IEventfulAccountService.OnAdminResignedForAccount), args);
-			service.OnAdminResignedForAdmin += async (args) => await SendGuidEncryptable(nameof(IEventfulAccountService.OnAdminResignedForAdmin), args);
-			service.OnDepartmentAccountCreated += async (args) => await SendGuidEncryptable(nameof(IEventfulAccountService.OnDepartmentAccountCreated), args);
-			service.OnDepartmentAccountSettingsChanged += async (args) => await SendGuidEncryptable(nameof(IEventfulAccountService.OnDepartmentAccountSettingsChanged), args);
 			service.OnDepositAccountReferenceChangedForReferenced += async (args) => await SendGuidEncryptable(nameof(IEventfulAccountService.OnDepositAccountReferenceChangedForReferenced), args);
 			service.OnDepositAccountReferenceChangedForReferencing += async (args) => await SendGuidEncryptable(nameof(IEventfulAccountService.OnDepositAccountReferenceChangedForReferencing), args);
 			service.OnDepositAccountReferenceCreatedForReferenced += async (args) => await SendGuidEncryptable(nameof(IEventfulAccountService.OnDepositAccountReferenceCreatedForReferenced), args);

@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using PBApp.Configuration;
 using PBCommon;
 using PBCommon.Extensions;
+using PBData.Abstractions;
 using PBData.Entities;
 using PBData.Extensions;
 using System;
@@ -52,10 +53,14 @@ namespace CitizenBank
 			services.ConfigurePBApp(c => c
 			.ConfigurePBCommon(cc =>
 			{
-				cc.SetURL(Configuration.GetSection("SetupData").GetValue<String>("URL").ToString());
+				cc.ConfigureSettingsInitializer(si =>
+				{
+					si.URL = Configuration.GetSection("SetupData").GetValue<String>("URL").ToString();
 #if DEBUG
-				cc.SetURL("https://localhost:5001");
+					si.URL = "https://localhost:5001";
 #endif
+
+				});
 				cc.AddLocalizationResource("CitizenBank.Resources.Strings", Assembly.GetExecutingAssembly());
 			})
 			.ConfigurePBDataAccess(cda =>
@@ -105,7 +110,8 @@ namespace CitizenBank
 				{
 					if (!c.Query<CurrencyEntity>().Any())
 					{
-						var superAdmin = c.GetFirst<UserEntity>(u => u.Roles.Any(r => r.Name.Equals(PBCommon.Settings.SUPERADMIN_ROLE)));
+						var superAdminClaim = c.GetSingle<IClaimEntity>(c => c.Rights.Contains(PBCommon.Configuration.Settings.OWNER_RIGHT) && c.ValueId == Guid.Empty);
+						var superAdmin = c.GetSingle<UserEntity>(superAdminClaim.HolderId);
 						c.Insert(new CurrencyEntity(superAdmin, "aUEC", "aUEC", 0.005M) 
 						{
 							IsActive = true
@@ -119,13 +125,7 @@ namespace CitizenBank
 				IConfigurationSection adminData = Configuration.GetSection("SuperAdminData");
 				ca.CreateSuperAdmin(adminData.GetValue<String>("Name"),
 						adminData.GetValue<String>("Email"),
-						adminData.GetValue<String>("Password"),
-						adminData.GetValue<String>("Reset"))
-				.UseRoleNames(new Dictionary<String, ICollection<String>>()
-				{
-					{CBCommon.Settings.CitizenBank.CITIZEN_RIGHT ,new String[]{PBCommon.Settings.SYSTEM_ROLE} },
-					{CBCommon.Settings.Logistics.LOGISTICS_MANAGER_RIGHT ,new String[]{PBCommon.Settings.ADMIN_ROLE} }
-				});
+						adminData.GetValue<String>("Password"));
 			})
 			.ConfigurePBServer(cs =>
 			{

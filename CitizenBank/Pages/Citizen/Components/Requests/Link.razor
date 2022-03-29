@@ -7,7 +7,7 @@
     <NotLoading>
         <PBFrontend.UI.Input.TextInput Placeholder="Name"
                                        @bind-Value="linkNewInputValue"
-                                       ValidationField="linkNewResponse.Validation[nameof(ICitizenService.CreateCitizenLinkRequestParameter.Name))"
+                                       ValidationField="linkNewResponse.Validation.GetField(nameof(ICitizenService.CreateCitizenLinkRequestParameter.Name))"
                                        OnEnterPressed="e=>LinkNew(e)" />
         <div class="input-group-append">
             <button class="btn btn-outline-success"
@@ -16,5 +16,5 @@
             </button>
         </div>
     </NotLoading>
-    <PBFrontend.UI.Input.Validation ValidationField="linkNewResponse.Validation[nameof(ICitizenService.CreateCitizenLinkRequestParameter.Name))" />
+    <PBFrontend.UI.Input.Validation ValidationField="linkNewResponse.Validation.GetField(nameof(ICitizenService.CreateCitizenLinkRequestParameter.Name))" />
 </div>
