@@ -144,7 +144,7 @@ namespace CBApplication.Services.Abstractions
 		}
 		Task<IResponse> CreateDepositAccountReference(IAsAccountEncryptableRequest<CreateAccountReferenceParameter> request);
 
-		abstract class SearchAccountsParameterBase : EncryptableBase<Guid>
+		class SearchAccountsParameterBase : EncryptableBase<Guid>
 		{
 			public String Name { get; set; }
 			public ICollection<String> ExcludeNames { get; set; }
@@ -185,6 +185,8 @@ namespace CBApplication.Services.Abstractions
 				CreatorId = await encryptor.Encrypt(CreatorId);
 			}
 		}
+		Task<IGetPaginatedEncryptableResponse<IAccountEntity>> SearchAccounts(IAsAccountGetPaginatedEncryptableRequest<SearchAccountsParameterBase> request);
+
 		sealed class SearchRealAccountsParameter : SearchAccountsParameterBase
 		{
 			public Dictionary<Guid, Boolean> CanBeDepositAccountFor { get; set; }

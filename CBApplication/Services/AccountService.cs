@@ -903,6 +903,33 @@ namespace CBApplication.Services
 			return retVal2;
 		}
 
+		public async Task<IGetPaginatedEncryptableResponse<IAccountEntity>> SearchAccounts(IAsAccountGetPaginatedEncryptableRequest<IAccountService.SearchAccountsParameterBase> request)
+        {
+			var response = new GetPaginatedEncryptableResponse<IAccountEntity>();
+
+			async Task notNullRequest()
+            {
+				var data = await SearchAccounts<IAccountEntity, IAccountSettingsEntity, IAccountService.SearchAccountsParameterBase>(request, response);
+
+				void setData()
+                {
+					response.LastPage = data.GetPageCount(request.PerPage) - 1;
+					response.Data = data.Paginate(request.PerPage, request.Page).Select(a=>a.Account.CloneAsT()).ToList();
+                }
+
+				await CachedCriterionChain.Cache.Get()
+					.ThisValidatePagination(request, data)
+					.SetOnCriterionMet(setData)
+					.Evaluate(response);
+            }
+
+			await FirstParameterizedRequestNullCheck(request, response)
+				.SetOnCriterionMet(notNullRequest)
+				.Evaluate(response);
+
+			return response;
+        }
+
 		public async Task<IGetPaginatedEncryptableResponse<RealAccountEntity>> SearchRealAccounts(IAsAccountGetPaginatedEncryptableRequest<IAccountService.SearchRealAccountsParameter> request)
 		{
 			var response = new GetPaginatedEncryptableResponse<RealAccountEntity>();
