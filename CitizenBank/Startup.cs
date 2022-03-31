@@ -106,19 +106,6 @@ namespace CitizenBank
 					}
 				}
 #endif
-				cda.SetOnDataAccessConfigured(c =>
-				{
-					if (!c.Query<CurrencyEntity>().Any())
-					{
-						var superAdminClaim = c.GetSingle<IClaimEntity>(c => c.Rights.Contains(PBCommon.Configuration.Settings.OWNER_RIGHT) && c.ValueId == Guid.Empty);
-						var superAdmin = c.GetSingle<UserEntity>(superAdminClaim.HolderId);
-						c.Insert(new CurrencyEntity(superAdmin, "aUEC", "aUEC", 0.005M) 
-						{
-							IsActive = true
-						});
-						c.SaveChanges();
-					}
-				});
 			})
 			.ConfigurePBApplication(ca =>
 			{
@@ -126,6 +113,19 @@ namespace CitizenBank
 				ca.CreateSuperAdmin(adminData.GetValue<String>("Name"),
 						adminData.GetValue<String>("Email"),
 						adminData.GetValue<String>("Password"));
+				ca.SetOnApplicationConfigured(c =>
+				{
+					if (!c.Query<CurrencyEntity>().Any())
+					{
+						var superAdminClaim = c.GetSingle<IClaimEntity>(c => c.Rights.Contains(PBCommon.Configuration.Settings.OWNER_RIGHT) && c.ValueId == Guid.Empty);
+						var superAdmin = c.GetSingle<UserEntity>(superAdminClaim.HolderId);
+						c.Insert(new CurrencyEntity(superAdmin, "aUEC", "aUEC", 0.005M)
+						{
+							IsActive = true
+						});
+						c.SaveChanges();
+					}
+				});
 			})
 			.ConfigurePBServer(cs =>
 			{

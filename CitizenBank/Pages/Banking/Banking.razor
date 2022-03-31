@@ -1,5 +1,5 @@
 ﻿@page "/banking"
-<AuthorizeView ForRoles="new[] { CBCommon.Settings.CitizenBank.CITIZEN_ROLE, PBCommon.Settings.SUPERADMIN_ROLE }">
+<AuthorizeView ForRights="new[] { CBCommon.Settings.CitizenBank.CITIZEN_RIGHT, PBCommon.Configuration.Settings.OWNER_RIGHT }">
 	<AuthorizedRedirect TargetOnFail="/citizen">
 		<StateMachineFrame>
 			<TabFrame>

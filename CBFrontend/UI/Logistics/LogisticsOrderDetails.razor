@@ -36,7 +36,7 @@
                             <PBFrontend.UI.Formatting.Localize Value="Status" />
                         </span>
                     </div>
-                    <AuthorizeView ForRole="@CBCommon.Settings.Logistics.LOGISTICS_MANAGER_RIGHT">
+                    <AuthorizeView ForRight="@CBCommon.Settings.Logistics.LOGISTICS_MANAGER_RIGHT">
                         <Authorized>
                             <PBFrontend.UI.Input.SelectInput ValueChanged="s=>Edit(s)"
                                                              Value="Order.Status"
