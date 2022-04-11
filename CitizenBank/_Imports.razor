@@ -1,12 +1,5 @@
-﻿@using System.Net.Http
-@using Microsoft.AspNetCore.Authorization
-@using Microsoft.AspNetCore.Components.Forms
-@using Microsoft.AspNetCore.Components.Routing
-@using Microsoft.AspNetCore.Components.Web
-@using Microsoft.AspNetCore.Components.Web.Virtualization
-@using Microsoft.JSInterop
-@using CitizenBank
-@using CitizenBank.Shared
+﻿@using PBFrontend
+@using PBFrontend.UI.Formatting.Box.Presets.Default
 @using PBFrontend.UI.Formatting.Box.Presets.Shadow
 @using PBFrontend.UI.Formatting.Box.Presets
 @using PBFrontend.UI.Formatting.Box
@@ -24,7 +17,6 @@
 @using PBFrontend.UI
 @using PBFrontend.Classes.Formatting.Abstractions
 @using PBFrontend.Classes.Formatting
-@using PBFrontend.Configuration
 @using PBFrontend.UI.Authorization.Cookies
 @using static PBCommon.Enums
 @using PBFrontend.Extensions
@@ -35,10 +27,28 @@
 @using PBFrontend.UI.Meta.Telemetry.Children
 @using PBFrontend.UI.Miscellaneous.StateMachine.Children
 @using PBFrontend.UI.Miscellaneous.StateMachine
-@using CBFrontend.UI
-@using CBFrontend.UI.Transactions
-@using CBApplication.Services
-@using CBApplication.Services.Abstractions
 @using PBFrontend.UI.Authorization.ChangePassword
 @using PBFrontend.UI.Miscellaneous.StateMachine.Children.Tabs
-@using PBFrontend.UI.Authorization.ForgotPassword 
+@using PBFrontend.UI.Icons
+@using PBFrontend.UI.Authorization.ForgotPassword
+
+@using CBData.Entities
+@using CBData.Abstractions
+
+@using CBApplication.Services.Abstractions
+
+@using CBFrontend.UI.Transactions
+@using CBFrontend.Classes
+@using CBFrontend.Classes.Formatting
+@using CBFrontend.UI.Citizen.SearchCitizen
+@using CBFrontend.UI.DataFrames.Accounts.Children
+@using CBFrontend.UI.DataFrames.Citizens.Children
+@using CBFrontend.UI.Details
+@using CBFrontend.UI.Account.SearchAccount.Children
+@using CBFrontend.UI.Account.SearchAccount 
+
+@using CitizenBank.Shared
+
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Routing

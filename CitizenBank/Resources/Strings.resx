@@ -303,6 +303,10 @@
   <data name="Logistics" xml:space="preserve">
     <value>Logistics</value>
   </data>
+  <data name="LogisticsOfferDetails OrderId ({0})" xml:space="preserve">
+    <value>({0})</value>
+    <comment>{0} OrderId</comment>
+  </data>
   <data name="LogisticsOfferDetails requests" xml:space="preserve">
     <value>requests</value>
   </data>
@@ -335,6 +339,9 @@
   </data>
   <data name="Open" xml:space="preserve">
     <value>Open</value>
+  </data>
+  <data name="Order Id" xml:space="preserve">
+    <value>Order Id</value>
   </data>
   <data name="Orders" xml:space="preserve">
     <value>Orders</value>

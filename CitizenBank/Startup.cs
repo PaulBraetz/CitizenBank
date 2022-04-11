@@ -132,6 +132,21 @@ namespace CitizenBank
 				cs.SetDBConnectedServiceContextImplementation<CBObservingServiceContext>()
 					.SetUseSignalR()
 					.SetUseDefaultControllers(true);
+			})
+			.ConfigurePBFrontend(cf =>
+			{
+				cf.ConfigureSettingsInitializer(i =>
+				{
+					i.DefaultPageFrame = PBFrontend.Classes.Formatting.Presets.BlursCss.PageFrame;
+					i.DefaultPageContent = PBFrontend.Classes.Formatting.Presets.BlursCss.PageContent;
+					i.DefaultPageHeader = PBFrontend.Classes.Formatting.Presets.BlursCss.PageHeader;
+					i.DefaultPageFooter = PBFrontend.Classes.Formatting.Presets.BlursCss.PageFooter;
+
+					i.DefaultBoxFrame = PBFrontend.Classes.Formatting.Presets.BlursCss.BoxFrame;
+
+					i.DefaultInfoFrame = PBFrontend.Classes.Formatting.Presets.BlursCss.InfoFrame;
+					i.DefaultWarningFrame = PBFrontend.Classes.Formatting.Presets.BlursCss.WarningFrame;
+				});
 			}));
 		}
 

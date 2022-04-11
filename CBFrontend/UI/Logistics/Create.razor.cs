@@ -6,14 +6,9 @@ using CBData.Entities;
 using PBApplication.Responses;
 using PBApplication.Responses.Abstractions;
 using PBCommon.Globalization;
-using PBFrontend.Extensions;
 using PBFrontend.UI.Authorization;
-using PBFrontend.UI.Input;
 using PBFrontend.UI.Miscellaneous.Loading;
-
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 using static CBCommon.Enums.LogisticsEnums;
@@ -24,8 +19,8 @@ namespace CBFrontend.UI.Logistics
 	{
 		private AsCitizenRequest<ILogisticsService.CreateLogisticsOrderParameter> request = new()
 		{
-            Parameter = new()
-            {
+			Parameter = new()
+			{
 				Deadline = TimeManager.Now + TimeSpan.FromDays(1)
 			}
 		};
@@ -50,7 +45,13 @@ namespace CBFrontend.UI.Logistics
 				response = await SessionParent.ServiceContext.GetService<IEventfulLogisticsService>().CreateLogisticsOrder(request);
 				if (response.Validation.NoneInvalid)
 				{
-					request = new();
+					request = new()
+					{
+						Parameter = new()
+						{
+							Deadline = TimeManager.Now + TimeSpan.FromDays(1)
+						}
+					};
 					deadlineDate = TimeManager.Now + TimeSpan.FromDays(1);
 					deadlineTime = DateTimeOffset.MinValue;
 					response = new Response();

@@ -4,7 +4,7 @@
         <div class="input-group">
             <div class="input-group-prepend">
                 <div class="input-group-text">
-                    <PBFrontend.UI.Formatting.Localize Value="Name" /> : @(@Value?.Name != null ? Value.Name:SessionParent.Localize("None"))
+                    <Localize Value="Name" /> : @(@Value?.Name != null ? Value.Name:SessionParent.Localize("None"))
                 </div>
             </div>
             <CBFrontend.UI.Account.SearchAccount.Children.NameInput />

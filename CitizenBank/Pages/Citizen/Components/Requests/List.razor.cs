@@ -9,8 +9,6 @@ using CitizenBank.Pages.Banking;
 using PBApplication.Requests;
 using PBApplication.Services.Abstractions;
 
-using PBFrontend.UI.Miscellaneous.Loading;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;

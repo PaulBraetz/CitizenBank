@@ -11,10 +11,10 @@ using static CBCommon.Enums.LogisticsEnums;
 
 namespace CBData.Entities
 {
-	public class LogisticsOrderEntity : ExpiringEntityBase
+	public class LogisticsOrderEntity : ExpiringEntityBase, PBData.Abstractions.IHasVerification
 	{
 		public LogisticsOrderEntity() { }
-		public LogisticsOrderEntity(DateTimeOffset deadline, String target, CitizenEntity client, OrderType type, String details)
+		public LogisticsOrderEntity(DateTimeOffset deadline, String target, CitizenEntity client, OrderType type, String details, String id)
 			: base(CBCommon.Settings.Logistics.ORDER_LIFESPAN, true, true)
 		{
 			Deadline = deadline;
@@ -22,6 +22,7 @@ namespace CBData.Entities
 			Client = client;
 			Type = type;
 			Details = details;
+			Verification = id;
 		}
 
 		public LogisticsOrderEntity(LogisticsOrderEntity from, IDictionary<Guid, Object> circularReferenceHelperDictionary) : base(from, circularReferenceHelperDictionary)
@@ -33,6 +34,7 @@ namespace CBData.Entities
 			Client = from.Client.CloneAsT(circularReferenceHelperDictionary);
 			Type = from.Type;
 			Details = from.Details;
+			Verification = from.Verification;
 		}
 
 		public virtual OrderStatus Status { get; set; }
@@ -42,6 +44,8 @@ namespace CBData.Entities
 		public virtual CitizenEntity Client { get; set; }
 		public virtual OrderType Type { get; set; }
 		public virtual String Details { get; set; }
+		public virtual String Verification { get; set; }
+		public virtual String OrderId { get => Verification; set => _ = value; }
 
 		public override Object Clone(IDictionary<Guid, Object> circularReferenceHelperDictionary)
 		{

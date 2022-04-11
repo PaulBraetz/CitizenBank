@@ -1,7 +1,7 @@
 ﻿@page "/citizen"
 <AuthorizeView>
 	<AuthorizedRedirect TargetOnFail="/user">
-		<ShadowPage>
+		<DefaultPage>
 			<Header>
 				<PBTitle>
 					<Localize Value="Citizen Management" />
@@ -15,6 +15,6 @@
 					<CitizenBank.Pages.Citizen.Components.Citizens.Citizens />
 				</CBFrontend.UI.DataFrames.Citizens.CitizensFrame>
 			</ChildContent>
-		</ShadowPage>
+		</DefaultPage>
 	</AuthorizedRedirect>
 </AuthorizeView>

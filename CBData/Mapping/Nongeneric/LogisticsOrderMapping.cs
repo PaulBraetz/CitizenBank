@@ -13,6 +13,7 @@ namespace CBData.Mapping
 			Map(m => m.Origin).Length(32768);
 			Map(m => m.Target).Length(32768);
 			Map(m => m.Details).Length(32768);
+			Map(m => m.Verification).Length(32768);
 			References(m => m.Client);
 			Map(m => m.Type).CustomType<CBCommon.Enums.LogisticsEnums.OrderType>();
 		}

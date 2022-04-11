@@ -1,21 +1,32 @@
 ﻿@inherits LayoutComponentBase
 
 <SessionFrame @ref="sessionFrameRef">
-	<SessionFrameInitialized>
-		<ConsentFrame>
-			<AuthorizeView>
-				<div class="page">
-					<div class="sidebar sidebar-@sessionFrameRef.ThemeInfo.GetCss">
-						<NavMenu />
-					</div>
-					<div class="main d-flex flex-column text-@sessionFrameRef.ThemeInfo.GetCss bg-@sessionFrameRef.ThemeInfo.GetCss">
-						@Body
-						<ConditionalCookieBanner CookieInfoHref="/cookies" />
+	<ConsentFrame>
+		<div class="page">
+			<SessionFrameInitialized>
+				<div class="sidebar blur-5 @ThemeFactory.GetThemeCss("sidebar",sessionFrameRef.Session.Theme)">
+					<NavMenu />
+				</div>
+				<div class="main @ThemeFactory.GetText(sessionFrameRef.Session.Theme).Css">
+					<ConditionalCookieBanner CookieInfoHref="/cookies" />
+					@Body
+				</div>
+			</SessionFrameInitialized>
+			<SessionFrameNotInitialized>
+				<div class="container-fluid content">
+					<div class="align-self-center flex-fill bg-transparent mt-1 rounded d-flex flex-column">
+						<div class="flex-fill d-flex">
+							<div class="align-items-center blur-10 flex-column flex-fill px-lg-2 pb-lg-2 d-flex">
+								<InfoBox>
+									Loading
+								</InfoBox>
+							</div>
+						</div>
 					</div>
 				</div>
-			</AuthorizeView>
-		</ConsentFrame>
-	</SessionFrameInitialized>
+			</SessionFrameNotInitialized>
+		</div>
+	</ConsentFrame>
 </SessionFrame>
 
 @code {

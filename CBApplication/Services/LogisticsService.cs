@@ -68,7 +68,8 @@ namespace CBApplication.Services
 					}
 					void createOrder()
 					{
-						var newEntity = new LogisticsOrderEntity(request.Parameter.Deadline, request.Parameter.Target, client, request.Parameter.Type, request.Parameter.Details)
+						var orderId = GetService<IEventfulCUDService>().GenerateUniqueVerification<LogisticsOrderEntity>();
+						var newEntity = new LogisticsOrderEntity(request.Parameter.Deadline, request.Parameter.Target, client, request.Parameter.Type, request.Parameter.Details, orderId)
 						{
 							Origin = request.Parameter.Origin
 						};

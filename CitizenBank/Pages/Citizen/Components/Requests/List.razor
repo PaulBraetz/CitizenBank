@@ -15,7 +15,7 @@
 </InfoBox>
     <table class="table">
         <thead>
-            <tr class="text-@SessionParent.ThemeInfo.GetCss">
+            <tr class="@GetTextThemeCss()">
                 <th><Localize Value="Handle" /></th>
                 <th><Localize Value="Verification Link" /></th>
                 <th><Localize Value="Actions" /></th>
@@ -24,7 +24,7 @@
         <tbody>
             @foreach (var request in CitizenRequestsParent.Requests)
             {
-                <tr class="text-@SessionParent.ThemeInfo.GetCss">
+                <tr class="@GetTextThemeCss()">
                     <td>
                         @request.Citizen.Name
                     </td>
