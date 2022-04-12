@@ -4,7 +4,7 @@
         <Header>
             <PBFrontend.UI.Formatting.Collapse.Children.CollapseDiv>
                 <div class="text-@HeaderColor.ToCssString()">
-                    <PBFrontend.UI.Formatting.Collapse.Children.CollapseChevron /> @SessionParent.Localize(new LocalizableFormattableString("LogisticsOfferDetails OrderId ({0})", Order.OrderId)) <CitizenName Citizen="Order.Client"/> <Localize Value="LogisticsOfferDetails requests" /> <Localize Value="@Order.Type.ToString()" />
+                    <PBFrontend.UI.Formatting.Collapse.Children.CollapseChevron /> @SessionParent.Localize(new LocalizableFormattableString("LogisticsOfferDetails OrderId ({0})", Order.OrderId)) <Localize Value="@Order.Type.ToString()" />
                 </div>
             </PBFrontend.UI.Formatting.Collapse.Children.CollapseDiv>
         </Header>
@@ -16,6 +16,12 @@
                     </dt>
                     <dd>
                         @Order.OrderId
+                    </dd>
+                    <dt>
+                        <Localize Value="Client"/>
+                    </dt>
+                    <dd>
+                        @Order.Client.Name
                     </dd>
                     <dt>
                         <Localize Value="Route" />

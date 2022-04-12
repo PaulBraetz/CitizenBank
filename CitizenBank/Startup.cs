@@ -47,8 +47,10 @@ namespace CitizenBank
 			CBCommon.Settings.CitizenBank.EMAIL_POP3_PORT = emailData.GetValue<Int32>("Pop3Port");
 
 			//Enum.GetValues<ConsoleLogger.Code>().ForEach(ConsoleLogger.Unlock);
-			ConsoleLogger.Unlock(ConsoleLogger.Code.SRV);
-			ConsoleLogger.Unlock(ConsoleLogger.Code.MLN);
+			//ConsoleLogger.Unlock(ConsoleLogger.Code.SRV);
+			//ConsoleLogger.Unlock(ConsoleLogger.Code.MLN);
+			ConsoleLogger.Unlock(ConsoleLogger.Code.RSD);
+			ConsoleLogger.Unlock(ConsoleLogger.Code.RCV);
 
 			services.ConfigurePBApp(c => c
 			.ConfigurePBCommon(cc =>

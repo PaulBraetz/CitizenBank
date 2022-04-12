@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="PBFrontend" Version="32.2.1" />
+    <PackageReference Include="PBFrontend" Version="33.0.0" />
   </ItemGroup>
 
   <ItemGroup>

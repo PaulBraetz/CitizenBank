@@ -69,7 +69,7 @@ namespace CBFrontend.UI.DataFrames.Accounts
 
                 async Task generalSubscribe()
                 {
-                    await SubscribeOnce<VirtualAccountEntity>(new EventSubscription(nameof(IEventfulAccountService.OnVirtualAccountCreated), CitizensParent.CurrentCitizen.HubId), addVirtualAccount);
+                    await Subscribe<VirtualAccountEntity>(new EventSubscription(nameof(IEventfulAccountService.OnVirtualAccountCreated), CitizensParent.CurrentCitizen.HubId), addVirtualAccount);
                 }
 
                 async Task generalUnsubscribe()

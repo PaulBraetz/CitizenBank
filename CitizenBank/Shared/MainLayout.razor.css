@@ -1,23 +1,38 @@
 .page {
-	position: relative;
 	display: flex;
-	flex-direction: column;
-	background-image: url("../nasa-rTZW4f02zY8-unsplash.jpg");
+	background-image: url("../nasa--hI5dX2ObAs-unsplash.jpg");
 	background-size: cover;
+	background-attachment: fixed;
 	background-color: black;
+	width: 100vw;
+	font-family: lato-light;
 }
+
 
 .main {
 	flex: 1;
-	height: 100vh;
-	display: flex;
 	flex-direction: column;
-	width: 100%;
+	display: flex;
+	width: 100vw;
+	height: 100vh;
 }
 
+/*Phone resolution*/
 @media (max-width: 640.98px) {
+	.page {
+		flex-direction: column;
+		/*Credit: https://css-tricks.com/the-trick-to-viewport-units-on-mobile/*/
+		min-height: 100vh; /* Fallback for browsers that do not support Custom Properties */
+		min-height: calc(var(--vh, 1vh) * 100);
+		height: fit-content;
+	}
+
+	.sidebar {
+		width: 100vw;
+	}
 }
 
+/*Tablet/Desktop resolution*/
 @media (min-width: 641px) {
 	.page {
 		flex-direction: row;
@@ -37,11 +52,6 @@
 		position: sticky;
 		top: 0;
 		z-index: 1;
-	}
-
-	.main > div {
-		padding-left: 2rem !important;
-		padding-right: 1.5rem !important;
 	}
 }
 

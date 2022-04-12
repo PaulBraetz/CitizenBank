@@ -44,7 +44,7 @@ namespace CBFrontend.UI.Logistics
 
 		protected override async Task OnParametersSetAndSessionInitializedAsync()
 		{
-			await SubscribeOnce<LogisticsOrderEntity>(new EventSubscription(nameof(IEventfulLogisticsService.OnLogisticsOrderEdited), Order.HubId), onEdit);
+			await Subscribe<LogisticsOrderEntity>(new EventSubscription(nameof(IEventfulLogisticsService.OnLogisticsOrderEdited), Order.HubId), onEdit);
 
 			await base.OnInitializedAsync();
 			void onEdit(LogisticsOrderEntity oder)

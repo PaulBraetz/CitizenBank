@@ -1,4 +1,7 @@
-@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+@font-face {
+    src: url("../lib/lato/fonts/Lato-Light.ttf");
+    font-family: lato-light;
+}
 
 #blazor-error-ui {
     background: lightyellow;
@@ -20,10 +23,6 @@
     }
 
 /*Required custom*/
-
-.bg-custom-transparent {
-    background-color: rgba(255,255,255,0.01);
-}
 
 /*Themes*/
 /*Light*/

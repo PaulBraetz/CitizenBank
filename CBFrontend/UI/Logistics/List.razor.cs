@@ -27,7 +27,7 @@ namespace CBFrontend.UI.Logistics
 
 		protected override async Task OnParametersSetAndSessionInitializedAsync()
 		{
-			await SubscribeOnce<LogisticsOrderEntity>(new EventSubscription(nameof(IEventfulLogisticsService.OnLogisticsOrderCreated), SessionParent.Session.HubId), a => Refresh());
+			await Subscribe<LogisticsOrderEntity>(new EventSubscription(nameof(IEventfulLogisticsService.OnLogisticsOrderCreated), SessionParent.Session.HubId), a => Refresh());
 
 			orders = await SessionParent.ServiceContext.GetService<IEventfulLogisticsService>().GetLogisticsOrders(request);
 		}

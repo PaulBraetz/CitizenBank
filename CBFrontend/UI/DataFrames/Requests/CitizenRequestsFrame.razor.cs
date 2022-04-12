@@ -3,6 +3,7 @@
 using CBData.Entities;
 
 using Microsoft.AspNetCore.Components;
+using PBApplication.Extensions;
 using PBFrontend.UI.Authorization;
 using PBShared.Events;
 using System.Collections.Generic;
@@ -21,27 +22,31 @@ namespace CBFrontend.UI.DataFrames.Requests
 
 		protected override async Task OnParametersSetAndSessionInitializedAsync()
 		{
-			requests = (await SessionParent.ServiceContext.GetService<IEventfulCitizenService>().GetCitizenLinkRequests()).Data.ToList();
-			foreach (var request in requests)
+			var response = await SessionParent.ServiceContext.GetService<IEventfulCitizenService>().GetCitizenLinkRequests();
+			if (response.HasData())
 			{
-				await SubscribeOnce(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenLinkRequestVerified), request.HubId), () => remove(request));
-				await SubscribeOnce(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenLinkRequestCancelled), request.HubId), () => remove(request));
-			}
-			await SubscribeOnce<CitizenLinkRequestEntity>(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenLinkRequestCreated), SessionParent.Session.User.HubId), add);
+				requests = response.Data.ToList();
+				foreach (var request in requests)
+				{
+					await Subscribe(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenLinkRequestVerified), request.HubId), () => remove(request));
+					await Subscribe(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenLinkRequestCancelled), request.HubId), () => remove(request));
+				}
+				await Subscribe<CitizenLinkRequestEntity>(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenLinkRequestCreated), SessionParent.Session.User.HubId), add);
 
-			void add(CitizenLinkRequestEntity response)
-			{
-				requests.Add(response);
-				SubscribeOnce(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenLinkRequestVerified), response.HubId), () => remove(response));
-				SubscribeOnce(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenLinkRequestCancelled), response.HubId), () => remove(response));
-				InvokeAsync(StateHasChanged);
-			}
-			void remove(CitizenLinkRequestEntity request)
-			{
-				requests.Remove(request);
-				Unsubscribe(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenLinkRequestVerified), request.HubId));
-				Unsubscribe(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenLinkRequestCancelled), request.HubId));
-				InvokeAsync(StateHasChanged);
+				void add(CitizenLinkRequestEntity response)
+				{
+					requests.Add(response);
+					Subscribe(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenLinkRequestVerified), response.HubId), () => remove(response));
+					Subscribe(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenLinkRequestCancelled), response.HubId), () => remove(response));
+					InvokeAsync(StateHasChanged);
+				}
+				void remove(CitizenLinkRequestEntity request)
+				{
+					requests.Remove(request);
+					Unsubscribe(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenLinkRequestVerified), request.HubId));
+					Unsubscribe(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenLinkRequestCancelled), request.HubId));
+					InvokeAsync(StateHasChanged);
+				}
 			}
 		}
 	}

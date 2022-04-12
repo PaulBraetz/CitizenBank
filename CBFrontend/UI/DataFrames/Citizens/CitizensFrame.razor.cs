@@ -39,7 +39,7 @@ namespace CBFrontend.UI.DataFrames.Citizens
 
 		protected override async Task OnParametersSetAndSessionInitializedAsync()
 		{
-			if (previousUser == null || previousUser.Id != SessionParent.Session.User.Id)
+			if (previousUser == null || (SessionParent.Session.IsLoggedIn && previousUser.Id != SessionParent.Session.User.Id))
 			{
 				if (previousUser != null)
 				{
@@ -49,8 +49,8 @@ namespace CBFrontend.UI.DataFrames.Citizens
 				previousUser = SessionParent.Session.User;
 
 				citizens = (await SessionParent.ServiceContext.GetService<IEventfulCitizenService>().GetCitizens()).Data.ToList();
-				await Task.WhenAll(citizens.Select(c => new EventSubscription(nameof(IEventfulCitizenService.OnCitizenUnlinked), c.HubId)).Select(s => SubscribeOnce<IEventfulCitizenService.OnCitizenUnlinkedData>(s, remove)));
-				await SubscribeOnce<CitizenEntity>(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenLinked), SessionParent.Session.User.HubId), add);
+				await Task.WhenAll(citizens.Select(c => new EventSubscription(nameof(IEventfulCitizenService.OnCitizenUnlinked), c.HubId)).Select(s => Subscribe<IEventfulCitizenService.OnCitizenUnlinkedData>(s, remove)));
+				await Subscribe<CitizenEntity>(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenLinked), SessionParent.Session.User.HubId), add);
 
 				async Task generalUnsubscribe()
 				{
@@ -60,7 +60,7 @@ namespace CBFrontend.UI.DataFrames.Citizens
 				void add(CitizenEntity response)
 				{
 					citizens.Add(response);
-					SubscribeOnce<IEventfulCitizenService.OnCitizenUnlinkedData>(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenUnlinked), response.HubId), remove);
+					Subscribe<IEventfulCitizenService.OnCitizenUnlinkedData>(new EventSubscription(nameof(IEventfulCitizenService.OnCitizenUnlinked), response.HubId), remove);
 					InvokeAsync(StateHasChanged);
 				}
 				void remove(IEventfulCitizenService.OnCitizenUnlinkedData data)
