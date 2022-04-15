@@ -1,59 +1,60 @@
 body {
-    font-family: LatoWebLight;
+	font-family: LatoWebLight;
 }
 
 #blazor-error-ui {
-    background: lightyellow;
-    bottom: 0;
-    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
-    display: none;
-    left: 0;
-    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
-    position: fixed;
-    width: 100%;
-    z-index: 1000;
+	background: lightyellow;
+	bottom: 0;
+	box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+	display: none;
+	left: 0;
+	padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+	position: fixed;
+	width: 100%;
+	z-index: 1000;
 }
 
-    #blazor-error-ui .dismiss {
-        cursor: pointer;
-        position: absolute;
-        right: 0.75rem;
-        top: 0.5rem;
-    }
+	#blazor-error-ui .dismiss {
+		cursor: pointer;
+		position: absolute;
+		right: 0.75rem;
+		top: 0.5rem;
+	}
 
 /*Required custom*/
 
 .bg-custom-transparent {
-    background-color: rgba(255,255,255,0.01);
+	background-color: rgba(255,255,255,0.01);
 }
 
 /*Themes*/
 /*Light*/
 .bg-theme-light {
-    background-color: white;
+	background-color: white;
 }
 
 .text-theme-light {
-    color: black
+	color: black
 }
 /*Dark*/
 .bg-theme-dark {
-    background-color: rgb(30, 30, 30);
+	background-color: rgb(30, 30, 30);
 }
 
 .text-theme-dark {
-    color: white
+	color: white
 }
 
 /*Clickables*/
 .clickable {
-    cursor: pointer
+	cursor: pointer
 }
 
 .non-clickable {
-    cursor: default
+	cursor: default
 }
 
-.nav-link {
-    color: inherit;
+.nav-link, .nav-link:hover, .nav-link:focus {
+	color: inherit;
+	text-decoration: none;
 }

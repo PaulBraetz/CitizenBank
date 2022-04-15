@@ -46,20 +46,14 @@ namespace CitizenBank
 			CBCommon.Settings.CitizenBank.EMAIL_SMTP_PORT = emailData.GetValue<Int32>("SmtpPort");
 			CBCommon.Settings.CitizenBank.EMAIL_POP3_PORT = emailData.GetValue<Int32>("Pop3Port");
 
-			//Enum.GetValues<ConsoleLogger.Code>().ForEach(ConsoleLogger.Unlock);
-			//ConsoleLogger.Unlock(ConsoleLogger.Code.SRV);
-			//ConsoleLogger.Unlock(ConsoleLogger.Code.MLN);
-			ConsoleLogger.Unlock(ConsoleLogger.Code.RSD);
-			ConsoleLogger.Unlock(ConsoleLogger.Code.RCV);
-
 			services.ConfigurePBApp(c => c
 			.ConfigurePBCommon(cc =>
 			{
 				cc.ConfigureSettingsInitializer(si =>
 				{
-					si.URL = Configuration.GetSection("SetupData").GetValue<String>("URL").ToString();
+					si.URL = Configuration.GetSection("SetupData").GetSection("URL").GetValue<String>("Production").ToString();
 #if DEBUG
-					si.URL = "https://localhost:5001";
+					si.URL = Configuration.GetSection("SetupData").GetSection("URL").GetValue<String>("Development").ToString();
 #endif
 
 				});
