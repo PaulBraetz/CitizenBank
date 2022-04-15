@@ -1,6 +1,5 @@
-@font-face {
-    src: url("../lib/lato/fonts/Lato-Light.ttf");
-    font-family: lato-light;
+body {
+    font-family: LatoWebLight;
 }
 
 #blazor-error-ui {
@@ -24,14 +23,18 @@
 
 /*Required custom*/
 
+.bg-custom-transparent {
+    background-color: rgba(255,255,255,0.01);
+}
+
 /*Themes*/
 /*Light*/
 .bg-theme-light {
-    background-color: rgb(30, 30, 30);
+    background-color: white;
 }
 
 .text-theme-light {
-    color: white
+    color: black
 }
 /*Dark*/
 .bg-theme-dark {
@@ -52,9 +55,5 @@
 }
 
 .nav-link {
-    color: white;
+    color: inherit;
 }
-.nav-link:hover {
-    color: white;
-}
-

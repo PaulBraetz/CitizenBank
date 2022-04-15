@@ -178,3 +178,7 @@
 .bg-white-t100 {
 	background-color: rgba(255, 255, 255,1);
 }
+
+.bg-t0 {
+	background-color: rgba(0,0,0,0);
+}
