@@ -16,8 +16,15 @@
 	height: 100vh;
 }
 
+.sidebar > .addendum {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: end;
+}
+
 /*Phone resolution*/
-@media (max-width: 640.98px) {
+@media (max-width: 640.98px){
 	.page {
 		flex-direction: column;
 		/*Credit: https://css-tricks.com/the-trick-to-viewport-units-on-mobile/*/
@@ -25,10 +32,10 @@
 		min-height: calc(var(--vh, 1vh) * 100);
 		height: fit-content;
 	}
-
 	.sidebar {
 		width: 100vw;
 	}
+
 }
 
 /*Tablet/Desktop resolution*/

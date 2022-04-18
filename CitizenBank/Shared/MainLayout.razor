@@ -4,12 +4,15 @@
 	<ConsentFrame>
 		<div class="page">
 			<SessionFrameInitialized>
-				<div class="sidebar blur-5">
+				<div class="sidebar blur-5 @ThemeFactory.GetText(sessionFrameRef.Session.Theme)">
 					<NavMenu />
+					<div class="addendum">
+						<PBFrontend.UI.Meta.Reconnect />
+					</div>
 				</div>
 				<div class="main @ThemeFactory.GetText(sessionFrameRef.Session.Theme).Css">
-					<ConditionalCookieBanner CookieInfoHref="/cookies" />
 					@Body
+					<ConditionalDefaultCookieBanner CookieInfoHref="/cookies" />
 				</div>
 			</SessionFrameInitialized>
 			<SessionFrameNotInitialized>

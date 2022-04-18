@@ -21,7 +21,7 @@
 				</NavLink>
 			</li>
 		</Authorized>
-		<AuthorizeView ForRights="new[] { CBCommon.Settings.CitizenBank.CITIZEN_RIGHT, PBCommon.Configuration.Settings.OWNER_RIGHT }">
+		<AuthorizeView ForRight="@CBCommon.Settings.CitizenBank.CITIZEN_RIGHT">
 			<Authorized>
 				<li class="nav-item px-3" @onclick="()=>ToggleNavMenu(true)">
 					<NavLink class="nav-link" href="/banking" Match="NavLinkMatch.All">
