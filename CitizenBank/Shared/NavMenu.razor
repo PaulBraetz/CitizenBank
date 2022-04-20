@@ -8,42 +8,42 @@
 </div>
 
 <div class="@NavMenuCssClass overflow-auto">
-	<ul class="nav d-flex flex-column">
-		<li class="nav-item px-3 @GetTextThemeCss()" @onclick="()=>ToggleNavMenu(true)">
+	<ul class="nav d-flex flex-column @GetTextThemeCss()">
+		<li class="nav-item px-3" @onclick="()=>ToggleNavMenu(true)">
 			<NavLink class="nav-link" href="/user" Match="NavLinkMatch.All">
-				<Icon T="Icon.Type.person_circle" />&nbsp;<Localize Value="User" /><Authorized>&nbsp;:&nbsp;<Ellipsis Width="100px" Value="@SessionParent.Session.User.Name" /></Authorized>
+				<Icon T="Icon.Type.person_circle" />&nbsp;<Localize Value="User" /><Authorized>&nbsp;:&nbsp;<Ellipsis Width="150" Value="@SessionParent.Session.User.Name" /></Authorized>
 			</NavLink>
 		</li>
 		<Authorized>
-			<li class="nav-item px-3 @GetTextThemeCss()" @onclick="()=>ToggleNavMenu(true)">
+			<li class="nav-item px-3" @onclick="()=>ToggleNavMenu(true)">
 				<NavLink class="nav-link" href="/citizen" Match="NavLinkMatch.All">
 					<Icon T="Icon.Type.person" />&nbsp;Citizen
 				</NavLink>
 			</li>
 		</Authorized>
-		<AuthorizeView ForRights="new[] { CBCommon.Settings.CitizenBank.CITIZEN_RIGHT, PBCommon.Configuration.Settings.OWNER_RIGHT }">
+		<AuthorizeView ForRight="@CBCommon.Settings.CitizenBank.CITIZEN_RIGHT">
 			<Authorized>
-				<li class="nav-item px-3 @GetTextThemeCss()" @onclick="()=>ToggleNavMenu(true)">
+				<li class="nav-item px-3" @onclick="()=>ToggleNavMenu(true)">
 					<NavLink class="nav-link" href="/banking" Match="NavLinkMatch.All">
 						<Icon T="Icon.Type.credit_card" />&nbsp;<Localize Value="Bank" />
 					</NavLink>
 				</li>
 			</Authorized>
 		</AuthorizeView>
-		<li class="nav-item px-3 @GetTextThemeCss()" @onclick="()=>ToggleNavMenu(true)">
+		<li class="nav-item px-3" @onclick="()=>ToggleNavMenu(true)">
 			<NavLink class="nav-link" href="/logistics" Match="NavLinkMatch.All">
 				<Icon T="Icon.Type.box_seam" />&nbsp;<Localize Value="Logistics" />
 			</NavLink>
 		</li>
-		<li class="nav-item px-3 @GetTextThemeCss()" @onclick="()=>ToggleNavMenu(true)">
+		<li class="nav-item px-3" @onclick="()=>ToggleNavMenu(true)">
 			<NavLink class="nav-link" href="/cookies" Match="NavLinkMatch.All">
 				<Icon T="Icon.Type.info" />&nbsp;Cookies
 			</NavLink>
 		</li>
-		<li class="nav-item px-3 @GetTextThemeCss()">
+		<li class="nav-item px-3">
 			<LanguageSelect />
 		</li>
-		<li class="nav-item px-3 @GetTextThemeCss()">
+		<li class="nav-item px-3">
 			<TimeZoneSelect />
 		</li>
 	</ul>
