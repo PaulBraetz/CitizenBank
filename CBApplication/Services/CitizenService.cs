@@ -379,7 +379,6 @@ namespace CBApplication.Services
 		public async Task<IGetPaginatedEncryptableResponse<CitizenEntity>> GetCitizens()
 		{
 
-
 			var response = new GetPaginatedEncryptableResponse<CitizenEntity>();
 
 			void successAction()
@@ -399,7 +398,6 @@ namespace CBApplication.Services
 
 		public async Task<IEncryptableResponse<CitizenSettingsEntity>> GetCitizenSettings(IAsCitizenRequest request)
 		{
-
 
 			var response = new EncryptableResponse<CitizenSettingsEntity>();
 
@@ -431,7 +429,6 @@ namespace CBApplication.Services
 		public event ServiceEventHandler<ServiceEventArgs<CitizenSettingsEntity>> OnCitizenSettingsChanged;
 		public async Task<IResponse> SetCitizenSettings(IAsCitizenRequest<SetCitizenSettingsParameter> request)
 		{
-
 
 			var response = new Response();
 
@@ -481,7 +478,6 @@ namespace CBApplication.Services
 		public async Task<IResponse> UnlinkCitizen(IAsCitizenRequest request)
 		{
 
-
 			var response = new Response();
 
 			async Task notNullRequest()
@@ -523,7 +519,6 @@ namespace CBApplication.Services
 
 		public async Task<IGetPaginatedEncryptableResponse<CitizenEntity>> SearchCitizens(IAsUserGetPaginatedEncryptableRequest<SearchCitizensParameter> request)
 		{
-
 
 			var response = new GetPaginatedEncryptableResponse<CitizenEntity>();
 
@@ -609,7 +604,6 @@ namespace CBApplication.Services
 		public async Task<CitizenEntity> GetCitizen(String name)
 		{
 
-
 			CitizenEntity citizen = null;
 			if (name.IsValidHandle())
 			{
@@ -638,7 +632,6 @@ namespace CBApplication.Services
 
 		public async Task<IEncryptableResponse<CitizenEntity>> RetrieveCitizen(String name)
 		{
-
 
 			var response = new EncryptableResponse<CitizenEntity>();
 

@@ -17,12 +17,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="PBFrontend" Version="34.4.4" />
+    <PackageReference Include="PBFrontend" Version="34.6.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CBApplication\CBApplication.csproj" />
     <ProjectReference Include="..\CBCommon\CBCommon.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="UI\DataFrames\Session\Children\" />
   </ItemGroup>
   
 

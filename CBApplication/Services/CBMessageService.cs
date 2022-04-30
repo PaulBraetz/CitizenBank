@@ -34,7 +34,9 @@ namespace CBApplication.Services
 		}
 
 		public async Task<IGetPaginatedEncryptableResponse<AccountMessageEntity>> GetAccountMessages(IAsAccountGetPaginatedRequest<GetAccountMessagesParameter> request)
-		{			
+		{
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(GetAccountMessages));
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(GetAccountMessages));
 
 			var response = new GetPaginatedEncryptableResponse<AccountMessageEntity>();
 
@@ -150,9 +152,8 @@ namespace CBApplication.Services
 
 			CreateCitizenMessage(creator, creator, message);
 		}
-		public void CreateCitizenSelfMessages(IEnumerable<CitizenEntity> creators, LocalizableFormattableString message)
 		{
-
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(CreateCitizenSelfMessages));
 
 			creators.ForEach(c => CreateCitizenSelfMessage(c, message));
 		}
@@ -160,7 +161,7 @@ namespace CBApplication.Services
 		public event ServiceEventHandler<ServiceEventArgs<AccountMessageEntity>> OnAccountMessageCreated;
 		public void CreateAccountMessages(AccountEntityBase creator, IEnumerable<AccountEntityBase> recipients, LocalizableFormattableString message)
 		{
-
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(CreateAccountMessages));
 
 			AccountMessageEntity newMessage = new(creator, recipients, message, TimeSpan.FromDays(3), false);
 			Connection.Insert(newMessage);
@@ -174,19 +175,19 @@ namespace CBApplication.Services
 		}
 		public void CreateAccountMessage(AccountEntityBase creator, AccountEntityBase recipient, LocalizableFormattableString message)
 		{
-
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(CreateAccountMessage));
 
 			CreateAccountMessages(creator, new[] { recipient }, message);
 		}
 		public void CreateAccountSelfMessage(AccountEntityBase creator, LocalizableFormattableString message)
 		{
-
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(CreateAccountSelfMessage));
 
 			CreateAccountMessage(creator, creator, message);
 		}
 		public void CreateAccountSelfMessages(IEnumerable<AccountEntityBase> creators, LocalizableFormattableString message)
 		{
-
+			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(CreateAccountSelfMessages));
 
 			creators.ForEach(c => CreateAccountSelfMessage(c, message));
 		}

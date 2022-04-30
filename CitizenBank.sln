@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31205.134
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CBCommon", "CBCommon\CBCommon.csproj", "{9AACFBB9-10C6-4BED-931E-C5431A11E081}"
 EndProject
@@ -56,29 +56,5 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F54314EE-9A06-4853-BFF1-A90F23620E2C}
-	EndGlobalSection
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 7
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://dev.azure.com/braetzprojekt
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = CBCommon\\CBCommon.csproj
-		SccProjectName1 = CBCommon
-		SccLocalPath1 = CBCommon
-		SccProjectUniqueName2 = CBData\\CBData.csproj
-		SccProjectName2 = CBData
-		SccLocalPath2 = CBData
-		SccProjectUniqueName3 = CBApplication\\CBApplication.csproj
-		SccProjectName3 = CBApplication
-		SccLocalPath3 = CBApplication
-		SccProjectUniqueName4 = CBFrontend\\CBFrontend.csproj
-		SccProjectName4 = CBFrontend
-		SccLocalPath4 = CBFrontend
-		SccProjectUniqueName5 = CBClient\\CBClient.csproj
-		SccProjectName5 = CBClient
-		SccLocalPath5 = CBClient
-		SccProjectUniqueName6 = CitizenBank\\CitizenBank.csproj
-		SccProjectName6 = CitizenBank
-		SccLocalPath6 = CitizenBank
 	EndGlobalSection
 EndGlobal

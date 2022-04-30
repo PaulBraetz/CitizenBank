@@ -51,9 +51,9 @@ namespace CitizenBank
 			{
 				cc.ConfigureSettingsInitializer(si =>
 				{
-					si.URL = Configuration.GetSection("SetupData").GetValue<String>("URL").ToString();
+					si.URL = Configuration.GetSection("SetupData").GetSection("URL").GetValue<String>("Production").ToString();
 #if DEBUG
-					si.URL = "https://localhost:5001";
+					si.URL = Configuration.GetSection("SetupData").GetSection("URL").GetValue<String>("Development").ToString();
 #endif
 
 				});

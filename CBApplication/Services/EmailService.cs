@@ -37,7 +37,10 @@ namespace CBApplication.Services
 
 		public async Task ChangeEmail(String name, String email, String verificationCode, String newEmail)
 		{
+<<<<<<< HEAD
 
+=======
+>>>>>>> 830ac890b7424c0df58250177e3a5dc71afc2934
 
 			var bodyPart1 = GetLocalized(CHANGEEMAIL_BODY_PART_1);
 			var bodyPart1WithLink = String.Format(bodyPart1, verificationCode.ToVerifyLink());
@@ -51,7 +54,10 @@ namespace CBApplication.Services
 		private const String REGISTER_BODY_PART = "Click this link to confirm your registration : {0}";
 		public async Task Register(String name, String email, String verificationCode)
 		{
+<<<<<<< HEAD
 
+=======
+>>>>>>> 830ac890b7424c0df58250177e3a5dc71afc2934
 
 			var bodyPart = GetLocalized(REGISTER_BODY_PART);
 			var bodyPartWithLink = String.Format(bodyPart, verificationCode.ToVerifyLink());
@@ -63,7 +69,10 @@ namespace CBApplication.Services
 		private const String DELETE_BODY_PART = "Your user has successfully been deleted.";
 		public async Task DeleteUser(String name, String email)
 		{
+<<<<<<< HEAD
 
+=======
+>>>>>>> 830ac890b7424c0df58250177e3a5dc71afc2934
 
 			var bodyPart = GetLocalized(DELETE_BODY_PART);
 			await SendEmail(name, email, DELETE_SUBJECT,  bodyPart);
@@ -73,7 +82,10 @@ namespace CBApplication.Services
 		private const String PASSWORD_BODY_PART = "Click this link to confirm your password change : {0}";
 		public async Task RequestPasswordChange(String name, String email, String verificationCode)
 		{
+<<<<<<< HEAD
 
+=======
+>>>>>>> 830ac890b7424c0df58250177e3a5dc71afc2934
 
 			var bodyPart = GetLocalized(PASSWORD_BODY_PART);
 			var bodyPartWithLink = String.Format(bodyPart, verificationCode.ToVerifyLink());
@@ -85,7 +97,10 @@ namespace CBApplication.Services
 		private const String AUTH_BODY_PART = "Your two factor authentication code is : {0}";
 		public async Task TwoFactorAuthentication(String name, String email, String verificationCode)
 		{
+<<<<<<< HEAD
 
+=======
+>>>>>>> 830ac890b7424c0df58250177e3a5dc71afc2934
 
 			var bodyPart = GetLocalized(AUTH_BODY_PART);
 			var bodyPartWithLink = String.Format(bodyPart, verificationCode);

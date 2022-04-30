@@ -44,7 +44,10 @@ namespace CBApplication.Services
 
 		public async Task<IResponse> CreateLogisticsOrder(IAsCitizenRequest<CreateLogisticsOrderParameter> request)
 		{
+<<<<<<< HEAD
 
+=======
+>>>>>>> 830ac890b7424c0df58250177e3a5dc71afc2934
 
 			var response = new Response();
 
@@ -107,7 +110,10 @@ namespace CBApplication.Services
 
 		public async Task<IResponse> EditLogisticsOrder(IAsCitizenEncryptableRequest<EditLogisticsOrderParameter> request)
 		{
+<<<<<<< HEAD
 
+=======
+>>>>>>> 830ac890b7424c0df58250177e3a5dc71afc2934
 
 			var response = new Response();
 
@@ -159,7 +165,10 @@ namespace CBApplication.Services
 
 		public async Task<IGetPaginatedEncryptableResponse<LogisticsOrderEntity>> GetLogisticsOrders(IGetPaginatedEncryptableRequest<GetLogisticsOrdersParameter> request)
 		{
+<<<<<<< HEAD
 
+=======
+>>>>>>> 830ac890b7424c0df58250177e3a5dc71afc2934
 
 			var response = new GetPaginatedEncryptableResponse<LogisticsOrderEntity>();
 
