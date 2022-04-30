@@ -541,7 +541,6 @@ namespace CBApplication.Services
 									 }
 									 else
 									 {
-
 										 String sid = dict["sid" + i];
 
 										 OrgEntity org = Connection.Query<OrgEntity>().Where(o => o.Name.Equals(name)).SingleOrDefault();

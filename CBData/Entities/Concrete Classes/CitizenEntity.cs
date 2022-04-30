@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace CBData.Entities
 {
-
 	public class CitizenEntity : NamedEntityBase
 	{
 		public CitizenEntity(String name) : base(name) { }

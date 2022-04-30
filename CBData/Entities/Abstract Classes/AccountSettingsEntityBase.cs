@@ -11,7 +11,6 @@ using static CBCommon.Enums.CitizenBankEnums;
 
 namespace CBData.Entities
 {
-
 	public abstract class AccountSettingsEntityBase : SettingsEntityBase, IAccountSettingsEntity
 	{
 		protected AccountSettingsEntityBase() { }

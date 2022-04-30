@@ -47,7 +47,6 @@ namespace CBApplication.Services
 		public async Task<IResponse> CreateCitizenLinkRequest(IAsUserRequest<CreateCitizenLinkRequestParameter> request)
 		{
 
-
 			var response = new Response();
 
 			async Task notNullRequest()
@@ -92,7 +91,6 @@ namespace CBApplication.Services
 		public event ServiceEventHandler<ServiceEventArgs> OnCitizenLinkRequestCancelled;
 		public async Task<IResponse> CancelCitizenLinkRequest(IAsUserEncryptableRequest<CancelCitizenLinkRequestParameter> request)
 		{
-
 
 			var response = new Response();
 
@@ -139,7 +137,6 @@ namespace CBApplication.Services
 
 		public async Task<IResponse> VerifyCitizenLinkRequest(IAsUserEncryptableRequest<VerifyCitizenLinkRequestParameter> request)
 		{
-
 
 			var response = new Response();
 
@@ -219,7 +216,6 @@ namespace CBApplication.Services
 		public async Task EnsureSettingsAndAccountForCitizen(CitizenEntity citizen)
 		{
 
-
 			void run()
 			{
 				var claimService = GetService<IEventfulClaimService>();
@@ -268,7 +264,6 @@ namespace CBApplication.Services
 		public async Task<IGetPaginatedEncryptableResponse<CitizenLinkRequestEntity>> GetCitizenLinkRequests(IAsUserGetPaginatedRequest<GetCitizenLinkRequestsParameter> request)
 		{
 
-
 			var response = new GetPaginatedEncryptableResponse<CitizenLinkRequestEntity>();
 
 			async Task notNullRequest()
@@ -315,7 +310,6 @@ namespace CBApplication.Services
 		public async Task<IGetPaginatedEncryptableResponse<CitizenLinkRequestEntity>> GetCitizenLinkRequests()
 		{
 
-
 			var response = new GetPaginatedEncryptableResponse<CitizenLinkRequestEntity>();
 
 			void successAction()
@@ -336,7 +330,6 @@ namespace CBApplication.Services
 
 		public async Task<IGetPaginatedEncryptableResponse<CitizenEntity>> GetCitizens(IAsUserGetPaginatedRequest<GetCitizensParameter> request)
 		{
-
 
 			var response = new GetPaginatedEncryptableResponse<CitizenEntity>();
 
@@ -378,7 +371,6 @@ namespace CBApplication.Services
 		}
 		public async Task<IGetPaginatedEncryptableResponse<CitizenEntity>> GetCitizens()
 		{
-
 			var response = new GetPaginatedEncryptableResponse<CitizenEntity>();
 
 			void successAction()
@@ -398,7 +390,6 @@ namespace CBApplication.Services
 
 		public async Task<IEncryptableResponse<CitizenSettingsEntity>> GetCitizenSettings(IAsCitizenRequest request)
 		{
-
 			var response = new EncryptableResponse<CitizenSettingsEntity>();
 
 			async Task notNullRequest()
@@ -429,7 +420,6 @@ namespace CBApplication.Services
 		public event ServiceEventHandler<ServiceEventArgs<CitizenSettingsEntity>> OnCitizenSettingsChanged;
 		public async Task<IResponse> SetCitizenSettings(IAsCitizenRequest<SetCitizenSettingsParameter> request)
 		{
-
 			var response = new Response();
 
 			async Task notNullRequest()
@@ -477,7 +467,6 @@ namespace CBApplication.Services
 		public event ServiceEventHandler<ServiceEventArgs<IEventfulCitizenService.OnCitizenUnlinkedData>> OnCitizenUnlinked;
 		public async Task<IResponse> UnlinkCitizen(IAsCitizenRequest request)
 		{
-
 			var response = new Response();
 
 			async Task notNullRequest()
@@ -519,7 +508,6 @@ namespace CBApplication.Services
 
 		public async Task<IGetPaginatedEncryptableResponse<CitizenEntity>> SearchCitizens(IAsUserGetPaginatedEncryptableRequest<SearchCitizensParameter> request)
 		{
-
 			var response = new GetPaginatedEncryptableResponse<CitizenEntity>();
 
 			async Task notNullRequest()
@@ -603,7 +591,6 @@ namespace CBApplication.Services
 
 		public async Task<CitizenEntity> GetCitizen(String name)
 		{
-
 			CitizenEntity citizen = null;
 			if (name.IsValidHandle())
 			{
@@ -632,7 +619,6 @@ namespace CBApplication.Services
 
 		public async Task<IEncryptableResponse<CitizenEntity>> RetrieveCitizen(String name)
 		{
-
 			var response = new EncryptableResponse<CitizenEntity>();
 
 			var citizen = await GetCitizen(name);

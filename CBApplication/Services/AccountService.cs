@@ -630,7 +630,6 @@ namespace CBApplication.Services
 
 				async Task foundCurrencyAndAccount()
 				{
-
 					var account = GetAccountEntity<VirtualAccountEntity>(request);
 					var duplicate = account.DepositReferences.SingleOrDefault(d => d.ReferencedAccount.Id == referencedAccount.Id && d.Currency.Id == currency.Id);
 					var referencedAccountSettings = GetSettings<RealAccountSettingsEntity>(referencedAccount);

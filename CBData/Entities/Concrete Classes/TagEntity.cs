@@ -5,7 +5,6 @@ using System.Collections.Generic;
 
 namespace CBData.Entities
 {
-
 	public class TagEntity : NamedEntityBase
 	{
 		public TagEntity(String text) : base(text)

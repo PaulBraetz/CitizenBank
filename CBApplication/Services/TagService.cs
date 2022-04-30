@@ -38,11 +38,6 @@ namespace CBApplication.Services.Public
 
 		public async Task<IGetPaginatedEncryptableResponse<SearchTagModel>> SearchTags(IAsAccountGetPaginatedEncryptableRequest<SearchTagsParameter> request)
 		{
-<<<<<<< HEAD
-
-=======
->>>>>>> 830ac890b7424c0df58250177e3a5dc71afc2934
-
 			var response = new GetPaginatedEncryptableResponse<SearchTagModel>();
 
 			async Task notNullRequest()
@@ -97,11 +92,6 @@ namespace CBApplication.Services.Public
 
 		public async Task<TagEntity> GetTag(String name)
 		{
-<<<<<<< HEAD
-
-=======
->>>>>>> 830ac890b7424c0df58250177e3a5dc71afc2934
-
 			TagEntity run()
 			{
 				name = name?.Trim().ToLower();

@@ -932,7 +932,6 @@ namespace CBApplication.Services
 				};
 				switch (target.Relationship)
 				{
-
 					case TransactionPartnersRelationship.DepositToForward:
 						{
 							update(source.Debtor, target.Debtor, (-1) * target.Gross);

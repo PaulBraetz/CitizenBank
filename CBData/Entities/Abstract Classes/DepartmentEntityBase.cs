@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 
 namespace CBData.Entities
 {
-
 	public abstract class DepartmentEntityBase : NamedEntityBase, IDepartmentEntity
 	{
 		protected DepartmentEntityBase() { }
