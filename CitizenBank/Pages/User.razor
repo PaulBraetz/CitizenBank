@@ -8,7 +8,7 @@
 			</PBTitle>
 		</Header>
 		<ChildContent>
-				<ShadowPageFormBox>
+				<DefaultFormBox>
 					<Header>
 						<PBTitle>
 							<Localize Value="Manage Login" />
@@ -22,9 +22,9 @@
 							<div class="my-1">
 								<CollapseFrame>
 									<CollapseText><CollapseChevron /><Localize Value="Forgot Password" /></CollapseText>
-									<CollapseContent>
+									<WhenNotCollapsed>
 										<ForgotPasswordPreset />
-									</CollapseContent>
+									</WhenNotCollapsed>
 								</CollapseFrame>
 							</div>
 						</NotAuthorized>
@@ -37,9 +37,9 @@
 									<div class="my-1">
 										<CollapseFrame>
 											<CollapseText><CollapseChevron /><Localize Value="Register" /></CollapseText>
-											<CollapseContent>
+											<WhenNotCollapsed>
 												<RegisterPreset />
-											</CollapseContent>
+											</WhenNotCollapsed>
 										</CollapseFrame>
 									</div>
 								</Authorized>
@@ -47,33 +47,33 @@
 							<div class="my-1">
 								<CollapseFrame>
 									<CollapseText><CollapseChevron /><Localize Value="Change Password" /></CollapseText>
-									<CollapseContent>
+									<WhenNotCollapsed>
 										<ChangePasswordPreset />
-									</CollapseContent>
+									</WhenNotCollapsed>
 								</CollapseFrame>
 							</div>
 							<div class="my-1">
 								<CollapseFrame>
 									<CollapseText><CollapseChevron /><Localize Value="Change Email" /></CollapseText>
-									<CollapseContent>
+									<WhenNotCollapsed>
 										<PBFrontend.UI.Authorization.ChangeEmail.ChangeEmailPreset />
-									</CollapseContent>
+									</WhenNotCollapsed>
 								</CollapseFrame>
 							</div>
 							<div class="my-1">
 								<CollapseFrame>
 									<CollapseText><CollapseChevron /><Localize Value="Delete User" /></CollapseText>
-									<CollapseContent>
+									<WhenNotCollapsed>
 										<DeleteUser/>
-									</CollapseContent>
+									</WhenNotCollapsed>
 								</CollapseFrame>
 							</div>
 							<LogoutPreset />
 						</Authorized>
 					</ChildContent>
-				</ShadowPageFormBox>
+				</DefaultFormBox>
 				<Authorized>
-					<ShadowPageFormBox>
+					<DefaultFormBox>
 						<Header>
 							<PBTitle>
 								<Localize Value="Settings" />
@@ -82,8 +82,13 @@
 						<ChildContent>
 							<Settings />
 						</ChildContent>
-					</ShadowPageFormBox>
+					</DefaultFormBox>
 				</Authorized>
+				<AuthorizeView ForRight="@PBCommon.Configuration.Settings.LOG_READER_RIGHT">
+					<Authorized>
+						<PBFrontend.UI.Meta.Logging.Logs/>
+					</Authorized>
+				</AuthorizeView>
 		</ChildContent>
 	</DefaultPage>
 </SessionFrameInitialized>

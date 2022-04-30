@@ -38,7 +38,7 @@ namespace CBApplication.Services.Public
 
 		public async Task<IGetPaginatedEncryptableResponse<SearchTagModel>> SearchTags(IAsAccountGetPaginatedEncryptableRequest<SearchTagsParameter> request)
 		{
-			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(SearchTags));
+
 
 			var response = new GetPaginatedEncryptableResponse<SearchTagModel>();
 
@@ -94,7 +94,7 @@ namespace CBApplication.Services.Public
 
 		public async Task<TagEntity> GetTag(String name)
 		{
-			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(GetTag));
+
 
 			TagEntity run()
 			{

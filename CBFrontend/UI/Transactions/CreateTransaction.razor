@@ -1,7 +1,7 @@
 ﻿@inherits AccountsFrameChild
 @if (parameter != null)
 {
-	<ShadowPageFormBox>
+	<DefaultFormBox>
 		<Header>
 			<PBTitle>
 				Create
@@ -130,11 +130,11 @@
 				</div>
 			}
 		</ChildContent>
-	</ShadowPageFormBox>
+	</DefaultFormBox>
 }
 @if (preview?.Data != null)
 {
-	<ShadowPageFormBox>
+	<DefaultFormBox>
 		<Header>
 			<PBTitle>
 				<Localize Value="Preview" />
@@ -143,5 +143,5 @@
 		<ChildContent>
 			<SourceTransactionDetails Transaction="preview.Data" />
 		</ChildContent>
-	</ShadowPageFormBox>
+	</DefaultFormBox>
 }

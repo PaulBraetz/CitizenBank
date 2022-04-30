@@ -44,7 +44,7 @@ namespace CBApplication.Services
 
 		public async Task<IResponse> CreateLogisticsOrder(IAsCitizenRequest<CreateLogisticsOrderParameter> request)
 		{
-			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(CreateLogisticsOrder));
+
 
 			var response = new Response();
 
@@ -107,7 +107,7 @@ namespace CBApplication.Services
 
 		public async Task<IResponse> EditLogisticsOrder(IAsCitizenEncryptableRequest<EditLogisticsOrderParameter> request)
 		{
-			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(EditLogisticsOrder));
+
 
 			var response = new Response();
 
@@ -159,7 +159,7 @@ namespace CBApplication.Services
 
 		public async Task<IGetPaginatedEncryptableResponse<LogisticsOrderEntity>> GetLogisticsOrders(IGetPaginatedEncryptableRequest<GetLogisticsOrdersParameter> request)
 		{
-			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(GetLogisticsOrders));
+
 
 			var response = new GetPaginatedEncryptableResponse<LogisticsOrderEntity>();
 

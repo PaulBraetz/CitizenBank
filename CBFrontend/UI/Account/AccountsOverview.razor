@@ -1,5 +1,5 @@
 ﻿@inherits AccountsFrameChild
-<ShadowPageFormBox>
+<DefaultFormBox>
     <Header>
         <PBTitle>
             <PBTitle>
@@ -25,7 +25,7 @@
                         <CollapseChevron /><Localize Value="Real Accounts" />
                     </CollapseDiv>
                 </label>
-                <CollapseContent>
+                <WhenNotCollapsed>
                     <table class="table @GetTextThemeCss()">
                         <thead>
                             <tr>
@@ -45,7 +45,7 @@
                             }
                         </tbody>
                     </table>
-                </CollapseContent>
+                </WhenNotCollapsed>
             </CollapseFrame>
         </div>
         }
@@ -58,7 +58,7 @@
                         <CollapseChevron /><Localize Value="Virtual Accounts" />
                     </CollapseDiv>
                 </label>
-                <CollapseContent>
+                <WhenNotCollapsed>
                     <table class="table @GetTextThemeCss()">
                         <thead>
                             <tr>
@@ -78,9 +78,9 @@
                             }
                         </tbody>
                     </table>
-                </CollapseContent>
+                </WhenNotCollapsed>
             </CollapseFrame>
         </div>
         }
     </ChildContent>
-</ShadowPageFormBox>
+</DefaultFormBox>

@@ -46,7 +46,7 @@ namespace CBApplication.Services
 		public event ServiceEventHandler<ServiceEventArgs<CitizenLinkRequestEntity>> OnCitizenLinkRequestCreated;
 		public async Task<IResponse> CreateCitizenLinkRequest(IAsUserRequest<CreateCitizenLinkRequestParameter> request)
 		{
-			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(CreateCitizenLinkRequest));
+
 
 			var response = new Response();
 
@@ -92,7 +92,7 @@ namespace CBApplication.Services
 		public event ServiceEventHandler<ServiceEventArgs> OnCitizenLinkRequestCancelled;
 		public async Task<IResponse> CancelCitizenLinkRequest(IAsUserEncryptableRequest<CancelCitizenLinkRequestParameter> request)
 		{
-			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(CancelCitizenLinkRequest));
+
 
 			var response = new Response();
 
@@ -139,7 +139,7 @@ namespace CBApplication.Services
 
 		public async Task<IResponse> VerifyCitizenLinkRequest(IAsUserEncryptableRequest<VerifyCitizenLinkRequestParameter> request)
 		{
-			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(VerifyCitizenLinkRequest));
+
 
 			var response = new Response();
 
@@ -218,7 +218,7 @@ namespace CBApplication.Services
 
 		public async Task EnsureSettingsAndAccountForCitizen(CitizenEntity citizen)
 		{
-			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(EnsureSettingsAndAccountForCitizen));
+
 
 			void run()
 			{
@@ -267,7 +267,7 @@ namespace CBApplication.Services
 
 		public async Task<IGetPaginatedEncryptableResponse<CitizenLinkRequestEntity>> GetCitizenLinkRequests(IAsUserGetPaginatedRequest<GetCitizenLinkRequestsParameter> request)
 		{
-			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(GetCitizenLinkRequests));
+
 
 			var response = new GetPaginatedEncryptableResponse<CitizenLinkRequestEntity>();
 
@@ -314,7 +314,7 @@ namespace CBApplication.Services
 		}
 		public async Task<IGetPaginatedEncryptableResponse<CitizenLinkRequestEntity>> GetCitizenLinkRequests()
 		{
-			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(GetCitizenLinkRequests));
+
 
 			var response = new GetPaginatedEncryptableResponse<CitizenLinkRequestEntity>();
 
@@ -336,7 +336,7 @@ namespace CBApplication.Services
 
 		public async Task<IGetPaginatedEncryptableResponse<CitizenEntity>> GetCitizens(IAsUserGetPaginatedRequest<GetCitizensParameter> request)
 		{
-			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(GetCitizens));
+
 
 			var response = new GetPaginatedEncryptableResponse<CitizenEntity>();
 
@@ -378,7 +378,7 @@ namespace CBApplication.Services
 		}
 		public async Task<IGetPaginatedEncryptableResponse<CitizenEntity>> GetCitizens()
 		{
-			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(GetCitizens));
+
 
 			var response = new GetPaginatedEncryptableResponse<CitizenEntity>();
 
@@ -399,7 +399,7 @@ namespace CBApplication.Services
 
 		public async Task<IEncryptableResponse<CitizenSettingsEntity>> GetCitizenSettings(IAsCitizenRequest request)
 		{
-			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(GetCitizenSettings));
+
 
 			var response = new EncryptableResponse<CitizenSettingsEntity>();
 
@@ -431,7 +431,7 @@ namespace CBApplication.Services
 		public event ServiceEventHandler<ServiceEventArgs<CitizenSettingsEntity>> OnCitizenSettingsChanged;
 		public async Task<IResponse> SetCitizenSettings(IAsCitizenRequest<SetCitizenSettingsParameter> request)
 		{
-			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(SetCitizenSettings));
+
 
 			var response = new Response();
 
@@ -480,7 +480,7 @@ namespace CBApplication.Services
 		public event ServiceEventHandler<ServiceEventArgs<IEventfulCitizenService.OnCitizenUnlinkedData>> OnCitizenUnlinked;
 		public async Task<IResponse> UnlinkCitizen(IAsCitizenRequest request)
 		{
-			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(UnlinkCitizen));
+
 
 			var response = new Response();
 
@@ -523,7 +523,7 @@ namespace CBApplication.Services
 
 		public async Task<IGetPaginatedEncryptableResponse<CitizenEntity>> SearchCitizens(IAsUserGetPaginatedEncryptableRequest<SearchCitizensParameter> request)
 		{
-			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(SearchCitizens));
+
 
 			var response = new GetPaginatedEncryptableResponse<CitizenEntity>();
 
@@ -608,7 +608,7 @@ namespace CBApplication.Services
 
 		public async Task<CitizenEntity> GetCitizen(String name)
 		{
-			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(GetCitizen));
+
 
 			CitizenEntity citizen = null;
 			if (name.IsValidHandle())
@@ -638,7 +638,7 @@ namespace CBApplication.Services
 
 		public async Task<IEncryptableResponse<CitizenEntity>> RetrieveCitizen(String name)
 		{
-			ConsoleLogger.Log(ConsoleLogger.Code.SRV, nameof(GetCitizen));
+
 
 			var response = new EncryptableResponse<CitizenEntity>();
 

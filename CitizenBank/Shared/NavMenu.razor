@@ -11,7 +11,7 @@
 	<ul class="nav d-flex flex-column">
 		<li class="nav-item px-3 @GetTextThemeCss()" @onclick="()=>ToggleNavMenu(true)">
 			<NavLink class="nav-link" href="/user" Match="NavLinkMatch.All">
-				<Icon T="Icon.Type.person_circle" />&nbsp;<Localize Value="User" /><Authorized>&nbsp;:&nbsp;<Ellipsis Width="100px" Value="@SessionParent.Session.User.Name" /></Authorized>
+				<Icon T="Icon.Type.person_circle" />&nbsp;<Localize Value="User" /><Authorized>&nbsp;:&nbsp;<Ellipsis Width="150" Value="@SessionParent.Session.User.Name" /></Authorized>
 			</NavLink>
 		</li>
 		<Authorized>
