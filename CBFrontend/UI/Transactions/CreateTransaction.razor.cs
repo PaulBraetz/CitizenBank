@@ -47,7 +47,6 @@ namespace CBFrontend.UI.Transactions
 
 		private IAsAccountEncryptableRequest<ITransactionService.CreateTransactionOfferParameter> GetRequest()
 		{
-
 			parameter.CreditorId = creditor?.Id ?? Guid.Empty;
 			parameter.DebtorId = debtor?.Id ?? Guid.Empty;
 			parameter.RecipientId = creatorIsCreditor ? parameter.DebtorId : parameter.CreditorId;

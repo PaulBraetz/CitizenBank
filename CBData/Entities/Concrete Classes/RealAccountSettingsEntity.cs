@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace CBData.Entities
 {
-
 	public class RealAccountSettingsEntity : AccountSettingsEntityBase
 	{
 		public RealAccountSettingsEntity(CurrencyBoolDictionaryEntity canReceiveTransactionOffersFor,

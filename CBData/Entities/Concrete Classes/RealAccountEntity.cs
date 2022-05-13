@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace CBData.Entities
 {
-
 	public class RealAccountEntity : AccountEntityBase
 	{
 		public RealAccountEntity(CitizenEntity creator, CreditScoreEntity creditScore) : base(creator, creator.Name, creditScore)

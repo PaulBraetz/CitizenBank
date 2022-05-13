@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 
 namespace CBData.Entities
 {
-
 	public class DepositAccountReferenceEntity : EntityBase, IActivable, IHasCurrency<CurrencyEntity>
 	{
 		public DepositAccountReferenceEntity(RealAccountEntity depositAccount, CurrencyEntity currency)

@@ -38,7 +38,6 @@ namespace CBApplication.Services.Public
 
 		public async Task<IGetPaginatedEncryptableResponse<SearchTagModel>> SearchTags(IAsAccountGetPaginatedEncryptableRequest<SearchTagsParameter> request)
 		{
-
 			var response = new GetPaginatedEncryptableResponse<SearchTagModel>();
 
 			async Task notNullRequest()
@@ -93,7 +92,6 @@ namespace CBApplication.Services.Public
 
 		public async Task<TagEntity> GetTag(String name)
 		{
-
 			TagEntity run()
 			{
 				name = name?.Trim().ToLower();

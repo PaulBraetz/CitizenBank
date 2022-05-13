@@ -170,7 +170,6 @@ namespace CBApplication.Services.Abstractions
 
 		sealed class GetCurrenciesParameter
 		{
-
 		}
 		Task<IGetPaginatedEncryptableResponse<CurrencyEntity>> GetCurrencies(IGetPaginatedRequest<GetCurrenciesParameter> request);
 

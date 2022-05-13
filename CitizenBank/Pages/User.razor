@@ -8,7 +8,7 @@
 			</PBTitle>
 		</Header>
 		<ChildContent>
-				<ShadowPageFormBox>
+				<DefaultFormBox>
 					<Header>
 						<PBTitle>
 							<Localize Value="Manage Login" />
@@ -71,9 +71,9 @@
 							<LogoutPreset />
 						</Authorized>
 					</ChildContent>
-				</ShadowPageFormBox>
+				</DefaultFormBox>
 				<Authorized>
-					<ShadowPageFormBox>
+					<DefaultFormBox>
 						<Header>
 							<PBTitle>
 								<Localize Value="Settings" />
@@ -82,7 +82,7 @@
 						<ChildContent>
 							<Settings />
 						</ChildContent>
-					</ShadowPageFormBox>
+					</DefaultFormBox>
 				</Authorized>
 				<AuthorizeView ForRight="@PBCommon.Configuration.Settings.LogReaderRight">
 					<Authorized>

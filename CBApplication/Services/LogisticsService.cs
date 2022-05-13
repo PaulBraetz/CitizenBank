@@ -44,7 +44,6 @@ namespace CBApplication.Services
 
 		public async Task<IResponse> CreateLogisticsOrder(IAsCitizenRequest<CreateLogisticsOrderParameter> request)
 		{
-
 			var response = new Response();
 
 			async Task notNullRequest()
@@ -106,7 +105,6 @@ namespace CBApplication.Services
 
 		public async Task<IResponse> EditLogisticsOrder(IAsCitizenEncryptableRequest<EditLogisticsOrderParameter> request)
 		{
-
 			var response = new Response();
 
 			async Task notNullRequest()
@@ -157,7 +155,6 @@ namespace CBApplication.Services
 
 		public async Task<IGetPaginatedEncryptableResponse<LogisticsOrderEntity>> GetLogisticsOrders(IGetPaginatedEncryptableRequest<GetLogisticsOrdersParameter> request)
 		{
-
 			var response = new GetPaginatedEncryptableResponse<LogisticsOrderEntity>();
 
 			async Task notNullRequest()

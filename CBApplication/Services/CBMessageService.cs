@@ -35,7 +35,6 @@ namespace CBApplication.Services
 
 		public async Task<IGetPaginatedEncryptableResponse<AccountMessageEntity>> GetAccountMessages(IAsAccountGetPaginatedRequest<GetAccountMessagesParameter> request)
 		{
-
 			var response = new GetPaginatedEncryptableResponse<AccountMessageEntity>();
 
 			async Task notNullRequest()
@@ -146,16 +145,15 @@ namespace CBApplication.Services
 
 			CreateCitizenMessage(creator, creator, message);
 		}
+
 		public void CreateCitizenSelfMessages(IEnumerable<CitizenEntity> creators, LocalizableFormattableString message)
 		{
-
 			creators.ForEach(c => CreateCitizenSelfMessage(c, message));
 		}
 
 		public event ServiceEventHandler<ServiceEventArgs<AccountMessageEntity>> OnAccountMessageCreated;
 		public void CreateAccountMessages(AccountEntityBase creator, IEnumerable<AccountEntityBase> recipients, LocalizableFormattableString message)
 		{
-
 			AccountMessageEntity newMessage = new(creator, recipients, message, TimeSpan.FromDays(3), false);
 			Connection.Insert(newMessage);
 			Connection.SaveChanges();
@@ -168,17 +166,14 @@ namespace CBApplication.Services
 		}
 		public void CreateAccountMessage(AccountEntityBase creator, AccountEntityBase recipient, LocalizableFormattableString message)
 		{
-
 			CreateAccountMessages(creator, new[] { recipient }, message);
 		}
 		public void CreateAccountSelfMessage(AccountEntityBase creator, LocalizableFormattableString message)
 		{
-
 			CreateAccountMessage(creator, creator, message);
 		}
 		public void CreateAccountSelfMessages(IEnumerable<AccountEntityBase> creators, LocalizableFormattableString message)
 		{
-
 			creators.ForEach(c => CreateAccountSelfMessage(c, message));
 		}
 	}
