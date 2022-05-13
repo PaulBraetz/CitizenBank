@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace CBData.Entities
 {
 
-	public class CitizenEntity : NamedEntityBase
+	public class CitizenEntity : NamedEntityBase, ISessionAttachment
 	{
 		public CitizenEntity(String name) : base(name) { }
 
@@ -23,6 +23,16 @@ namespace CBData.Entities
 		public override Object Clone(IDictionary<Guid, Object> circularReferenceHelperDictionary)
 		{
 			return new CitizenEntity(this, circularReferenceHelperDictionary);
+		}
+
+		public void AttachTo(UserSessionEntity session)
+		{
+			return;
+		}
+
+		public void DetachFrom(UserSessionEntity session)
+		{
+			return;
 		}
 	}
 }

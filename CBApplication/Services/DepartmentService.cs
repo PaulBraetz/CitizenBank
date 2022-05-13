@@ -64,7 +64,7 @@ namespace CBApplication.Services
 					};
 					Connection.Insert(newDepartment, newSettings);
 
-					_ = GetService<IEventfulClaimService>().EnsureClaim(newDepartment, PBCommon.Configuration.Settings.OWNER_RIGHT, newSettings);
+					GetService<IEventfulClaimService>().EnsureClaim(newDepartment, newSettings, new IClaimService.EnsureRightDatum(PBCommon.Configuration.Settings.OwnerRight, true));
 
 					superDepartment.SubDepartments.Add(newDepartment);
 					Connection.Update(superDepartment);
@@ -167,7 +167,7 @@ namespace CBApplication.Services
 				}
 				void successAction()
 				{
-					GetService<IEventfulClaimService>().EnsureClaim(admin, PBCommon.Configuration.Settings.ADMIN_RIGHT, department);
+					GetService<IEventfulClaimService>().EnsureClaim(admin, department, new IClaimService.EnsureRightDatum(PBCommon.Configuration.Settings.AdminRight, true));
 
 					OnAdminRecruitedForAdmin.Invoke(Session, admin, department.CloneAsT());
 					OnAdminRecruitedForDepartment.Invoke(Session, department, admin.CloneAsT());
@@ -213,7 +213,7 @@ namespace CBApplication.Services
 
 				void successAction()
 				{
-					GetService<IEventfulClaimService>().RemoveRight(admin.Value.GetHeldClaims(Connection, PBCommon.Configuration.Settings.ADMIN_RIGHT, department).Single(), PBCommon.Configuration.Settings.ADMIN_RIGHT);
+					GetService<IEventfulClaimService>().EnsureClaim(admin.Value, department, new IClaimService.EnsureRightDatum(PBCommon.Configuration.Settings.AdminRight, false));
 
 					OnAdminResignedForAdmin.Invoke(Session, admin.Value, department.CloneAsT());
 					OnAdminResignedForDepartment.Invoke(Session, department, admin.Value.CloneAsT());
@@ -262,7 +262,7 @@ namespace CBApplication.Services
 				}
 				void successAction()
 				{
-					GetService<IEventfulClaimService>().EnsureClaim(member, CBCommon.Settings.CitizenBank.MEMBER_RIGHT, department);
+					GetService<IEventfulClaimService>().EnsureClaim(member, department, new IClaimService.EnsureRightDatum(CBCommon.Settings.CitizenBank.MEMBER_RIGHT, true));
 
 					OnMemberRecruitedForDepartment.Invoke(Session, department, member.CloneAsT());
 					OnMemberRecruitedForMember.Invoke(Session, member, department.CloneAsT());
@@ -303,8 +303,7 @@ namespace CBApplication.Services
 
 				void successAction()
 				{
-					var memberClaim = member.Value.GetHeldClaims(Connection, CBCommon.Settings.CitizenBank.MEMBER_RIGHT, department).Single();
-					GetService<IEventfulClaimService>().RemoveRight(memberClaim, CBCommon.Settings.CitizenBank.MEMBER_RIGHT);
+					GetService<IEventfulClaimService>().EnsureClaim(member.Value, department, new IClaimService.EnsureRightDatum(CBCommon.Settings.CitizenBank.MEMBER_RIGHT, false));
 
 					OnMemberResignedForDepartment.Invoke(Session, department, member.Value.CloneAsT());
 					OnMemberResignedForMember.Invoke(Session, member.Value, department.CloneAsT());
@@ -555,13 +554,13 @@ namespace CBApplication.Services
 												 org.Creator = asCitizen.Value;
 												 if (!oldAdminIn.Any(d => d.Id == org.Id))
 												 {
-													 claimService.EnsureClaim(asCitizen.Value, PBCommon.Configuration.Settings.ADMIN_RIGHT, org);
+													 GetService<IEventfulClaimService>().EnsureClaim(asCitizen.Value, org, new IClaimService.EnsureRightDatum(PBCommon.Configuration.Settings.AdminRight, true));
 												 }
 												 newAdminIn.Add(org);
 											 }
 											 if (!oldMemberIn.Any(d => d.Id == org.Id))
 											 {
-												 claimService.EnsureClaim(account, CBCommon.Settings.CitizenBank.MEMBER_RIGHT, org);
+												 GetService<IEventfulClaimService>().EnsureClaim(account, org, new IClaimService.EnsureRightDatum(CBCommon.Settings.CitizenBank.MEMBER_RIGHT, true));
 											 }
 											 newMemberIn.Add(org);
 										 }
@@ -577,7 +576,8 @@ namespace CBApplication.Services
 											 Connection.Insert(org);
 											 Connection.Insert(settings);
 
-											 claimService.EnsureClaim(org, PBCommon.Configuration.Settings.ADMIN_RIGHT, settings);
+											 //TODO: settings ownership is immutable => use property
+											 GetService<IEventfulClaimService>().EnsureClaim(org, settings, new IClaimService.EnsureRightDatum(PBCommon.Configuration.Settings.OwnerRight, true));
 										 }
 										 else
 										 {
@@ -592,17 +592,15 @@ namespace CBApplication.Services
 
 					oldMemberIn
 						.Where(o => !newMemberIn.Any(d => d.Id == o.Id))
-						.Select(o => (Org: o, MemberClaim: o.GetClaims(Connection, account, CBCommon.Settings.CitizenBank.MEMBER_RIGHT).Single()))
-						.ForEach(data =>
+						.ForEach(o =>
 						{
-							claimService.RemoveRight(data.MemberClaim, CBCommon.Settings.CitizenBank.MEMBER_RIGHT);
+							GetService<IEventfulClaimService>().EnsureClaim(account, o, new IClaimService.EnsureRightDatum(CBCommon.Settings.CitizenBank.MEMBER_RIGHT, false));
 						});
 					oldAdminIn
 						.Where(o => !newAdminIn.Any(d => d.Id == o.Id))
-						.Select(o => (Org: o, AdminClaim: o.GetClaims(Connection, account, PBCommon.Configuration.Settings.ADMIN_RIGHT).Single()))
-						.ForEach(data =>
+						.ForEach(o =>
 						{
-							claimService.RemoveRight(data.AdminClaim, CBCommon.Settings.CitizenBank.MEMBER_RIGHT);
+							GetService<IEventfulClaimService>().EnsureClaim(account, o, new IClaimService.EnsureRightDatum(PBCommon.Configuration.Settings.AdminRight, false));
 						});
 
 					Connection.SaveChanges();

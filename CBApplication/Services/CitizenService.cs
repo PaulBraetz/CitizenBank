@@ -174,13 +174,14 @@ namespace CBApplication.Services
 				void successAction()
 				{
 					var citizen = createRequest.Citizen;
-					var previousOwners = citizen.GetClaims(Connection, PBCommon.Configuration.Settings.OWNER_RIGHT);
-					var claimService = GetService<IEventfulClaimService>();
-					var ownerArray = new[] { PBCommon.Configuration.Settings.OWNER_RIGHT };
+					var previousOwners = citizen.GetOwnerClaimsHolders<UserEntity>(Connection);
 
-					previousOwners.ForEach(c => claimService.UpdateClaim(c, c.Rights.Except(ownerArray)));
-					claimService.EnsureClaim(user, ownerArray, citizen);
-					claimService.EnsureClaim(user, CBCommon.Settings.CitizenBank.CITIZEN_RIGHT);
+					var claimService = GetService<IEventfulClaimService>();
+
+					var previousOwnersDatum = new IClaimService.EnsureRightDatum(PBCommon.Configuration.Settings.OwnerRight, false);
+					previousOwners.ForEach(c => claimService.EnsureClaim(c, citizen, previousOwnersDatum));
+					claimService.EnsureClaim(user, citizen, new IClaimService.EnsureRightDatum(PBCommon.Configuration.Settings.OwnerRight, true));
+					claimService.EnsureClaim(user, new IClaimService.EnsureRightDatum(CBCommon.Settings.CitizenBank.CITIZEN_RIGHT, true));
 
 					Connection.Delete(createRequest);
 					Connection.SaveChanges();
@@ -228,7 +229,8 @@ namespace CBApplication.Services
 					};
 					Connection.Insert(citizenSettings);
 
-					claimService.EnsureClaim(citizen, PBCommon.Configuration.Settings.OWNER_RIGHT, citizenSettings);
+					//TODO: Settings ownership is immutable => use property instead
+					claimService.EnsureClaim(citizen, citizenSettings, new IClaimService.EnsureRightDatum(PBCommon.Configuration.Settings.OwnerRight, true));
 				}
 				if (!citizen.GetHeldOwnerClaimsValues<RealAccountEntity>(Connection).Any())
 				{
@@ -253,8 +255,8 @@ namespace CBApplication.Services
 									accountSettings.CanReceiveTransactionOffersFor,
 									accountSettings);
 
-					_ = claimService.EnsureClaim(account, PBCommon.Configuration.Settings.OWNER_RIGHT, accountSettings);
-					_ = claimService.EnsureClaim(citizen, PBCommon.Configuration.Settings.OWNER_RIGHT, account);
+					claimService.EnsureClaim(account, accountSettings, new IClaimService.EnsureRightDatum(PBCommon.Configuration.Settings.OwnerRight, true));
+					claimService.EnsureClaim(citizen, account, new IClaimService.EnsureRightDatum(PBCommon.Configuration.Settings.OwnerRight, true));
 				}
 				Connection.SaveChanges();
 			}
@@ -481,15 +483,13 @@ namespace CBApplication.Services
 
 					var claimService = GetService<IEventfulClaimService>();
 
-					var ownershipClaim = citizen.GetClaims(Connection, PBCommon.Configuration.Settings.OWNER_RIGHT).Single();
-					var previousOwner = Connection.GetSingle<UserEntity>(ownershipClaim.HolderId);
+					var previousOwner = citizen.GetOwnerClaimsHolders<UserEntity>(Connection).Single();
 
-					claimService.RemoveRight(ownershipClaim, PBCommon.Configuration.Settings.OWNER_RIGHT);
+					claimService.EnsureClaim(previousOwner, citizen, new IClaimService.EnsureRightDatum(PBCommon.Configuration.Settings.OwnerRight, false));
 
 					if (!previousOwner.GetHeldOwnerClaimsValues<CitizenEntity>(Connection).Any())
 					{
-						var globalClaim = previousOwner.GetHeldClaims(Connection, CBCommon.Settings.CitizenBank.CITIZEN_RIGHT).Single();
-						claimService.RemoveRight(globalClaim, CBCommon.Settings.CitizenBank.CITIZEN_RIGHT);
+						claimService.EnsureClaim(previousOwner, new IClaimService.EnsureRightDatum(CBCommon.Settings.CitizenBank.CITIZEN_RIGHT, false));
 					}
 
 					OnCitizenUnlinked.Invoke(Session, citizen, new IEventfulCitizenService.OnCitizenUnlinkedData(citizen.CloneAsT(), previousOwner.CloneAsT()));
@@ -568,7 +568,7 @@ namespace CBApplication.Services
 						.ToList();
 
 					response.LastPage = query.Value.GetPageCount(request.PerPage) - 1;
-					
+
 					CitizenEntity newCitizen = await GetCitizen(request.Parameter.Name);
 					if (response.Data.Count == 0 && newCitizen != null)
 					{
@@ -640,6 +640,52 @@ namespace CBApplication.Services
 					ValidationCode.NotFound.WithMessage("The requested citizen could not be found."))
 				.SetOnCriterionMet(successAction)
 				.CatchAll(ValidationField.Create("request"))
+				.Evaluate(response);
+
+			return response;
+		}
+
+		public async Task<IResponse> SetCurrentCitizen(IEncryptableRequest<SetCurrentCitizenRequestParameter> request)
+		{
+			var response = new Response();
+
+			async Task notNullRequest()
+			{
+				var citizen = Connection.GetSingle<CitizenEntity>(request.Parameter.CitizenId);
+
+				void successAction()
+				{
+					GetService<IEventfulUserService>().AttachToSession(citizen);
+				}
+
+				await FirstValidateAuthenticated()
+					.NextNullCheck(citizen,
+						ValidationField.Create(nameof(request.Parameter.CitizenId)),
+						ValidationCode.NotFound)
+					.SetOnCriterionMet(successAction)
+					.Evaluate(response);
+			}
+
+			await FirstParameterizedRequestNullCheck(request, response)
+				.SetOnCriterionMet(notNullRequest)
+				.CatchAll(ValidationField.Request)
+				.Evaluate(response);
+
+			return response;
+		}
+
+		public async Task<IEncryptableResponse<CitizenEntity>> GetCurrentCitizen()
+		{
+			var response = new EncryptableResponse<CitizenEntity>();
+
+
+			void successAction()
+			{
+				response.Data = Session.GetAttached<CitizenEntity>().SingleOrDefault();
+			}
+
+			await FirstValidateAuthenticated()
+				.SetOnCriterionMet(successAction)
 				.Evaluate(response);
 
 			return response;

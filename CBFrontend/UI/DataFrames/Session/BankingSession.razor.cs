@@ -82,7 +82,7 @@ namespace CBFrontend.UI.DataFrames.Session
 				var request = new AsUserGetPaginatedEncryptableRequest<IClaimService.GetHeldClaimsParameter>()
 				{
 					Page = 0,
-					PerPage = PBCommon.Configuration.Settings.MAX_PAGINATED_PERPAGE,
+					PerPage = PBCommon.Configuration.Settings.MaxPaginatedPerPage,
 					Parameter = new IClaimService.GetHeldClaimsParameter()
 					{
 						HolderId = CurrentCitizen.Id
@@ -101,18 +101,18 @@ namespace CBFrontend.UI.DataFrames.Session
 					CurrentCitizen = citizen;
 					lastCitizen = valueId;
 
-					var claim = response.Data.Single
+					//TODO
+					//await Subscribe(new EventSubscription(nameof(IEventfulClaimService.OnClaimDeleted), CurrentCitizen.HubId), removeCurrentCitizen);
+					//await Subscribe(new EventSubscription(nameof))
 
-					await Subscribe(new EventSubscription(nameof(IEventfulClaimService.OnClaimDeleted), CurrentCitizen.HubId), removeCurrentCitizen);
-					await Subscribe(new EventSubscription(nameof))
-					
+
 					async Task removeCurrentCitizen()
 					{
 						await SetCurrentCitizen(null);
 					}
 					async Task updateCurrentCitizen(IClaimService.ClaimDto<UserEntity, CitizenEntity> claim)
 					{
-						if(!(claim.Rights.Contains(PBCommon.Configuration.Settings.OWNER_RIGHT) || claim.Rights.Contains(PBCommon.Configuration.Settings.ADMIN_RIGHT)))
+						if(!(claim.Rights.Contains(PBCommon.Configuration.Settings.OwnerRight) || claim.Rights.Contains(PBCommon.Configuration.Settings.AdminRight)))
 						{
 							await removeCurrentCitizen();
 						}

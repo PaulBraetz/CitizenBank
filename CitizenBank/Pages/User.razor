@@ -32,7 +32,7 @@
 							<div class="my-1">
 								<UserDetails User="@SessionParent.Session.User" />
 							</div>
-							<AuthorizeView ForRight="@PBCommon.Configuration.Settings.OWNER_RIGHT">
+							<AuthorizeView ForRight="@PBCommon.Configuration.Settings.OwnerRight">
 								<Authorized>
 									<div class="my-1">
 										<CollapseFrame>
@@ -84,7 +84,7 @@
 						</ChildContent>
 					</ShadowPageFormBox>
 				</Authorized>
-				<AuthorizeView ForRight="@PBCommon.Configuration.Settings.LOG_READER_RIGHT">
+				<AuthorizeView ForRight="@PBCommon.Configuration.Settings.LogReaderRight">
 					<Authorized>
 						<PBFrontend.UI.Meta.Logging.Logs/>
 					</Authorized>

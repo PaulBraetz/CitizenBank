@@ -52,5 +52,15 @@ namespace CBData.Entities
 				PriorityTags.SafeDecrypt(decryptor));
 			await base.DecryptSelf(decryptor);
 		}
+
+		public void AttachTo(UserSessionEntity session)
+		{
+			return;
+		}
+
+		public void DetachFrom(UserSessionEntity session)
+		{
+			return;
+		}
 	}
 }

@@ -35,8 +35,6 @@ namespace CitizenBank.Events
 			RegisterTypeToServices<ITransactionService, TransactionService>(new InjectionConstructor(this));
 			RegisterTypeToServices<ILogisticsService, LogisticsService>(new InjectionConstructor(this));
 
-			RegisterTypeToServices<IEmailService, EmailService>(new InjectionConstructor(this));
-
 			IEncryptionService encryptionService = GetService<IEncryptionService>();
 
 			RegisterTypeToObservers<IServiceObserver<IEventfulCitizenService>, CitizenServiceObserver, IEventfulCitizenService>(new InjectionConstructor(hubContext, encryptionService, serializer));

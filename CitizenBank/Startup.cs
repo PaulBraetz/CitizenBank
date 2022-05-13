@@ -14,6 +14,7 @@ using PBCommon.Extensions;
 using PBData.Abstractions;
 using PBData.Entities;
 using PBData.Extensions;
+using PBServer.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,22 +39,14 @@ namespace CitizenBank
 			services.AddRazorPages();
 			services.AddServerSideBlazor();
 
-			var emailData = Configuration.GetSection("EmailData");
-			CBCommon.Settings.CitizenBank.EMAIL_SERVER = emailData.GetValue<String>("Server");
-			CBCommon.Settings.CitizenBank.EMAIL_NOREPLY_ADDRESS = emailData.GetValue<String>("NoreplyAddress");
-			CBCommon.Settings.CitizenBank.EMAIL_NOREPLY_USER = emailData.GetValue<String>("NoreplyUser");
-			CBCommon.Settings.CitizenBank.EMAIL_NOREPLY_PASSWORD = emailData.GetValue<String>("NoreplyPassword");
-			CBCommon.Settings.CitizenBank.EMAIL_SMTP_PORT = emailData.GetValue<Int32>("SmtpPort");
-			CBCommon.Settings.CitizenBank.EMAIL_POP3_PORT = emailData.GetValue<Int32>("Pop3Port");
-
 			services.ConfigurePBApp(c => c
 			.ConfigurePBCommon(cc =>
 			{
 				cc.ConfigureSettingsInitializer(si =>
 				{
-					si.URL = Configuration.GetSection("SetupData").GetSection("URL").GetValue<String>("Production").ToString();
+					si.Url = Configuration.GetSection("SetupData").GetSection("URL").GetValue<String>("Production").ToString();
 #if DEBUG
-					si.URL = Configuration.GetSection("SetupData").GetSection("URL").GetValue<String>("Development").ToString();
+					si.Url = Configuration.GetSection("SetupData").GetSection("URL").GetValue<String>("Development").ToString();
 #endif
 
 				});
@@ -113,7 +106,7 @@ namespace CitizenBank
 				{
 					if (!c.Query<CurrencyEntity>().Any())
 					{
-						var superAdminClaim = c.GetSingle<IClaimEntity>(c => c.Rights.Contains(PBCommon.Configuration.Settings.OWNER_RIGHT) && c.ValueId == Guid.Empty);
+						var superAdminClaim = c.GetSingle<IClaimEntity>(c => c.Rights.Contains(PBCommon.Configuration.Settings.OwnerRight) && c.ValueId == Guid.Empty);
 						var superAdmin = c.GetSingle<UserEntity>(superAdminClaim.HolderId);
 						c.Insert(new CurrencyEntity(superAdmin, "aUEC", "aUEC", 0.005M)
 						{
@@ -128,6 +121,16 @@ namespace CitizenBank
 				cs.SetDBConnectedServiceContextImplementation<CBObservingServiceContext>()
 					.SetUseSignalR()
 					.SetUseDefaultControllers(true);
+
+				cs.ConfigureSettingsInitializer(si =>
+				{
+					var emailData = Configuration.GetSection("NoreplyEmailData");
+
+					si.NoreplyPop3Configuration = new EmailConfiguration(emailData.GetSection("Pop3"));
+					si.NoreplySmtpConfiguration = new EmailConfiguration(emailData.GetSection("Smtp"));
+					si.DefaultVerifyLinkFormatString = "https://citizen-bank.net/v/{0}";
+					si.UseEmailService = true;
+				});
 			})
 			.ConfigurePBFrontend(cf =>
 			{

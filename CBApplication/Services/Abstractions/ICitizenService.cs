@@ -94,5 +94,22 @@ namespace CBApplication.Services.Abstractions
 		Task<IGetPaginatedEncryptableResponse<CitizenEntity>> SearchCitizens(IAsUserGetPaginatedEncryptableRequest<SearchCitizensParameter> request);
 
 		Task<IEncryptableResponse<CitizenEntity>> RetrieveCitizen(String name);
+
+		sealed class SetCurrentCitizenRequestParameter : EncryptableBase<Guid>
+		{
+			public Guid CitizenId { get; set; }
+
+			protected override async Task DecryptSelf(IDecryptor<Guid> decryptor)
+			{
+				CitizenId = await decryptor.Decrypt(CitizenId);
+			}
+
+			protected override async Task EncryptSelf(IEncryptor<Guid> encryptor)
+			{
+				CitizenId = await encryptor.Encrypt(CitizenId);
+			}
+		}
+		Task<IResponse> SetCurrentCitizen(IEncryptableRequest<SetCurrentCitizenRequestParameter> request);
+		Task<IEncryptableResponse<CitizenEntity>> GetCurrentCitizen();
 	}
 }

@@ -584,16 +584,17 @@ namespace CBApplication.Services
 					Connection.SaveChanges();
 
 					var claimService = GetService<IEventfulClaimService>();
-					claimService.EnsureClaim(newAccount, PBCommon.Configuration.Settings.OWNER_RIGHT, settings);
+
+					claimService.EnsureClaim(out var _, newAccount, new HashSet<IClaimService.EnsureRightDatum>() { new(PBCommon.Configuration.Settings.OwnerRight, true) }, settings);
 
 					if (department != null)
 					{
-						claimService.EnsureClaim(department, PBCommon.Configuration.Settings.ADMIN_RIGHT, newAccount);
+						claimService.EnsureClaim(department, newAccount, new IClaimService.EnsureRightDatum(PBCommon.Configuration.Settings.AdminRight, true));
 						OnVirtualAccountCreated.Invoke(Session, citizen, newAccount.CloneAsT());
 					}
 					else
 					{
-						claimService.EnsureClaim(citizen, PBCommon.Configuration.Settings.OWNER_RIGHT, newAccount);
+						claimService.EnsureClaim(citizen, newAccount, new IClaimService.EnsureRightDatum(PBCommon.Configuration.Settings.OwnerRight, true));
 						OnVirtualAccountCreated.Invoke(Session, citizen, newAccount.CloneAsT());
 					}
 
@@ -857,7 +858,7 @@ namespace CBApplication.Services
 				}
 				void isNeitherAdminNorOwner()
 				{
-					retVal2 = retVal2.Where(t => t.Settings.Accessibility == request.Parameter.Accessibility.Value && ( user.HoldsOwnerRightRecursively(Connection, t.Account) || user.HoldsAdminRightRecursively(Connection, t.Account) || user.HoldsObserverRightRecursively(Connection, t.Account)));
+					retVal2 = retVal2.Where(t => t.Settings.Accessibility == request.Parameter.Accessibility.Value && (user.HoldsOwnerRightRecursively(Connection, t.Account) || user.HoldsAdminRightRecursively(Connection, t.Account) || user.HoldsObserverRightRecursively(Connection, t.Account)));
 				}
 
 				await FirstValidateAuthenticatedDelegate(request, response)
@@ -904,31 +905,31 @@ namespace CBApplication.Services
 		}
 
 		public async Task<IGetPaginatedEncryptableResponse<IAccountEntity>> SearchAccounts(IAsAccountGetPaginatedEncryptableRequest<IAccountService.SearchAccountsParameterBase> request)
-        {
+		{
 			var response = new GetPaginatedEncryptableResponse<IAccountEntity>();
 
 			async Task notNullRequest()
-            {
+			{
 				var data = await SearchAccounts<IAccountEntity, IAccountSettingsEntity, IAccountService.SearchAccountsParameterBase>(request, response);
 
 				void setData()
-                {
+				{
 					response.LastPage = data.GetPageCount(request.PerPage) - 1;
-					response.Data = data.Paginate(request.PerPage, request.Page).Select(a=>a.Account.CloneAsT()).ToList();
-                }
+					response.Data = data.Paginate(request.PerPage, request.Page).Select(a => a.Account.CloneAsT()).ToList();
+				}
 
 				await CachedCriterionChain.Cache.Get()
 					.ThisValidatePagination(request, data)
 					.SetOnCriterionMet(setData)
 					.Evaluate(response);
-            }
+			}
 
 			await FirstParameterizedRequestNullCheck(request, response)
 				.SetOnCriterionMet(notNullRequest)
 				.Evaluate(response);
 
 			return response;
-        }
+		}
 
 		public async Task<IGetPaginatedEncryptableResponse<RealAccountEntity>> SearchRealAccounts(IAsAccountGetPaginatedEncryptableRequest<IAccountService.SearchRealAccountsParameter> request)
 		{

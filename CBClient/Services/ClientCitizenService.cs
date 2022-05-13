@@ -57,9 +57,14 @@ namespace CitizenBank.Client.Services
 			return await WebClient.SerializePostDeserialize<IAsCitizenRequest, EncryptableResponse<CitizenSettingsEntity>>("api/citizen/GetCitizenSettings", request);
 		}
 
+		public async Task<IEncryptableResponse<CitizenEntity>> GetCurrentCitizen()
+		{
+			return await WebClient.GetDeserialize<EncryptableResponse<CitizenEntity>>("api/citizen/GetCurrentCitizen");
+		}
+
 		public async Task<IEncryptableResponse<CitizenEntity>> RetrieveCitizen(String name)
 		{
-			return await WebClient.PostDeserialize<IEncryptableResponse<CitizenEntity>>("api/citizen/RetrieveCitizen", name);
+			return await WebClient.PostDeserialize<EncryptableResponse<CitizenEntity>>("api/citizen/RetrieveCitizen", name);
 		}
 
 		public async Task<IGetPaginatedEncryptableResponse<CitizenEntity>> SearchCitizens(IAsUserGetPaginatedEncryptableRequest<ICitizenService.SearchCitizensParameter> request)
@@ -70,6 +75,11 @@ namespace CitizenBank.Client.Services
 		public async Task<IResponse> SetCitizenSettings(IAsCitizenRequest<ICitizenService.SetCitizenSettingsParameter> request)
 		{
 			return await WebClient.SerializePostDeserialize< IAsCitizenRequest < ICitizenService.SetCitizenSettingsParameter > ,Response >("api/citizen/SetCitizenSettings", request);
+		}
+
+		public async Task<IResponse> SetCurrentCitizen(IEncryptableRequest<ICitizenService.SetCurrentCitizenRequestParameter> request)
+		{
+			return await WebClient.SerializePostDeserialize<IEncryptableRequest<ICitizenService.SetCurrentCitizenRequestParameter>, Response>("api/citizen/SetCurrentCitizen", request);
 		}
 
 		public async Task<IResponse> UnlinkCitizen(IAsCitizenRequest request)
