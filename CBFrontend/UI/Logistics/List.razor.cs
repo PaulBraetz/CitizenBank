@@ -1,18 +1,14 @@
 ﻿
 using CBApplication.Services.Abstractions;
-
 using CBData.Entities;
-
 using PBApplication.Requests;
 using PBApplication.Requests.Abstractions;
 using PBApplication.Responses;
 using PBApplication.Responses.Abstractions;
 using PBFrontend.UI.Authorization;
-using PBShared.Events;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using PBFrontend.UI.Miscellaneous.Loading;
+using PBShared.Events;
+using System.Threading.Tasks;
 
 namespace CBFrontend.UI.Logistics
 {

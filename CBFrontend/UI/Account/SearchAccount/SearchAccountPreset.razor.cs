@@ -1,6 +1,4 @@
-﻿using CBApplication.Services.Abstractions;
-using CBData.Abstractions;
-using CBData.Entities;
+﻿using CBData.Abstractions;
 
 using Microsoft.AspNetCore.Components;
 

@@ -3,16 +3,8 @@ using CBApplication.Requests.Abstractions;
 using CBApplication.Services.Abstractions;
 using CBData.Entities;
 using CBFrontend.UI.DataFrames.Accounts.Children;
-using PBApplication.Requests;
-using PBApplication.Requests.Abstractions;
 using PBApplication.Responses.Abstractions;
-using PBApplication.Services.Abstractions;
 using PBFrontend.UI.Miscellaneous.Loading;
-using PBShared.Events;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using static CBCommon.Enums.CitizenBankEnums;
 

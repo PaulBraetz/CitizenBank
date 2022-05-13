@@ -1,13 +1,8 @@
 ﻿using CBApplication.Requests;
-using CBApplication.Requests.Abstractions;
 using CBApplication.Services.Abstractions;
 using CBData.Abstractions;
-using CBData.Entities;
 
 using Microsoft.AspNetCore.Components;
-
-using PBApplication.Requests;
-using PBApplication.Requests.Abstractions;
 using PBApplication.Responses;
 using PBApplication.Responses.Abstractions;
 
@@ -30,7 +25,7 @@ namespace CBFrontend.UI.Account.SearchAccount
 		public AsAccountGetPaginatedEncryptableRequest<IAccountService.SearchAccountsParameterBase> Request = new()
 		{
 			PerPage = 5,
-			Parameter = new() 
+			Parameter = new()
 			{
 				Accessibility = PBCommon.Enums.AccessibilityType.Public
 			},

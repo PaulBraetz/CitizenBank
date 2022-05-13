@@ -1,8 +1,6 @@
 ﻿using CBApplication.Requests.Abstractions;
 
 using PBApplication.Requests;
-using PBApplication.Responses;
-using PBApplication.Services.Abstractions;
 using PBCommon.Encryption.Abstractions;
 using System;
 using System.Threading.Tasks;
@@ -18,7 +16,7 @@ namespace CBApplication.Requests
 		public Guid AsCitizenId { get; set; }
 	}
 	public class AsCitizenEncryptableRequest<TParameter> : AsUserEncryptableRequest<TParameter>, IAsCitizenEncryptableRequest<TParameter>
-		where TParameter:IEncryptable<Guid>
+		where TParameter : IEncryptable<Guid>
 	{
 		public Guid AsCitizenId { get; set; }
 

@@ -7,12 +7,10 @@ using CBFrontend.UI.DataFrames.Accounts.Children;
 using PBApplication.Requests;
 using PBApplication.Responses.Abstractions;
 using PBCommon.Validation;
-using PBCommon.Validation.Abstractions;
 using PBFrontend.UI.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CBFrontend.UI.Transactions

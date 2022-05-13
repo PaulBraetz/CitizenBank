@@ -4,15 +4,7 @@ using CBApplication.Services.Abstractions;
 using CBData.Entities;
 using CBFrontend.UI.DataFrames.Citizens.Children;
 using Microsoft.AspNetCore.Components;
-
-using PBApplication.Requests;
-using PBFrontend.Extensions;
-using PBFrontend.UI.Authorization;
-using PBFrontend.UI.Input;
 using PBShared.Events;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 using static CBCommon.Enums.LogisticsEnums;

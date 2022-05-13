@@ -1,8 +1,5 @@
-﻿using CBData.Abstractions;
-using PBCommon.Encryption.Abstractions;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace CBData.Entities
 {

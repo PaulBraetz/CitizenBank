@@ -1,20 +1,14 @@
 ﻿
-
-using CBApplication.Requests;
-
 using CBData.Abstractions;
 using CBData.Entities;
 
 using PBApplication.Events;
-using PBApplication.Responses;
 using PBApplication.Services.Abstractions;
 using PBCommon.Encryption;
 using PBCommon.Encryption.Abstractions;
-using PBData.Abstractions;
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CBApplication.Services.Abstractions

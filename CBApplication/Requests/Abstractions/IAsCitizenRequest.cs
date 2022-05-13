@@ -1,6 +1,4 @@
 ﻿using PBApplication.Requests.Abstractions;
-using PBApplication.Responses.Abstractions;
-using PBApplication.Services.Abstractions;
 using PBCommon.Encryption.Abstractions;
 using System;
 

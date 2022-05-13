@@ -2,9 +2,7 @@
 using CBData.Entities;
 
 using PBApplication.Events;
-using PBApplication.Responses;
 using PBApplication.Services.Abstractions;
-using System.Collections.Generic;
 
 namespace CBApplication.Services.Abstractions
 {

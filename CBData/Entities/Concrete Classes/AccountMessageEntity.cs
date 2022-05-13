@@ -9,7 +9,7 @@ namespace CBData.Entities
 	public class AccountMessageEntity : MessageEntityBase<AccountEntityBase>
 	{
 		public AccountMessageEntity(AccountEntityBase creator, IEnumerable<AccountEntityBase> recipients, LocalizableFormattableString
-			message, TimeSpan lifeSpan, Boolean expiryPaused) 
+			message, TimeSpan lifeSpan, Boolean expiryPaused)
 			: base(creator, recipients, message, lifeSpan, expiryPaused)
 		{
 		}

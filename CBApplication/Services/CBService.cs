@@ -1,5 +1,4 @@
-﻿using CBApplication.Requests;
-using CBApplication.Requests.Abstractions;
+﻿using CBApplication.Requests.Abstractions;
 
 using CBData.Abstractions;
 using CBData.Entities;
@@ -7,15 +6,12 @@ using PBApplication.Context.Abstractions;
 using PBApplication.Extensions;
 using PBApplication.Responses.Abstractions;
 using PBApplication.Services;
-using PBApplication.Services.Abstractions;
 using PBCommon.Validation;
 using PBCommon.Validation.Abstractions;
 using PBData.Abstractions;
-using PBData.Entities;
 using PBData.Extensions;
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace CBApplication.Services

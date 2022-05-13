@@ -1,15 +1,10 @@
-﻿
-using PBCommon.Encryption;
-using PBCommon.Encryption.Abstractions;
-using PBData.Entities;
+﻿using PBData.Entities;
 using PBData.Extensions;
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading.Tasks;
 using static CBData.Entities.CurrencyBoolDictionaryEntity;
 
 namespace CBData.Entities

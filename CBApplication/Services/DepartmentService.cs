@@ -1,40 +1,29 @@
-﻿using CBApplication.Requests;
+﻿using CBApplication.Extensions;
 using CBApplication.Requests.Abstractions;
 using CBApplication.Services.Abstractions;
-
 using CBCommon.Extensions;
-
 using CBData.Abstractions;
 using CBData.Entities;
-
+using PBApplication.Context.Abstractions;
 using PBApplication.Events;
 using PBApplication.Extensions;
 using PBApplication.Responses;
 using PBApplication.Responses.Abstractions;
-using PBCommon.Validation;
-using PBCommon.Validation.Abstractions;
-
+using PBApplication.Services.Abstractions;
 using PBCommon.Extensions;
-
+using PBCommon.Validation;
 using PBData.Abstractions;
 using PBData.Entities;
 using PBData.Extensions;
-
 using ScrapeX;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Xml.Linq;
-
-using static CBApplication.Services.Abstractions.IEventfulDepartmentService;
-using static PBCommon.Enums;
 using System.Threading.Tasks;
 using static CBApplication.Services.Abstractions.IDepartmentService;
-using PBApplication.Context.Abstractions;
-using PBApplication.Services.Abstractions;
-using CBApplication.Extensions;
+using static CBApplication.Services.Abstractions.IEventfulDepartmentService;
+using static PBCommon.Enums;
 
 namespace CBApplication.Services
 {
@@ -719,7 +708,7 @@ namespace CBApplication.Services
 				{
 					response.LastPage = data.GetPageCount(request.PerPage) - 1;
 					response.Data = data.Paginate(request.PerPage, request.Page)
-						.Select(t=>t.Department)
+						.Select(t => t.Department)
 						.CloneAsT()
 						.ToList();
 				}

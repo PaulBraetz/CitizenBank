@@ -1,15 +1,9 @@
 ﻿
-using CBApplication.Requests;
-
 using CBData.Entities;
 
 using PBApplication.Events;
-using PBApplication.Responses;
 using PBApplication.Services.Abstractions;
 using PBCommon.Globalization;
-using PBData.Entities;
-
-using System;
 using System.Collections.Generic;
 
 namespace CBApplication.Services.Abstractions

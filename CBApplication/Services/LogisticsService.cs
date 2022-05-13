@@ -1,33 +1,25 @@
 ﻿
 
+using CBApplication.Requests.Abstractions;
 using CBApplication.Services.Abstractions;
-
 using CBData.Entities;
-
+using PBApplication.Context.Abstractions;
 using PBApplication.Events;
 using PBApplication.Extensions;
 using PBApplication.Requests.Abstractions;
 using PBApplication.Responses;
 using PBApplication.Responses.Abstractions;
-using PBApplication.Services;
 using PBApplication.Services.Abstractions;
-using PBCommon.Validation;
-
 using PBCommon.Extensions;
 using PBCommon.Globalization;
-
+using PBCommon.Validation;
 using PBData.Entities;
 using PBData.Extensions;
-
 using System;
 using System.Linq;
-
-using static CBCommon.Enums.LogisticsEnums;
 using System.Threading.Tasks;
 using static CBApplication.Services.Abstractions.ILogisticsService;
-using PBApplication.Context.Abstractions;
-using PBCommon;
-using CBApplication.Requests.Abstractions;
+using static CBCommon.Enums.LogisticsEnums;
 
 namespace CBApplication.Services
 {

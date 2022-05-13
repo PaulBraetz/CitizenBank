@@ -1,22 +1,4 @@
-﻿
-
-using CBApplication.Services.Abstractions;
-
-using CBCommon.Extensions;
-
-using CBData.Abstractions;
-using CBData.Entities;
-using PBApplication.Context.Abstractions;
-using PBApplication.Extensions;
-using PBApplication.Services.Abstractions;
-using PBCommon.Validation;
-
-using PBData.Abstractions;
-using PBData.Entities;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using PBApplication.Context.Abstractions;
 
 namespace CBApplication.Services
 {

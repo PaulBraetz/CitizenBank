@@ -5,13 +5,9 @@ using PBApplication.Context.Abstractions;
 using PBApplication.Requests.Abstractions;
 using PBApplication.Responses;
 using PBApplication.Responses.Abstractions;
-using PBApplication.Services.Abstractions;
 using PBClient.Access;
 using PBClient.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace CitizenBank.Client.Services
@@ -74,7 +70,7 @@ namespace CitizenBank.Client.Services
 
 		public async Task<IResponse> SetCitizenSettings(IAsCitizenRequest<ICitizenService.SetCitizenSettingsParameter> request)
 		{
-			return await WebClient.SerializePostDeserialize< IAsCitizenRequest < ICitizenService.SetCitizenSettingsParameter > ,Response >("api/citizen/SetCitizenSettings", request);
+			return await WebClient.SerializePostDeserialize<IAsCitizenRequest<ICitizenService.SetCitizenSettingsParameter>, Response>("api/citizen/SetCitizenSettings", request);
 		}
 
 		public async Task<IResponse> SetCurrentCitizen(IEncryptableRequest<ICitizenService.SetCurrentCitizenRequestParameter> request)

@@ -16,7 +16,7 @@ namespace CBApplication.Requests
 		public Guid AsCitizenId { get; set; }
 	}
 	public class AsCitizenGetPaginatedEncryptableRequest<TParameter> : AsUserGetPaginatedEncryptableRequest<TParameter>, IAsCitizenGetPaginatedEncryptableRequest<TParameter>
-		where TParameter: IEncryptable<Guid>
+		where TParameter : IEncryptable<Guid>
 	{
 		public Guid AsCitizenId { get; set; }
 		protected override async Task DecryptSelf(IDecryptor<Guid> decryptor)

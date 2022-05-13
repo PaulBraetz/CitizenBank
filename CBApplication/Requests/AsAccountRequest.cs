@@ -1,7 +1,4 @@
 ﻿using CBApplication.Requests.Abstractions;
-
-using PBApplication.Requests;
-using PBApplication.Services.Abstractions;
 using PBCommon.Encryption.Abstractions;
 using System;
 using System.Threading.Tasks;

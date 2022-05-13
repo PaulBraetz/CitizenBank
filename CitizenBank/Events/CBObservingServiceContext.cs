@@ -10,7 +10,6 @@ using PBApplication.Services.Abstractions;
 using PBCommon.Serialization;
 using PBServer.Context;
 using PBServer.Hubs;
-using Unity;
 using Unity.Injection;
 
 namespace CitizenBank.Events

@@ -11,8 +11,6 @@ using PBFrontend.UI.Miscellaneous.Loading;
 using System;
 using System.Threading.Tasks;
 
-using static CBCommon.Enums.LogisticsEnums;
-
 namespace CBFrontend.UI.Logistics
 {
 	public partial class Create : SessionChild

@@ -1,18 +1,9 @@
-﻿
-
-using CBApplication.Requests;
-
-using CBData.Abstractions;
-using CBData.Entities;
+﻿using CBData.Entities;
 
 using PBApplication.Events;
-using PBApplication.Responses;
 using PBApplication.Services.Abstractions;
-using PBData.Abstractions;
 
 using System;
-using System.Linq;
-using static CBApplication.Services.Abstractions.IEventfulAccountService;
 
 namespace CBApplication.Services.Abstractions
 {

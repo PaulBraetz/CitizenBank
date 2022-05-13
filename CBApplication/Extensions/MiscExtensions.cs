@@ -1,17 +1,9 @@
-﻿using CBApplication.Services.Abstractions;
-
+﻿
 using CBCommon.Extensions;
 
 using CBData.Entities;
 
-using PBApplication.Responses.Abstractions;
-using PBApplication.Services.Abstractions;
-
-using PBData.Abstractions;
-
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CBApplication.Extensions
 {

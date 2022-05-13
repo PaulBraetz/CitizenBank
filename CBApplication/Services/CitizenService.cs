@@ -1,38 +1,26 @@
-﻿using CBApplication.Requests;
-using CBApplication.Requests.Abstractions;
+﻿using CBApplication.Requests.Abstractions;
 using CBApplication.Services.Abstractions;
-
 using CBCommon.Extensions;
-
 using CBData.Entities;
-
+using PBApplication.Context.Abstractions;
 using PBApplication.Events;
 using PBApplication.Extensions;
-using PBApplication.Requests;
 using PBApplication.Requests.Abstractions;
 using PBApplication.Responses;
 using PBApplication.Responses.Abstractions;
 using PBApplication.Services.Abstractions;
-using PBCommon.Validation;
-
-using PBCommon;
 using PBCommon.Extensions;
-
+using PBCommon.Validation;
 using PBData.Abstractions;
 using PBData.Entities;
 using PBData.Extensions;
-
 using ScrapeX;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
-using static CBApplication.Services.Abstractions.IEventfulCitizenService;
-using static PBCommon.Enums;
 using System.Threading.Tasks;
 using static CBApplication.Services.Abstractions.ICitizenService;
-using PBApplication.Context.Abstractions;
+using static PBCommon.Enums;
 
 namespace CBApplication.Services
 {

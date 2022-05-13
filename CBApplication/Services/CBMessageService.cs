@@ -1,8 +1,5 @@
-﻿using CBApplication.Requests;
-using CBApplication.Requests.Abstractions;
+﻿using CBApplication.Requests.Abstractions;
 using CBApplication.Services.Abstractions;
-
-using CBData.Abstractions;
 using CBData.Entities;
 using PBApplication.Context.Abstractions;
 using PBApplication.Events;
@@ -10,19 +7,16 @@ using PBApplication.Extensions;
 using PBApplication.Responses;
 using PBApplication.Responses.Abstractions;
 using PBApplication.Services.Abstractions;
+using PBCommon.Extensions;
+using PBCommon.Globalization;
 using PBCommon.Validation;
 using PBData.Entities;
 using PBData.Extensions;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static CBApplication.Services.Abstractions.IEventfulCBMessageService;
 using static CBApplication.Services.Abstractions.ICBMessageService;
-using PBCommon.Extensions;
-using PBCommon;
-using PBCommon.Globalization;
 
 namespace CBApplication.Services
 {

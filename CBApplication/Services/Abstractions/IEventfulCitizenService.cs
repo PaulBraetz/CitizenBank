@@ -1,11 +1,7 @@
-﻿using CBApplication.Requests;
-
+﻿
 using CBData.Entities;
 
 using PBApplication.Events;
-using PBApplication.Extensions;
-using PBApplication.Requests;
-using PBApplication.Responses;
 using PBApplication.Services.Abstractions;
 using PBCommon.Encryption;
 using PBCommon.Encryption.Abstractions;

@@ -5,26 +5,17 @@ using CBCommon.Extensions;
 
 using CBData.Abstractions;
 using CBData.Entities;
-
-using NHibernate.Linq.Functions;
 using PBApplication.Context.Abstractions;
 using PBApplication.Extensions;
 using PBApplication.Responses;
 using PBApplication.Responses.Abstractions;
-using PBCommon;
 using PBCommon.Extensions;
 using PBCommon.Validation;
 using PBData.Extensions;
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Linq;
-
-using static CBApplication.Services.Abstractions.IEventfulAccountService;
-using static CBApplication.Services.Abstractions.IEventfulTagService;
 using static CBApplication.Services.Abstractions.ITagService;
 
 namespace CBApplication.Services.Public

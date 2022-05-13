@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CBApplication.Services.Abstractions
 {
-	public interface ICBMessageService : IService	   
+	public interface ICBMessageService : IService
 	{
 		sealed class GetCitizenMessagesParameter
 		{

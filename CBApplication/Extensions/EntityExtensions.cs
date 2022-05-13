@@ -1,15 +1,12 @@
-﻿using CBApplication.Services.Abstractions;
-
+﻿
 using CBCommon.Extensions;
 
 using CBData.Abstractions;
 using CBData.Entities;
 using PBApplication.Extensions;
-using PBApplication.Services.Abstractions;
 
 using PBData.Abstractions;
 using PBData.Access;
-using PBData.Entities;
 
 using System;
 using System.Linq;
@@ -35,7 +32,7 @@ namespace CBApplication.Extensions
 		{
 			return ((forCreditor ? target.CreditorBookings : target.DebtorBookings).Sum(b => b.Value) + value) <= (forCreditor ? target.Net : target.Gross);
 		}
-		
+
 		public static Boolean HoldsManagerRightImplicitlyRecursively<TCreditor, TDebtor, TCreator, TRecipient>(this IEntity holder, IConnection connection, ITransactionEntity<TCreditor, TDebtor, TCreator, TRecipient> value)
 			where TCreditor : IAccountEntity
 			where TDebtor : IAccountEntity

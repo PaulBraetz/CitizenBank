@@ -1,12 +1,9 @@
-﻿using CBApplication.Services.Abstractions;
-
+﻿
 using CBData.Entities;
 
 using Microsoft.AspNetCore.Components;
-using PBFrontend.UI.Authorization;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace CBFrontend.UI.Details
 {
@@ -17,7 +14,7 @@ namespace CBFrontend.UI.Details
 
 		private readonly Dictionary<String, Object> attributes = new()
 		{
-			{"class","text-success clickable" }
+			{ "class", "text-success clickable" }
 		};
 	}
 }

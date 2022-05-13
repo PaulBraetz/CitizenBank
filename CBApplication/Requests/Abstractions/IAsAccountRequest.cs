@@ -1,5 +1,4 @@
-﻿using PBApplication.Services.Abstractions;
-using PBCommon.Encryption.Abstractions;
+﻿using PBCommon.Encryption.Abstractions;
 using System;
 
 namespace CBApplication.Requests.Abstractions

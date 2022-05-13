@@ -1,6 +1,4 @@
-﻿using CBApplication.Requests;
-using CBApplication.Services.Abstractions;
-using CBData.Abstractions;
+﻿using CBData.Abstractions;
 using CBData.Entities;
 using Microsoft.AspNetCore.Components;
 using PBApplication.Extensions;
@@ -10,14 +8,10 @@ using PBApplication.Responses;
 using PBApplication.Responses.Abstractions;
 using PBApplication.Services.Abstractions;
 using PBApplication.Utilities;
-using PBData.Abstractions;
 using PBData.Entities;
 using PBFrontend.UI.Authorization;
-using PBShared.Events;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CBFrontend.UI.DataFrames.Session
@@ -112,7 +106,7 @@ namespace CBFrontend.UI.DataFrames.Session
 					}
 					async Task updateCurrentCitizen(IClaimService.ClaimDto<UserEntity, CitizenEntity> claim)
 					{
-						if(!(claim.Rights.Contains(PBCommon.Configuration.Settings.OwnerRight) || claim.Rights.Contains(PBCommon.Configuration.Settings.AdminRight)))
+						if (!(claim.Rights.Contains(PBCommon.Configuration.Settings.OwnerRight) || claim.Rights.Contains(PBCommon.Configuration.Settings.AdminRight)))
 						{
 							await removeCurrentCitizen();
 						}

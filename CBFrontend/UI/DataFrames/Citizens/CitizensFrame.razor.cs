@@ -4,8 +4,6 @@ using CBData.Entities;
 
 using Microsoft.AspNetCore.Components;
 
-using PBApplication.Extensions;
-
 using PBData.Entities;
 using PBFrontend.UI.Authorization;
 using PBShared.Events;

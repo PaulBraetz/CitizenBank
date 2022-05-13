@@ -2,14 +2,8 @@
 using CBData.Entities;
 
 using Microsoft.AspNetCore.Components;
-using PBApplication.Requests;
-using PBApplication.Services.Abstractions;
 using PBFrontend.UI.Authorization;
 using PBShared.Events;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CBFrontend.UI.Details

@@ -1,38 +1,27 @@
 ﻿using CBApplication.Extensions;
-using CBApplication.Requests;
 using CBApplication.Requests.Abstractions;
 using CBApplication.Services.Abstractions;
-
 using CBCommon.Extensions;
-
 using CBData.Abstractions;
 using CBData.Entities;
-
+using PBApplication.Context.Abstractions;
 using PBApplication.Events;
 using PBApplication.Extensions;
 using PBApplication.Requests.Abstractions;
 using PBApplication.Responses;
 using PBApplication.Responses.Abstractions;
 using PBApplication.Services.Abstractions;
-using PBCommon.Validation;
-using PBCommon.Validation.Abstractions;
-
-using PBCommon;
 using PBCommon.Extensions;
-
+using PBCommon.Globalization;
+using PBCommon.Validation;
 using PBData.Entities;
 using PBData.Extensions;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
-using static CBApplication.Services.Abstractions.IEventfulTransactionService;
-using static CBCommon.Enums.CitizenBankEnums;
 using System.Threading.Tasks;
 using static CBApplication.Services.Abstractions.ITransactionService;
-using PBApplication.Context.Abstractions;
-using PBCommon.Globalization;
+using static CBCommon.Enums.CitizenBankEnums;
 
 namespace CBApplication.Services
 {
