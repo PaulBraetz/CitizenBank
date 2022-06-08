@@ -583,7 +583,8 @@ namespace CBApplication.Services
 			if (name.IsValidHandle())
 			{
 				name = name.ToLower();
-				if ((citizen = Connection.GetSingle<CitizenEntity>(c => c.Name.ToLower().Equals(name))) == null)
+				citizen = Connection.GetSingle<CitizenEntity>(c => c.Name.ToLower().Equals(name));
+				if (citizen == null)
 				{
 					String url = "https://robertsspaceindustries.com/citizens/" + name;
 					String actualName = String.Empty;
@@ -636,6 +637,8 @@ namespace CBApplication.Services
 
 				void successAction()
 				{
+					var realAccount = citizen.GetHeldOwnerClaimsValues<RealAccountEntity>(Connection).Single();
+					GetService<IEventfulUserService>().AttachToSession(realAccount);
 					GetService<IEventfulUserService>().AttachToSession(citizen);
 				}
 
