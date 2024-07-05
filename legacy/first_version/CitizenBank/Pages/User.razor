@@ -1,0 +1,94 @@
+﻿@page "/user"
+@inherits SessionChild
+<SessionFrameInitialized>
+	<DefaultPage>
+		<Header>
+			<PBTitle>
+				<Localize Value="User" />
+			</PBTitle>
+		</Header>
+		<ChildContent>
+				<DefaultFormBox>
+					<Header>
+						<PBTitle>
+							<Localize Value="Manage Login" />
+						</PBTitle>
+					</Header>
+					<ChildContent>
+						<NotAuthorized>
+							<div class="my-1">
+								<LoginPreset />
+							</div>
+							<div class="my-1">
+								<CollapseFrame>
+									<CollapseText><CollapseChevron /><Localize Value="Forgot Password" /></CollapseText>
+									<WhenNotCollapsed>
+										<ForgotPasswordPreset />
+									</WhenNotCollapsed>
+								</CollapseFrame>
+							</div>
+						</NotAuthorized>
+						<Authorized>
+							<div class="my-1">
+								<UserDetails User="@SessionParent.Session.User" />
+							</div>
+							<AuthorizeView ForRight="@PBCommon.Configuration.Settings.OwnerRight">
+								<Authorized>
+									<div class="my-1">
+										<CollapseFrame>
+											<CollapseText><CollapseChevron /><Localize Value="Register" /></CollapseText>
+											<WhenNotCollapsed>
+												<RegisterPreset />
+											</WhenNotCollapsed>
+										</CollapseFrame>
+									</div>
+								</Authorized>
+							</AuthorizeView>
+							<div class="my-1">
+								<CollapseFrame>
+									<CollapseText><CollapseChevron /><Localize Value="Change Password" /></CollapseText>
+									<WhenNotCollapsed>
+										<ChangePasswordPreset />
+									</WhenNotCollapsed>
+								</CollapseFrame>
+							</div>
+							<div class="my-1">
+								<CollapseFrame>
+									<CollapseText><CollapseChevron /><Localize Value="Change Email" /></CollapseText>
+									<WhenNotCollapsed>
+										<PBFrontend.UI.Authorization.ChangeEmail.ChangeEmailPreset />
+									</WhenNotCollapsed>
+								</CollapseFrame>
+							</div>
+							<div class="my-1">
+								<CollapseFrame>
+									<CollapseText><CollapseChevron /><Localize Value="Delete User" /></CollapseText>
+									<WhenNotCollapsed>
+										<DeleteUser/>
+									</WhenNotCollapsed>
+								</CollapseFrame>
+							</div>
+							<LogoutPreset />
+						</Authorized>
+					</ChildContent>
+				</DefaultFormBox>
+				<Authorized>
+					<DefaultFormBox>
+						<Header>
+							<PBTitle>
+								<Localize Value="Settings" />
+							</PBTitle>
+						</Header>
+						<ChildContent>
+							<Settings />
+						</ChildContent>
+					</DefaultFormBox>
+				</Authorized>
+				<AuthorizeView ForRight="@PBCommon.Configuration.Settings.LogReaderRight">
+					<Authorized>
+						<PBFrontend.UI.Meta.Logging.Logs/>
+					</Authorized>
+				</AuthorizeView>
+		</ChildContent>
+	</DefaultPage>
+</SessionFrameInitialized>

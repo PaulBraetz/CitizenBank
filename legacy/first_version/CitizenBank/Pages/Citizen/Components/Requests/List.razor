@@ -1,0 +1,61 @@
+﻿@inherits CBFrontend.UI.DataFrames.Requests.Children.CitizenRequestsChild
+@namespace CitizenBank.Pages.Citizen.Components.Requests
+@using CBCommon.Extensions
+
+@if (CitizenRequestsParent.Requests.Any())
+{
+    <InfoBox>
+        <Header>
+            <span class="oi oi-info"></span> <Localize Value="Info" />
+        </Header>
+        <ChildContent>
+        <Localize Value="Link Info"></Localize><br />
+        <Localize Value="You can edit your bio here" />&nbsp;:&nbsp;<a href="https://robertsspaceindustries.com/account/profile"><Localize Value="RSI Account Settings" /></a>.
+    </ChildContent>
+</InfoBox>
+    <table class="table">
+        <thead>
+            <tr class="@GetTextThemeCss()">
+                <th><Localize Value="Handle" /></th>
+                <th><Localize Value="Verification Link" /></th>
+                <th><Localize Value="Actions" /></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var request in CitizenRequestsParent.Requests)
+            {
+                <tr class="@GetTextThemeCss()">
+                    <td>
+                        @request.Citizen.Name
+                    </td>
+                    <td>
+                        @request.VerificationCode.ToVerifyLink()
+                    </td>
+					<td>
+						<div class="btn-group">
+							<button type="button" class="btn btn-outline-success" @onclick="e=>Verify(request)">
+								<Localize Value="Verify" />
+							</button>
+							<button type="button" class="btn btn-outline-danger" @onclick="e=>Delete(request.Id)">
+								<Localize Value="Delete" />
+							</button>
+						</div>
+					</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <InfoBox>
+        <Header>
+            <span class="oi oi-info"></span> <Localize Value="Info" />
+        </Header>
+        <ChildContent>
+            <Localize Value="Currently, you don't have any open link requests." /><br />
+            <Localize Value="In order to request linking a citizen, enter your RSI account (citizen) name." />
+        </ChildContent>
+    </InfoBox>
+}
+

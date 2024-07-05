@@ -1,0 +1,67 @@
+﻿@inherits SessionChild
+
+<div class="top-row pl-4 navbar navbar-dark">
+	<a class="navbar-brand" href="">CitizenBank</a>
+	<button class="navbar-toggler" @onclick="ToggleNavMenu">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+</div>
+
+<div class="@NavMenuCssClass overflow-auto">
+	<ul class="nav d-flex flex-column @GetTextThemeCss()">
+		<li class="nav-item px-3" @onclick="()=>ToggleNavMenu(true)">
+			<NavLink class="nav-link" href="/user" Match="NavLinkMatch.All">
+				<Icon T="Icon.Type.person_circle" />&nbsp;<Localize Value="User" /><Authorized>&nbsp;:&nbsp;<Ellipsis Width="150" Value="@SessionParent.Session.User.Name" /></Authorized>
+			</NavLink>
+		</li>
+		<Authorized>
+			<li class="nav-item px-3" @onclick="()=>ToggleNavMenu(true)">
+				<NavLink class="nav-link" href="/citizen" Match="NavLinkMatch.All">
+					<Icon T="Icon.Type.person" />&nbsp;Citizen
+				</NavLink>
+			</li>
+		</Authorized>
+		<AuthorizeView ForRight="@CBCommon.Settings.CitizenBank.CITIZEN_RIGHT">
+			<Authorized>
+				<li class="nav-item px-3" @onclick="()=>ToggleNavMenu(true)">
+					<NavLink class="nav-link" href="/banking" Match="NavLinkMatch.All">
+						<Icon T="Icon.Type.credit_card" />&nbsp;<Localize Value="Bank" />
+					</NavLink>
+				</li>
+			</Authorized>
+		</AuthorizeView>
+		<li class="nav-item px-3" @onclick="()=>ToggleNavMenu(true)">
+			<NavLink class="nav-link" href="/logistics" Match="NavLinkMatch.All">
+				<Icon T="Icon.Type.box_seam" />&nbsp;<Localize Value="Logistics" />
+			</NavLink>
+		</li>
+		<li class="nav-item px-3" @onclick="()=>ToggleNavMenu(true)">
+			<NavLink class="nav-link" href="/cookies" Match="NavLinkMatch.All">
+				<Icon T="Icon.Type.info" />&nbsp;Cookies
+			</NavLink>
+		</li>
+		<li class="nav-item px-3">
+			<LanguageSelect />
+		</li>
+		<li class="nav-item px-3">
+			<TimeZoneSelect />
+		</li>
+	</ul>
+</div>
+
+@code {
+	private Boolean collapseNavMenu = true;
+
+	private String NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+	private void ToggleNavMenu(Boolean collapsed)
+	{
+		if (collapseNavMenu != collapsed)
+		{
+			collapseNavMenu = collapsed;
+			InvokeAsync(StateHasChanged);
+		}
+	}
+	private void ToggleNavMenu() => ToggleNavMenu(!collapseNavMenu);
+	public void Collapse() => ToggleNavMenu(true);
+	public void Expand() => ToggleNavMenu(false);
+}

@@ -1,0 +1,497 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Accessibility" xml:space="preserve">
+    <value>Privatsphäre</value>
+  </data>
+  <data name="Account Management" xml:space="preserve">
+    <value>Kontoverwaltung</value>
+  </data>
+  <data name="Accounts" xml:space="preserve">
+    <value>Konten</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Aktionen</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Zurück</value>
+  </data>
+  <data name="Bank" xml:space="preserve">
+    <value>Bank</value>
+  </data>
+  <data name="Cancelled" xml:space="preserve">
+    <value>Abgebrochen</value>
+  </data>
+  <data name="Cargo" xml:space="preserve">
+    <value>Güter</value>
+  </data>
+  <data name="Change Email" xml:space="preserve">
+    <value>Email Ändern</value>
+  </data>
+  <data name="Change Email Confirmation" xml:space="preserve">
+    <value>Bestätigung der Änderung Ihrer Email Adresse</value>
+  </data>
+  <data name="Change Password" xml:space="preserve">
+    <value>Passwort Ändern</value>
+  </data>
+  <data name="Change Password Confirmation" xml:space="preserve">
+    <value>Bestätigung der Passwortänderung</value>
+  </data>
+  <data name="Citizen" xml:space="preserve">
+    <value>Citizen</value>
+  </data>
+  <data name="Citizen Management" xml:space="preserve">
+    <value>Citizenverwaltung</value>
+  </data>
+  <data name="Citizens" xml:space="preserve">
+    <value>Citizens</value>
+  </data>
+  <data name="Click this link to confirm your email change : {0}" xml:space="preserve">
+    <value>Drücken Sie auf den folgenden Link, um die Änderung Ihrer Email Adresse zu bestätigen : {0}</value>
+  </data>
+  <data name="Click this link to confirm your password change : {0}" xml:space="preserve">
+    <value>Drücken Sie auf den folgenden Link, um Ihre Passwortänderung zu bestätigen : {0}</value>
+  </data>
+  <data name="Click this link to confirm your registration : {0}" xml:space="preserve">
+    <value>Drücken Sie auf den folgenden Link, um Ihre Registrierung zu bestätigen : {0}</value>
+  </data>
+  <data name="Client" xml:space="preserve">
+    <value>Klient</value>
+  </data>
+  <data name="ClientKey" xml:space="preserve">
+    <value>Klient</value>
+  </data>
+  <data name="Completed" xml:space="preserve">
+    <value>Abgeschlossen</value>
+  </data>
+  <data name="Consent" xml:space="preserve">
+    <value>Zustimmen</value>
+  </data>
+  <data name="CookieConsentInformation" xml:space="preserve">
+    <value>Diese Seite nutzt einen Cookie. Er ist nicht für Basisfunktionalitäten vonnöten. Sollten Sie zu seiner Nutzung zustimmen, wird die "An mich erinnern"-Funktion ermöglicht. Diese setzt einen Sitzungscookie im Speicher Ihres Browsers. Bei ihrem nächsten Besuch der Seite wird dieser genutzt, um Sie zu identifizieren. Sollten Sie sich dazu entscheiden, den Cookie abzulehnen, wird die Seite sich nicht an Ihre Entscheidung erinnern. Bei Ihrem nächsten Besuch werden Sie daher erneut nach dieser gefragt.</value>
+  </data>
+  <data name="Cookies" xml:space="preserve">
+    <value>Cookies</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Erstellen</value>
+  </data>
+  <data name="Create Transaction" xml:space="preserve">
+    <value>Transaktion erstellen</value>
+  </data>
+  <data name="Create Virtual Account" xml:space="preserve">
+    <value>Virtuelles Konto Erstellen</value>
+  </data>
+  <data name="Currently, you don't have any open link requests." xml:space="preserve">
+    <value>Momentan hast du keine austehenden Verbindungsanfragen.</value>
+  </data>
+  <data name="Currently, you have consented to the use of this cookie." xml:space="preserve">
+    <value>Momentan haben Sie der Nutzung dieses Cookies zugestimmt.</value>
+  </data>
+  <data name="Currently, you have neither consented to nor denied the use of this cookie." xml:space="preserve">
+    <value>Momentan haben Sie der Nutzung dieses Cookies weder zugestimmt noch widersprochen.</value>
+  </data>
+  <data name="Currently, you have not consented to the use of this cookie." xml:space="preserve">
+    <value>Momentan haben Sie der Nutzung dieses Cookies widersprochen.</value>
+  </data>
+  <data name="Currently, you have not linked any citizens." xml:space="preserve">
+    <value>Momentan hast du noch keine Citizens verbunden.</value>
+  </data>
+  <data name="Dark" xml:space="preserve">
+    <value>Dunkel</value>
+  </data>
+  <data name="Deadline" xml:space="preserve">
+    <value>Endzeitpunkt</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="Deletion Notification" xml:space="preserve">
+    <value>Benachrichtigung über Löschung</value>
+  </data>
+  <data name="Deny" xml:space="preserve">
+    <value>Widersprechen</value>
+  </data>
+  <data name="Department Accounts" xml:space="preserve">
+    <value>Abteilungskonten</value>
+  </data>
+  <data name="Department Management" xml:space="preserve">
+    <value>Abteilungsverwaltung</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Enable Delegate Role" xml:space="preserve">
+    <value>Delegatenrolle annehmen</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Fehler</value>
+  </data>
+  <data name="Expiration Date" xml:space="preserve">
+    <value>Löschungsdatum</value>
+  </data>
+  <data name="Forget me" xml:space="preserve">
+    <value>Mich vergessen</value>
+  </data>
+  <data name="Forgot Password" xml:space="preserve">
+    <value>Passwort Vergessen</value>
+  </data>
+  <data name="Forward" xml:space="preserve">
+    <value>Weiter</value>
+  </data>
+  <data name="German" xml:space="preserve">
+    <value>Deutsch</value>
+  </data>
+  <data name="Handle" xml:space="preserve">
+    <value>Handle</value>
+  </data>
+  <data name="Hello, {0}" xml:space="preserve">
+    <value>Hallo, {0}</value>
+  </data>
+  <data name="If you did not request this, please ignore this email and consider changing your password." xml:space="preserve">
+    <value>Falls Sie dies nicht beantragt haben, ignorieren Sie bitte diese Email und ziehen Sie eine Passwortänderung in Erwägung.</value>
+  </data>
+  <data name="If you did not request this, please ignore this email." xml:space="preserve">
+    <value>Falls Sie dies nicht beantragt haben, ignorieren Sie bitte diese Email.</value>
+  </data>
+  <data name="In order to request linking a citizen, enter your RSI account (citizen) name." xml:space="preserve">
+    <value>Um eine neue Verbindungsanfrage zu stellen, gib deinen RSI Account (Citizen) Namen ein.</value>
+  </data>
+  <data name="Info" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="Initial Session Language" xml:space="preserve">
+    <value>Sprache bei neuer Sitzung</value>
+  </data>
+  <data name="Initial Session Theme" xml:space="preserve">
+    <value>Farbschema bei neuer Sitzung</value>
+  </data>
+  <data name="Light" xml:space="preserve">
+    <value>Hell</value>
+  </data>
+  <data name="Link" xml:space="preserve">
+    <value>Verbinden</value>
+  </data>
+  <data name="Link Info" xml:space="preserve">
+    <value>Veröffentliche den Verifizierungslink in deinem Star Citizen Bio, um deinen Citizen erfolgreich zu verbinden.</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Einloggen</value>
+  </data>
+  <data name="Logistics" xml:space="preserve">
+    <value>Logistik</value>
+  </data>
+  <data name="LogisticsOfferDetails OrderId ({0})" xml:space="preserve">
+    <value>({0})</value>
+    <comment>{0} OrderId</comment>
+  </data>
+  <data name="LogisticsOfferDetails requests" xml:space="preserve">
+    <value>beantragt</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Ausloggen</value>
+  </data>
+  <data name="Manage Delegates" xml:space="preserve">
+    <value>Stellvertreter Verwalten</value>
+  </data>
+  <data name="Manage Login" xml:space="preserve">
+    <value>Login Verwalten</value>
+  </data>
+  <data name="Miscellaneous" xml:space="preserve">
+    <value>Verschiedenes</value>
+  </data>
+  <data name="Name or Password" xml:space="preserve">
+    <value>Name oder Passwort</value>
+  </data>
+  <data name="New Email" xml:space="preserve">
+    <value>Neue Email</value>
+  </data>
+  <data name="New Password" xml:space="preserve">
+    <value>Neues Passwort</value>
+  </data>
+  <data name="No Orders found." xml:space="preserve">
+    <value>Keine Aufträge gefunden.</value>
+  </data>
+  <data name="None[male]" xml:space="preserve">
+    <value>Keiner</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Offen</value>
+  </data>
+  <data name="Order Id" xml:space="preserve">
+    <value>Order Id</value>
+  </data>
+  <data name="Orders" xml:space="preserve">
+    <value>Aufträge</value>
+  </data>
+  <data name="Origin" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="Personnel" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="Please enjoy your stay :)" xml:space="preserve">
+    <value>Viel Spaß bei deinem Besuch :)</value>
+  </data>
+  <data name="Please Wait" xml:space="preserve">
+    <value>Bitte Warten</value>
+  </data>
+  <data name="Private" xml:space="preserve">
+    <value>Privat</value>
+  </data>
+  <data name="Public" xml:space="preserve">
+    <value>Öffentlich</value>
+  </data>
+  <data name="Real Accounts" xml:space="preserve">
+    <value>Reale Konten</value>
+  </data>
+  <data name="Refueling" xml:space="preserve">
+    <value>Auftanken</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Registrieren</value>
+  </data>
+  <data name="Registration Confirmation" xml:space="preserve">
+    <value>Bestätigung Ihrer Registrierung</value>
+  </data>
+  <data name="Remember me" xml:space="preserve">
+    <value>An mich erinnern</value>
+  </data>
+  <data name="Requests" xml:space="preserve">
+    <value>Anträge</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Zurücksetzen</value>
+  </data>
+  <data name="Route" xml:space="preserve">
+    <value>Route</value>
+  </data>
+  <data name="RSI Account Settings" xml:space="preserve">
+    <value>RSI Accounteinstellungen</value>
+  </data>
+  <data name="Search Client" xml:space="preserve">
+    <value>Klient suchen</value>
+  </data>
+  <data name="Select Citizen" xml:space="preserve">
+    <value>Citizen Auswählen</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Einstellungen</value>
+  </data>
+  <data name="Ships" xml:space="preserve">
+    <value>Schiffe</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Absenden</value>
+  </data>
+  <data name="Target" xml:space="preserve">
+    <value>Ziel</value>
+  </data>
+  <data name="The account provided could not be found." xml:space="preserve">
+    <value>Der angegebene Account konnte nicht gefunden werden.</value>
+  </data>
+  <data name="The citizen provided could not be found." xml:space="preserve">
+    <value>Der angegebene Citizen konnte nicht gefunden werden.</value>
+  </data>
+  <data name="This site is running" xml:space="preserve">
+    <value>Diese Seite nutzt</value>
+  </data>
+  <data name="Transaction Contracts" xml:space="preserve">
+    <value>Transaktionsverträge</value>
+  </data>
+  <data name="Transaction Offers" xml:space="preserve">
+    <value>Transaktionsangebote</value>
+  </data>
+  <data name="Transaction Requests" xml:space="preserve">
+    <value>Transaktionsanfragen</value>
+  </data>
+  <data name="Two Factor Authentication Confirmation" xml:space="preserve">
+    <value>Bestätigung der Zweifaktor Authentifizierung</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="Underway" xml:space="preserve">
+    <value>In Bearbeitung</value>
+  </data>
+  <data name="Unlink" xml:space="preserve">
+    <value>Entfernen</value>
+  </data>
+  <data name="until" xml:space="preserve">
+    <value>bis</value>
+  </data>
+  <data name="Unverified Citizen" xml:space="preserve">
+    <value>Nichtverifizierter Citizen</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>Nutzer</value>
+  </data>
+  <data name="Vehicles" xml:space="preserve">
+    <value>Fahrzeuge</value>
+  </data>
+  <data name="Verification Link" xml:space="preserve">
+    <value>Verifizierungslink</value>
+  </data>
+  <data name="Verified Citizen" xml:space="preserve">
+    <value>Verifizierter Citizen</value>
+  </data>
+  <data name="Verify" xml:space="preserve">
+    <value>Prüfen</value>
+  </data>
+  <data name="Virtual Accounts" xml:space="preserve">
+    <value>Virtuelle Konten</value>
+  </data>
+  <data name="Welcome to CitizenBank" xml:space="preserve">
+    <value>Wilkommen bei der CitizenBank</value>
+  </data>
+  <data name="Whereever" xml:space="preserve">
+    <value>Egal</value>
+  </data>
+  <data name="You are not authorized to access this account." xml:space="preserve">
+    <value>Sie sind nicht dazu berechtigt, auf den angegebenen Account zuzugreifen.</value>
+  </data>
+  <data name="You are not authorized to access this citizen." xml:space="preserve">
+    <value>Sie sind nicht dazu berechtigt, auf den angegebenen Citizen zuzugreifen.</value>
+  </data>
+  <data name="You can edit your bio here" xml:space="preserve">
+    <value>Hier kannst du dein Bio bearbeiten</value>
+  </data>
+  <data name="Your email address will not be stored in an unencrypted format and no record of this email will be kept." xml:space="preserve">
+    <value>Ihre Email Adresse wird nicht unverschlüsselt gespeichert; Diese Email selbst wird nicht gespeichert.</value>
+  </data>
+  <data name="Your two factor authentication code is : {0}" xml:space="preserve">
+    <value>Ihr Zweifaktor Authentifizierungscode lautet : {0}</value>
+  </data>
+  <data name="Your user email will be changed to : {0}" xml:space="preserve">
+    <value>Ihre Nutzeradresse wird zu folgender geändert : {0}</value>
+  </data>
+  <data name="Your user has successfully been deleted." xml:space="preserve">
+    <value>Ihr Nutzer wurde erfolgreich gelöscht.</value>
+  </data>
+  <data name="{0} is offering {1:0}{2} ({3:0}{4}) to {5}, due in {6} days." xml:space="preserve">
+    <value>{0} bietet {5} {1:0}{2} ({3:0}{4}) an, zu zahlen in {6} Tagen.</value>
+    <comment>{0} Debtor, {1} Gross, {2} Currency, {3} Net, {4} Currency, {5} Creditor, {6} Until Due</comment>
+  </data>
+</root>

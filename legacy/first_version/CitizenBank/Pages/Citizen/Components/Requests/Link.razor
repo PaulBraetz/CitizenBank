@@ -1,0 +1,20 @@
+﻿@inherits LoadingChild
+
+<div class="input-group">
+	<Loading>
+		<Spinner></Spinner>
+	</Loading>
+	<NotLoading>
+		<TextInput Placeholder="Name"
+				   @bind-Value="linkNewInputValue"
+				   ValidationField="linkNewResponse.Validation.GetField(nameof(ICitizenService.CreateCitizenLinkRequestParameter.Name))"
+				   OnEnterPressed="e=>LinkNew(e)" />
+		<div class="input-group-append">
+			<button class="btn btn-outline-success"
+					@onclick="LinkNew">
+				<Localize Value="Link" />
+			</button>
+		</div>
+	</NotLoading>
+	<Validation ValidationField="linkNewResponse.Validation.GetField(nameof(ICitizenService.CreateCitizenLinkRequestParameter.Name))" />
+</div>

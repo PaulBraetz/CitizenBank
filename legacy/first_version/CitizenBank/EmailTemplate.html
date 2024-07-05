@@ -1,0 +1,90 @@
+<!--Styled-->
+<style>
+	.main {
+		flex: 1;
+	}
+
+	@media (min-width: 641px) {
+		.main > div {
+			padding-left: 2rem !important;
+			padding-right: 1.5rem !important;
+		}
+	}
+
+	.d-flex {
+		display: flex !important;
+	}
+
+	.flex-column {
+		flex-direction: column !important;
+	}
+
+	.text-theme-light {
+		color: black;
+	}
+
+	.bg-theme-light {
+		background-color: white;
+	}
+
+	.bg-custom-transparent {
+		background-color: rgba(255,255,255,0.01);
+	}
+
+	.overflow-auto {
+		overflow: auto !important
+	}
+
+	.flex-grow-1 {
+		flex-grow: 1 !important;
+	}
+
+	.shadow-sm {
+		box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important
+	}
+
+	.m-1 {
+		margin: .25rem !important
+	}
+
+	.justify-content-center {
+		justify-content: center !important;
+	}
+
+	.shadow-sm {
+		box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important
+	}
+
+	.p-1 {
+		padding: .25rem !important
+	}
+</style>
+<div class="main d-flex flex-column text-theme-dark bg-theme-dark">
+	<div class="bg-custom-transparent overflow-auto flex-grow-1 shadow m-1">
+		<div class="justify-content-center d-flex shadow-sm p-1">
+			<h1 class="m-1 ">
+				{0}
+			</h1>
+		</div>
+		<div class="p-1">
+			{1}
+		</div>
+	</div>
+</div>
+<!--Inlined-->
+<div style="flex: 1; display: flex !important; flex-direction: column !important;background-color: white;color: black; ">
+	<div style="background-color: rgba(255,255,255,0.01); overflow: auto !important; flex-grow: 1 !important; box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important; margin: .25rem !important;">
+		<div style="justify-content: center !important; display: flex !important; box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important; padding: .25rem !important;">
+			<h1 style=" margin: .25rem !important;">
+				{0}
+			</h1>
+		</div>
+		<div class=" padding: .25rem !important;">
+			{1}
+		</div>
+	</div>
+</div>
+<!--Minified-->
+<div style="flex: 1; display: flex !important; flex-direction: column !important;background-color: white;color: black; "><div style="background-color: rgba(255,255,255,0.01); overflow: auto !important; flex-grow: 1 !important; box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important; margin: .25rem !important;"><div style="justify-content: center !important; display: flex !important; box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important; padding: .25rem !important;"><h1 style=" margin: .25rem !important;">{0}</h1></div><div class=" padding: .25rem !important;">{1}</div></div></div>
+<!--Escaped-->
+<!--"<div style=\"flex: 1; display: flex !important; flex-direction: column !important;background-color: white;color: black; \"><div style=\"background-color: rgba(255,255,255,0.01); overflow: auto !important; flex-grow: 1 !important; box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important; margin: .25rem !important;\"><div style=\"justify-content: center !important; display: flex !important; box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important; padding: .25rem !important;\"><h1 style=\" margin: .25rem !important;\">{0}</h1></div><div class=\" padding: .25rem !important;\">{1}</div></div></div>"-->

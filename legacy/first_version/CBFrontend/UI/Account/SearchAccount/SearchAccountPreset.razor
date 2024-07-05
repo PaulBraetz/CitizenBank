@@ -1,0 +1,20 @@
+﻿@inherits SessionChild
+<SearchAccountFrame @bind-Value="value">
+    <div class="dropdown show m-1">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <div class="input-group-text">
+                    <Localize Value="Name" /> : @(@Value?.Name != null ? Value.Name:SessionParent.Localize("None"))
+                </div>
+            </div>
+            <CBFrontend.UI.Account.SearchAccount.Children.NameInput />
+            <div class="input-group-append">
+                <CBFrontend.UI.Account.SearchAccount.Children.SubmitButton />
+            </div>
+            <div class="input-group-append">
+                <CBFrontend.UI.Account.SearchAccount.Children.ClearButton />
+            </div>
+        </div>
+        <CBFrontend.UI.Account.SearchAccount.Children.ResultsDropdown />
+    </div>
+</SearchAccountFrame>

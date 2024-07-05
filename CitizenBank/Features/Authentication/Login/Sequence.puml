@@ -1,0 +1,100 @@
+@startuml
+
+!pragma teoz true
+
+actor User
+
+box Client
+box Login Feature #Snow
+participant ClientLogin
+end box
+
+box Authentication Feature #Snow
+participant PrehashPassword
+end box
+end box
+
+box Server
+box Login Feature #Snow
+participant ServerLogin
+participant LoadRegistrationRequest
+participant LoadRegistration
+end box
+
+box CompleteRegistration Feature #Snow
+participant CompleteRegistration
+end box
+
+box Authentication Feature #Snow
+participant ValidatePassword
+participant HashPassword
+end box
+end box
+
+box External #LightSkyBlue
+boundary CIG
+end box
+
+User -> ClientLogin: (CitizenName, ClearPassword)
+activate ClientLogin
+ClientLogin -> PrehashPassword: ClearPassword
+activate PrehashPassword
+PrehashPassword -> ClientLogin: PrehashedPassword
+deactivate PrehashPassword
+
+ClientLogin -> ServerLogin: (CitizenName, PrehashedPassword)
+activate ServerLogin
+
+==Complete Registration==
+
+ServerLogin -> LoadRegistrationRequest: CitizenName
+activate LoadRegistrationRequest
+alt#Gold #LightGreen RegistrationRequest with CitizenName exists
+    ServerLogin -> CompleteRegistration: (CitizenName, HashedPassword, BioCode, PrehashedPassword)
+    activate CompleteRegistration
+    alt#Gold #LightGreen success
+        CompleteRegistration -> ServerLogin: success
+    else #Pink failure
+        CompleteRegistration -> ServerLogin: failure
+        deactivate CompleteRegistration
+        ServerLogin -> ClientLogin: failure
+        ClientLogin -> User: failure
+    end
+else #Pink RegistrationRequest with CitizenName doea not exist
+    LoadRegistrationRequest -> ServerLogin: failure
+    deactivate LoadRegistrationRequest
+end
+
+==Login==
+
+ServerLogin -> LoadRegistration: CitizenName
+activate LoadRegistration
+alt#Gold #LightGreen Registration with CitizenName exists
+    LoadRegistration -> ServerLogin: (CitizenName, HashedPassword)
+else #Pink Registration with CitizenName doea not exist
+    LoadRegistration -> ServerLogin: failure
+    deactivate LoadRegistration
+    ServerLogin -> ClientLogin: failure
+    ClientLogin -> User: failure
+end
+ServerLogin -> ValidatePassword: (PrehashedPassword, HashedPassword)
+activate ValidatePassword
+ValidatePassword -> HashPassword: (PrehashedPassword, HashedPassword.PasswordParameters)
+activate HashPassword
+HashPassword -> ValidatePassword: HashedPassword
+deactivate HashPassword
+alt#Gold #LightGreen HashedPassword matches HashedPassword
+    ValidatePassword -> ServerLogin: success
+else #Pink HashedPassword does not match HashedPassword
+    ValidatePassword -> ServerLogin: failure
+    deactivate ValidatePassword
+    ServerLogin -> ClientLogin: failure
+    'deactivate ServerLogin
+    ClientLogin -> User: failure
+    deactivate ClientLogin
+    
+end
+ServerLogin -> ServerLogin
+note right: How do we proceed after user has been authenticated?
+
+@enduml

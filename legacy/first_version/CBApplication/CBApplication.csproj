@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+ <PropertyGroup Label="Globals">
+  <SccProjectName>SAK</SccProjectName>
+  <SccProvider>SAK</SccProvider>
+  <SccAuxPath>SAK</SccAuxPath>
+  <SccLocalPath>SAK</SccLocalPath>
+ </PropertyGroup>
+
+ <PropertyGroup>
+  <TargetFramework>net6.0</TargetFramework>
+  <AnalysisLevel>latest</AnalysisLevel>
+  <EnableNETAnalyzers>true</EnableNETAnalyzers>
+  <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+ </PropertyGroup>
+
+ <ItemGroup>
+  <PackageReference Include="PBApplication" Version="52.0.0" />
+  <PackageReference Include="ScrapeX" Version="1.1.0" />
+ </ItemGroup>
+
+ <ItemGroup>
+   <ProjectReference Include="..\CBData\CBData.csproj" />
+ </ItemGroup>
+
+</Project>

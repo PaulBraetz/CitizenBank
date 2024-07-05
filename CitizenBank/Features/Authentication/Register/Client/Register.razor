@@ -1,0 +1,15 @@
+﻿@page "/register"
+@attribute [OptionalInteractiveWebAssemblyRenderMode]
+
+<ClientRegisterComponent Value="@Model" />
+
+@code {
+    [Injected]
+    public required ClientRegisterModel Model { get; set; }
+
+    protected override void OnInitialized()
+    {
+        OptionalRenderMode = new InteractiveWebAssemblyRenderMode(prerender: true);
+        base.OnInitialized();
+    }
+}

@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PBApp" Version="82.0.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CBApplication\CBApplication.csproj" />
+    <ProjectReference Include="..\CBClient\CBClient.csproj" />
+    <ProjectReference Include="..\CBCommon\CBCommon.csproj" />
+    <ProjectReference Include="..\CBData\CBData.csproj" />
+    <ProjectReference Include="..\CBFrontend\CBFrontend.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,86 @@
+﻿@inherits AccountsFrameChild
+<DefaultFormBox>
+    <Header>
+        <PBTitle>
+            <PBTitle>
+                <Localize Value="Accounts" />
+            </PBTitle>
+        </PBTitle>
+    </Header>
+    <ChildContent>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <div class="input-group-text">
+                    <Localize Value="Select Citizen" />
+                </div>
+            </div>
+            <CBFrontend.UI.DataFrames.Citizens.Children.SelectCurrentCitizen />
+        </div>
+        @if (AccountsParent.RealAccounts.Any())
+                {
+        <div class="mt-3">
+            <CollapseFrame>
+                <label>
+                    <CollapseDiv>
+                        <CollapseChevron /><Localize Value="Real Accounts" />
+                    </CollapseDiv>
+                </label>
+                <WhenNotCollapsed>
+                    <table class="table @GetTextThemeCss()">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Name
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var account in AccountsParent.RealAccounts)
+                            {
+                                <tr>
+                                    <td>
+                                        @account.Name
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </WhenNotCollapsed>
+            </CollapseFrame>
+        </div>
+        }
+        @if (AccountsParent.VirtualAccounts.Any())
+                {
+        <div class="mt-3">
+            <CollapseFrame>
+                <label>
+                    <CollapseDiv>
+                        <CollapseChevron /><Localize Value="Virtual Accounts" />
+                    </CollapseDiv>
+                </label>
+                <WhenNotCollapsed>
+                    <table class="table @GetTextThemeCss()">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Name
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var account in AccountsParent.VirtualAccounts)
+                            {
+                                <tr>
+                                    <td>
+                                        @account.Name
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </WhenNotCollapsed>
+            </CollapseFrame>
+        </div>
+        }
+    </ChildContent>
+</DefaultFormBox>

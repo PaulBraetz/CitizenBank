@@ -1,0 +1,37 @@
+﻿@inherits LayoutComponentBase
+
+<SessionFrame @ref="sessionFrameRef">
+	<ConsentFrame>
+		<div class="page">
+			<SessionFrameInitialized>
+				<div class="sidebar blur-5 @ThemeFactory.GetText(sessionFrameRef.Session.Theme)">
+					<NavMenu />
+					<div class="addendum">
+						<PBFrontend.UI.Meta.Reconnect />
+					</div>
+				</div>
+				<div class="main @ThemeFactory.GetText(sessionFrameRef.Session.Theme).Css">
+					@Body
+					<ConditionalDefaultCookieBanner CookieInfoHref="/cookies" />
+				</div>
+			</SessionFrameInitialized>
+			<SessionFrameNotInitialized>
+				<div class="container-fluid content">
+					<div class="align-self-center flex-fill bg-transparent mt-1 rounded d-flex flex-column">
+						<div class="flex-fill d-flex">
+							<div class="align-items-center blur-10 flex-column flex-fill px-lg-2 pb-lg-2 d-flex text-theme-dark">
+								<InfoBox>
+									Loading
+								</InfoBox>
+							</div>
+						</div>
+					</div>
+				</div>
+			</SessionFrameNotInitialized>
+		</div>
+	</ConsentFrame>
+</SessionFrame>
+
+@code {
+	private SessionFrame sessionFrameRef;
+}

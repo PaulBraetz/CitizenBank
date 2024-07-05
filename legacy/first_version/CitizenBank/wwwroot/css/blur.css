@@ -1,0 +1,39 @@
+﻿/*Credit for Blur Effects: https://gist.github.com/mrtcmn/0490fb79fa63418e4409a99553f80e26 */
+@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+	.blur-10 {
+		-webkit-backdrop-filter: blur(10px);
+		backdrop-filter: blur(10px);
+	}
+}
+
+@supports not ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
+	.blur-10 {
+		background-color: rgba(50,50,50, .5);
+	}
+}
+
+@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+	.blur-5 {
+		-webkit-backdrop-filter: blur(10px);
+		backdrop-filter: blur(10px);
+	}
+}
+
+@supports not ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
+	.blur-5 {
+		background-color: rgba(50,50,50, .35);
+	}
+}
+
+@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+	.blur-1, .bg-custom-transparent {
+		-webkit-backdrop-filter: blur(1px);
+		backdrop-filter: blur(1px);
+	}
+}
+
+@supports not ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
+	.blur-1, .bg-custom-transparent {
+		background-color: rgba(50,50,50, .2);
+	}
+}

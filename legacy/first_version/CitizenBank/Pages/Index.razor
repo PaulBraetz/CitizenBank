@@ -1,0 +1,22 @@
+﻿@inherits SessionChild
+@page "/"
+@page "/v/{Verification}"
+<DefaultPage>
+	<Header>
+		<PBTitle><Localize Value="Welcome to CitizenBank" /></PBTitle>
+	</Header>
+	<ChildContent>
+		<ShadowPageBox>
+			<Header>
+				<PBTitle><Localize Value="Please enjoy your stay :)" /></PBTitle>
+			</Header>
+			<ChildContent>
+				<Localize Value="This site is running" /> :<br />
+				PBApplication v.<PBFrontend.UI.Meta.Version.PBApplicationVersion /> <br />
+				PBCommon v.<PBFrontend.UI.Meta.Version.PBCommonVersion /> <br />
+				PBData v.<PBFrontend.UI.Meta.Version.PBDataVersion /> <br />
+				PBFrontend v.<PBFrontend.UI.Meta.Version.PBFrontendVersion />
+			</ChildContent>
+		</ShadowPageBox>
+	</ChildContent>
+</DefaultPage>

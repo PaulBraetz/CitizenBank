@@ -1,0 +1,95 @@
+@startuml
+
+!pragma teoz true
+
+box Server
+box Login Feature #Snow
+participant ServerLogin
+end box
+
+box CompleteRegistration Feature #Snow
+participant CompleteRegistration
+participant ValidatePassword
+participant ValidateBio
+participant LoadBio
+participant PersistRegistration
+participant DeleteRegistrationRequest
+end box
+
+box Authentication Feature #Snow
+participant HashPassword
+end box
+end box
+
+box External
+boundary CIG
+end box
+
+ServerLogin -> CompleteRegistration: (CitizenName, HashedPassword, BioCode, PrehashedPassword)
+activate CompleteRegistration
+CompleteRegistration -> ValidatePassword: (PrehashedPassword, HashedPassword)
+activate ValidatePassword
+ValidatePassword -> HashPassword: (PrehashedPassword, HashedPassword.PasswordParameters)
+activate HashPassword
+HashPassword -> ValidatePassword: HashedPassword
+deactivate HashPassword
+alt#Gold #LightGreen HashedPassword matches HashedPassword
+    ValidatePassword -> CompleteRegistration: success
+else #Pink HashedPassword does not match HashedPassword
+    ValidatePassword -> CompleteRegistration: PasswordFailure
+    deactivate ValidatePassword
+    CompleteRegistration -> ServerLogin: PasswordFailure
+end
+
+CompleteRegistration -> ValidateBio: (CitizanName, BioCode)
+activate ValidateBio
+ValidateBio -> LoadBio: CitizenName
+activate LoadBio
+LoadBio -> CIG: CitizenName
+activate CIG
+alt#Gold #LightGreen public bio for CitizenName found
+    CIG -> LoadBio: Bio
+    LoadBio -> ValidateBio: Bio
+else #Pink public bio for CitizenName not found
+    CIG -> LoadBio: UnknownCitizen
+    deactivate CIG
+    LoadBio -> ValidateBio: UnknownCitizen
+    deactivate LoadBio
+    ValidateBio -> CompleteRegistration: UnknownCitizenFailure
+    CompleteRegistration -> ServerLogin: UnknownCitizenFailure
+end
+
+alt#Gold #LightGreen Bio contains BioCode
+    ValidateBio -> CompleteRegistration: success
+else #Pink Bio does not contain BioCode
+    ValidateBio -> CompleteRegistration: BioCodeFailure
+    deactivate ValidateBio
+    CompleteRegistration -> ServerLogin: BioCodeFailure
+end
+
+CompleteRegistration -> DeleteRegistrationRequest: CitizenName
+activate DeleteRegistrationRequest
+alt#Gold #LightGreen delete succeeded
+    DeleteRegistrationRequest -> CompleteRegistration: success
+else #Pink delete failed
+    DeleteRegistrationRequest -> CompleteRegistration: DeleteFailure
+    deactivate DeleteRegistrationRequest
+    CompleteRegistration -> ServerLogin: DeleteFailure
+end
+
+CompleteRegistration -> PersistRegistration: (CitizenName, HashedPassword)
+activate PersistRegistration
+alt#Gold #LightGreen insert overwrote existing with CitizenName
+    PersistRegistration -> CompleteRegistration: overwrite-success
+    CompleteRegistration -> ServerLogin: overwrite-success
+else #LightGreen insert succeeded
+    PersistRegistration -> CompleteRegistration: success
+    CompleteRegistration -> ServerLogin: success
+else #Pink insert failed
+    PersistRegistration -> CompleteRegistration: PersistFailure
+    deactivate PersistRegistration
+    CompleteRegistration -> ServerLogin: PersistFailure
+    deactivate CompleteRegistration
+end
+
+@enduml

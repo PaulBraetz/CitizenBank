@@ -1,0 +1,6 @@
+﻿@inherits SearchCitizenChild
+
+<PBFrontend.UI.Input.TextInput @bind-Value="SearchCitizenParent.Request.Parameter.Name"
+                               ValidationField="SearchCitizenParent.Response.Validation.GetField(nameof(IEventfulCitizenService.SearchCitizensParameter.Name))"
+                               OnEnterPressed="SearchCitizenParent.Submit"
+                               Placeholder="Search" />

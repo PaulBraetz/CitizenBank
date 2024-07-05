@@ -1,0 +1,10 @@
+﻿@inherits SearchAccountChild
+@if (SearchAccountParent.Response.Data?.Any()??false)
+{
+    <div class="dropdown-menu show">
+        @foreach (var user in SearchAccountParent.Response.Data)
+        {
+            <a class="dropdown-item clickable" @onclick="()=>SearchAccountParent.Select(user)">@user.Name</a>
+        }
+    </div>
+}

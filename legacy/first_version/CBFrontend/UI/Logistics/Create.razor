@@ -1,0 +1,85 @@
+﻿@inherits SessionChild
+<DefaultFormBox>
+    <Header>
+        <PBTitle>
+            <Localize Value="Create" />
+        </PBTitle>
+    </Header>
+    <ChildContent>
+            <div>
+            <SearchCitizenFrame @bind-Value="client">
+                <label for="searchClient"><Localize Value="Search Client" /></label>
+                <div class="dropdown show" id="searchClient">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <Localize Value="Client" /> : @(@client?.Name != null ? client.Name:SessionParent.Localize("None[0]"))
+                            </div>
+                        </div>
+                        <CBFrontend.UI.Citizen.SearchCitizen.Children.NameInput />
+                        <div class="input-group-append">
+                            <CBFrontend.UI.Citizen.SearchCitizen.Children.ClearButton />
+                        </div>
+                        <div class="input-group-append">
+                            <CBFrontend.UI.Citizen.SearchCitizen.Children.SubmitButton />
+                        </div>
+                    </div>
+                    <CBFrontend.UI.Citizen.SearchCitizen.Children.ResultsDropdown />
+                </div>
+            </SearchCitizenFrame>
+        </div>
+        <div class="mt-3">
+            <TextInput @bind-Value="request.Parameter.Origin"
+                                           ValidationField="response.Validation.GetField(nameof(request.Parameter.Origin))"
+                                           OnEnterPressed="Submit"
+                                           Label="@nameof(request.Parameter.Origin)" />
+        </div>
+        <div class="mt-3">
+            <TextInput @bind-Value="request.Parameter.Target"
+                                           ValidationField="response.Validation.GetField(nameof(request.Parameter.Target))"
+                                           OnEnterPressed="Submit"
+                                           Label="@nameof(request.Parameter.Target)" />
+        </div>
+        <div class="mt-3">
+            <SelectInput @bind-Value="request.Parameter.Type"
+                                             Options="CBFrontend.Classes.HelperEnumerables.OrderTypeOptions"
+                                             TOption="CBCommon.Enums.LogisticsEnums.OrderType"
+                                             Label="@nameof(request.Parameter.Type)" />
+        </div>
+        <div class="mt-3">
+            <TextInput @bind-Value="request.Parameter.Details"
+                                           ValidationField="response.Validation.GetField(nameof(request.Parameter.Details))"
+                                           OnEnterPressed="Submit"
+                                           Label="@nameof(request.Parameter.Details)" />
+        </div>
+        <div class="mt-3">
+            <label for="deadline"><Localize Value="Deadline" />&nbsp;:&nbsp;@SessionParent.Localize(TotalDeadline)</label>
+            <div class="input-group" id="deadline">
+                <DateInput @bind-Value="deadlineDate"
+                                               Type="PBFrontend.UI.Input.DateInput.InputType.Date"
+                                               ValidationField="response.Validation.GetField(nameof(request.Parameter.Deadline))"
+                                               Min="PBCommon.Globalization.TimeManager.Now" />
+                <DateInput @bind-Value="deadlineTime"
+                                               Type="PBFrontend.UI.Input.DateInput.InputType.Time"
+                                               ValidationField="response.Validation.GetField(nameof(request.Parameter.Deadline))" />
+            </div>
+        </div>
+        <div class="flex-column">
+            <ValidationCollection ValidationFields="response.Validation" />
+        </div>
+    </ChildContent>
+    <Footer>
+        <LoadingFrame @ref="loadingFrameRef">
+            <div class="mt-3">
+                <Loading>
+                    <Spinner></Spinner>
+                </Loading>
+                <NotLoading>
+                    <button class="btn btn-outline-success" @onclick="Submit">
+                        <Localize Value="Submit" />
+                    </button>
+                </NotLoading>
+            </div>
+        </LoadingFrame>
+    </Footer>
+</DefaultFormBox>

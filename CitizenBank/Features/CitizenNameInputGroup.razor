@@ -1,0 +1,19 @@
+﻿@inherits ModelComponentBase<IInputGroupModel<CitizenName, string>>
+
+<div @attributes="Attributes">
+    <div>
+        @Model.Label
+    </div>
+    <CitizenNameInput Value="Model.Input" />
+    <div>
+        @Model.Description
+    </div>
+</div>
+
+@code {
+    protected override void OnParametersSet()
+    {
+        ClassNames = ClassNames.Add(["flex", "flex-col"]);
+        base.OnParametersSet();
+    }
+}

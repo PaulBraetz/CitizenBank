@@ -1,0 +1,11 @@
+﻿@inherits ModelComponentBase<IInputModel<CitizenName, string>>
+
+<InputControl @attributes="Attributes"
+              Value="Model"
+              TValue="CitizenName"
+              TError="String"
+              Parse="v=>v"
+              CanParse="v=>true"
+              UpdateOnFocusLost="false"
+              ErrorTitleParse="e=>e"
+              InitialValueParse="v=>v" />

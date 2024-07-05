@@ -1,0 +1,75 @@
+﻿@inherits CitizensFrameChild
+<PBFrontend.UI.Formatting.Collapse.CollapseFrame>
+    <ShadowPageBox>
+        <Header>
+            <PBFrontend.UI.Formatting.Collapse.Children.CollapseDiv>
+                <div class="text-@HeaderColor.ToCssString()">
+                    <PBFrontend.UI.Formatting.Collapse.Children.CollapseChevron /> @SessionParent.Localize(new LocalizableFormattableString("LogisticsOfferDetails OrderId ({0})", Order.OrderId)) <Localize Value="@Order.Type.ToString()" />
+                </div>
+            </PBFrontend.UI.Formatting.Collapse.Children.CollapseDiv>
+        </Header>
+        <ChildContent>
+            <PBFrontend.UI.Formatting.Collapse.Children.WhenNotCollapsed>
+                <dl>
+                    <dt>
+                        <Localize Value="Order Id"/>
+                    </dt>
+                    <dd>
+                        @Order.OrderId
+                    </dd>
+                    <dt>
+                        <Localize Value="Client"/>
+                    </dt>
+                    <dd>
+                        @Order.Client.Name
+                    </dd>
+                    <dt>
+                        <Localize Value="Route" />
+                    </dt>
+                    <dd>
+                        @(String.IsNullOrWhiteSpace(Order.Origin) ? SessionParent.Localize("Whereever") : Order.Origin)&nbsp;&rarr;&nbsp;@Order.Target
+                    </dd>
+                    <dt>
+                        <Localize Value="Details" />
+                    </dt>
+                    <dd>
+                        @Order.Details
+                    </dd>
+                    <dt>
+                        <Localize Value="Deadline" />
+                    </dt>
+                    <dd>
+                        @SessionParent.Localize(Order.Deadline, "dd:MM:yy hh:mm")
+                    </dd>
+                </dl>
+                <div class="m-1 input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <Localize Value="Status" />
+                        </span>
+                    </div>
+                    <AuthorizeView ForRight="@CBCommon.Settings.Logistics.LOGISTICS_MANAGER_RIGHT">
+                        <Authorized>
+                            <PBFrontend.UI.Input.SelectInput ValueChanged="s=>Edit(s)"
+                                                             Value="Order.Status"
+                                                             Options="CBFrontend.Classes.HelperEnumerables.OrderStatusOptions"
+                                                             TOption="CBCommon.Enums.LogisticsEnums.OrderStatus" />
+                        </Authorized>
+                        <NotAuthorized>
+                            <PBFrontend.UI.Input.SelectInput Disabled="true"
+                                                             Value="Order.Status"
+                                                             Options="CBFrontend.Classes.HelperEnumerables.OrderStatusOptions"
+                                                             TOption="CBCommon.Enums.LogisticsEnums.OrderStatus" />
+                        </NotAuthorized>
+                    </AuthorizeView>
+                </div>
+                @if (!Order.ExpiryPaused)
+                        {
+                <div class="m-1">
+                    <Localize Value="Expiration Date" />&nbsp;:&nbsp;@SessionParent.Localize(Order.ExpirationDate)
+                </div>
+                }
+            </PBFrontend.UI.Formatting.Collapse.Children.WhenNotCollapsed>
+        </ChildContent>
+    </ShadowPageBox>
+</PBFrontend.UI.Formatting.Collapse.CollapseFrame>

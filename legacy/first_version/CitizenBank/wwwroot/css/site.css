@@ -1,0 +1,81 @@
+<<<<<<< HEAD
+@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+=======
+body {
+	font-family: LatoWebLight;
+}
+>>>>>>> 830ac890b7424c0df58250177e3a5dc71afc2934
+
+#blazor-error-ui {
+	background: lightyellow;
+	bottom: 0;
+	box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+	display: none;
+	left: 0;
+	padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+	position: fixed;
+	width: 100%;
+	z-index: 1000;
+}
+
+	#blazor-error-ui .dismiss {
+		cursor: pointer;
+		position: absolute;
+		right: 0.75rem;
+		top: 0.5rem;
+	}
+
+/*Required custom*/
+
+.bg-custom-transparent {
+<<<<<<< HEAD
+    background-color: rgba(255,255,255,0.01);
+=======
+	background-color: rgba(255,255,255,0.01);
+>>>>>>> 830ac890b7424c0df58250177e3a5dc71afc2934
+}
+
+/*Themes*/
+/*Light*/
+.bg-theme-light {
+<<<<<<< HEAD
+    background-color: white;
+}
+
+.text-theme-light {
+    color: black
+=======
+	background-color: white;
+}
+
+.text-theme-light {
+	color: black
+>>>>>>> 830ac890b7424c0df58250177e3a5dc71afc2934
+}
+/*Dark*/
+.bg-theme-dark {
+	background-color: rgb(30, 30, 30);
+}
+
+.text-theme-dark {
+	color: white
+}
+
+/*Clickables*/
+.clickable {
+	cursor: pointer
+}
+
+.non-clickable {
+	cursor: default
+}
+
+<<<<<<< HEAD
+.nav-link {
+    color: inherit;
+=======
+.nav-link, .nav-link:hover, .nav-link:focus {
+	color: inherit;
+	text-decoration: none;
+>>>>>>> 830ac890b7424c0df58250177e3a5dc71afc2934
+}

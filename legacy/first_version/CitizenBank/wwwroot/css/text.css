@@ -1,0 +1,180 @@
+﻿
+.text-primary-t10 {
+	color: rgba(0, 123, 255,0.1);
+}
+
+.text-primary-t25 {
+	color: rgba(0, 123, 255,0.25);
+}
+
+.text-primary-t50 {
+	color: rgba(0, 123, 255,0.50);
+}
+
+.text-primary-t75 {
+	color: rgba(0, 123, 255,0.75);
+}
+
+.text-primary-t100 {
+	color: rgba(0, 123, 255,1);
+}
+
+.text-secondary-t10 {
+	color: rgba( 108, 117, 125,0.1);
+}
+
+.text-secondary-t25 {
+	color: rgba( 108, 117, 125,0.25);
+}
+
+.text-secondary-t50 {
+	color: rgba( 108, 117, 125,0.50);
+}
+
+.text-secondary-t75 {
+	color: rgba( 108, 117, 125,0.75);
+}
+
+.text-secondary-t100 {
+	color: rgba( 108, 117, 125,1);
+}
+
+.text-success-t10 {
+	color: rgba(40, 167, 69,0.1);
+}
+
+.text-success-t25 {
+	color: rgba(40, 167, 69,0.25);
+}
+
+.text-success-t50 {
+	color: rgba(40, 167, 69,0.50);
+}
+
+.text-success-t75 {
+	color: rgba(40, 167, 69,0.75);
+}
+
+.text-success-t100 {
+	color: rgba(40, 167, 69,1);
+}
+
+.text-danger-t10 {
+	color: rgba( 220, 53, 69,0.1);
+}
+
+.text-danger-t25 {
+	color: rgba( 220, 53, 69,0.25);
+}
+
+.text-danger-t50 {
+	color: rgba( 220, 53, 69,0.50);
+}
+
+.text-danger-t75 {
+	color: rgba( 220, 53, 69,0.75);
+}
+
+.text-danger-t100 {
+	color: rgba( 220, 53, 69,1);
+}
+
+.text-warning-t10 {
+	color: rgba(255, 193, 7,0.1);
+}
+
+.text-warning-t25 {
+	color: rgba(255, 193, 7,0.25);
+}
+
+.text-warning-t50 {
+	color: rgba(255, 193, 7,0.50);
+}
+
+.text-warning-t75 {
+	color: rgba(255, 193, 7,0.75);
+}
+
+.text-warning-t100 {
+	color: rgba(255, 193, 7,1);
+}
+
+.text-info-t10 {
+	color: rgba( 23, 162, 184,0.1);
+}
+
+.text-info-t25 {
+	color: rgba( 23, 162, 184,0.25);
+}
+
+.text-info-t50 {
+	color: rgba( 23, 162, 184,0.50);
+}
+
+.text-info-t75 {
+	color: rgba( 23, 162, 184,0.75);
+}
+
+.text-info-t100 {
+	color: rgba( 23, 162, 184,1);
+}
+
+.text-light-t10 {
+	color: rgba(248, 249, 250,0.1);
+}
+
+.text-light-t25 {
+	color: rgba(248, 249, 250,0.25);
+}
+
+.text-light-t50 {
+	color: rgba(248, 249, 250,0.50);
+}
+
+.text-light-t75 {
+	color: rgba(248, 249, 250,0.75);
+}
+
+.text-light-t100 {
+	color: rgba(248, 249, 250,1);
+}
+
+.text-dark-t10 {
+	color: rgba(52, 58, 64,0.1);
+}
+
+.text-dark-t25 {
+	color: rgba(52, 58, 64,0.25);
+}
+
+.text-dark-t50 {
+	color: rgba(52, 58, 64,0.50);
+}
+
+.text-dark-t75 {
+	color: rgba(52, 58, 64,0.75);
+}
+
+.text-dark-t100 {
+	color: rgba(52, 58, 64,1);
+}
+
+.text-white-t10 {
+	color: rgba(255, 255, 255,0.1);
+}
+
+.text-white-t25 {
+	color: rgba(255, 255, 255,0.25);
+}
+
+.text-white-t50 {
+	color: rgba(255, 255, 255,0.50);
+}
+
+.text-white-t75 {
+	color: rgba(255, 255, 255,0.75);
+}
+
+.text-white-t100 {
+	color: rgba(255, 255, 255,1);
+}

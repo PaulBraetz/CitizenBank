@@ -1,0 +1,86 @@
+@startuml
+
+!pragma teoz true
+
+actor User
+
+box Client
+box Register Feature #Snow
+participant ClientRegister
+participant ValidatePasswordAgainstGuideline
+end box
+
+box Authentication Feature #Snow
+participant PrehashPassword
+end box
+end box
+
+box Server
+box Register Feature #Snow
+participant ServerRegister
+participant GeneratePasswordParameters
+participant CreateBioCode
+participant PersistRegistrationRequest
+end box
+
+box Authentication Feature #Snow
+participant HashPassword
+end box
+end box
+
+User -> ClientRegister: (CitizenName, ClearPassword)
+activate ClientRegister
+
+ClientRegister -> ValidatePasswordAgainstGuideline: ClearPassword
+activate ValidatePasswordAgainstGuideline
+ValidatePasswordAgainstGuideline -> ClientRegister: PasswordValidity
+deactivate ValidatePasswordAgainstGuideline
+ClientRegister -> User: PasswordValidity
+
+ClientRegister -> PrehashPassword: ClearPassword
+activate PrehashPassword
+PrehashPassword -> ClientRegister: PrehashedPassword
+deactivate PrehashPassword
+
+ClientRegister -> ServerRegister: (CitizenName, PrehashedPassword)
+activate ServerRegister
+ServerRegister -> GeneratePasswordParameters
+activate GeneratePasswordParameters
+GeneratePasswordParameters -> ServerRegister: PasswordParameters
+deactivate GeneratePasswordParameters
+ServerRegister -> HashPassword: (PrehashedPassword, PasswordParameters)
+activate HashPassword
+HashPassword -> ServerRegister: HashedPassword
+deactivate HashPassword
+
+ServerRegister -> CreateBioCode: CitizenName
+activate CreateBioCode
+loop#Gold #LightBlue BioCode is default or RegistrationRequest with (BioCode, CitizenName) exists
+    CreateBioCode -> CreateBioCode: BioCode
+end
+CreateBioCode -> ServerRegister: BioCode
+deactivate CreateBioCode
+
+ServerRegister -> PersistRegistrationRequest: (CitizenName, HashedPassword, BioCode)
+activate PersistRegistrationRequest
+alt#Gold #LightGreen insert overwrote existing with CitizenName
+    PersistRegistrationRequest -> ServerRegister: overwrite-success
+
+    ServerRegister -> ClientRegister: (overwrite-success, BioCode)
+    ClientRegister -> User: (overwrite-success, BioCode)
+else #LightGreen insert succeeded
+    PersistRegistrationRequest -> ServerRegister: success
+
+    ServerRegister -> ClientRegister: (success, BioCode)
+
+    ClientRegister -> User: (success, BioCode)
+else #Pink insert failed
+    PersistRegistrationRequest -> ServerRegister: failure
+    deactivate PersistRegistrationRequest
+    ServerRegister -> ClientRegister: failure
+    deactivate ServerRegister
+    ClientRegister -> User: failure
+    deactivate ClientRegister
+end
+
+@enduml

@@ -1,0 +1,57 @@
+﻿@inherits SessionChild
+<ShadowPageBox>
+    <Header>
+        <PBFrontend.UI.Formatting.PBTitle>
+            <LoadingFrame @ref="refreshLoadingFrameRef">
+                <Localize Value="Orders" />&nbsp;<NotLoading><span class="text-primary clickable oi oi-reload" @onclick="async ()=>await refreshLoadingFrameRef.Load(async ()=>{await Refresh();Task.Delay(1500).Wait();})"></span></NotLoading><Loading><Spinner></Spinner></Loading>
+            </LoadingFrame>
+        </PBFrontend.UI.Formatting.PBTitle>
+    </Header>
+    <ChildContent>
+        @if (orders.Data?.Any()??false)
+                {
+        <table class="table @GetTextThemeCss() col-xl-9">
+            <thead>
+                <tr>
+                    <th>
+                        <Localize Value="Details" />
+                    </th>
+                    <th>
+                        <Localize Value="Origin" />&nbsp;&rArr;&nbsp;<Localize Value="Target" />
+                    </th>
+                    <th>
+                        <Localize Value="Deadline" />
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in orders.Data)
+                {
+                    <tr>
+                        <td>
+                            <LogisticsOrderDetails Order="order" />
+                        </td>
+                        <td>
+                            @(String.IsNullOrWhiteSpace(order.Origin) ? SessionParent.Localize("Whereever") : order.Origin)&nbsp;&rarr;&nbsp;@order.Target
+                        </td>
+                        <td>
+                            <Localize Value="until" /> @SessionParent.Localize(order.Deadline, "dd:MM:yy hh:mm")
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        }
+                else
+                {
+        <PBFrontend.UI.Formatting.Box.Presets.InfoBox>
+            <Header>
+                <span class="oi oi-info"></span> Info
+            </Header>
+            <ChildContent>
+                <Localize Value="No Orders found." />
+            </ChildContent>
+        </PBFrontend.UI.Formatting.Box.Presets.InfoBox>
+        }
+    </ChildContent>
+</ShadowPageBox>

@@ -1,0 +1,73 @@
+.page {
+	display: flex;
+	background-image: url("../nasa--hI5dX2ObAs-unsplash.jpg");
+	background-size: cover;
+	background-attachment: fixed;
+	background-color: black;
+	width: 100vw;
+}
+
+
+.main {
+	flex: 1;
+	flex-direction: column;
+	display: flex;
+	width: 100vw;
+	height: 100vh;
+}
+
+.sidebar > .addendum {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: end;
+}
+
+/*Phone resolution*/
+@media (max-width: 640.98px){
+	.page {
+		flex-direction: column;
+		/*Credit: https://css-tricks.com/the-trick-to-viewport-units-on-mobile/*/
+		min-height: 100vh; /* Fallback for browsers that do not support Custom Properties */
+		min-height: calc(var(--vh, 1vh) * 100);
+		height: fit-content;
+	}
+	.sidebar {
+		width: 100vw;
+	}
+
+}
+
+/*Tablet/Desktop resolution*/
+@media (min-width: 641px) {
+	.page {
+		flex-direction: row;
+		height: 100vh;
+	}
+
+	.sidebar {
+		width: 300px;
+		height: 100vh;
+		position: sticky;
+		top: 0;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.top-row {
+		position: sticky;
+		top: 0;
+		z-index: 1;
+	}
+}
+
+/*Required custom*/
+/*.sidebar-theme-dark {
+	background-color: #130f40;
+	background-image: linear-gradient(315deg, #130f40 0%, #000000 74%);
+}
+
+.sidebar-theme-light {
+	background-color: #36096d;
+	background-image: linear-gradient(315deg, #36096d 0%, #37d5d6 74%);
+}*/

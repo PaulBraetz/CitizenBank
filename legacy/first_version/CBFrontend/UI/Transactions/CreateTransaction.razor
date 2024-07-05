@@ -1,0 +1,147 @@
+﻿@inherits AccountsFrameChild
+@if (parameter != null)
+{
+	<DefaultFormBox>
+		<Header>
+			<PBTitle>
+				Create
+			</PBTitle>
+		</Header>
+		<ChildContent>
+			<div class="mb-2">
+				@if (creatorIsCreditor)
+				{
+					<div class="btn-group">
+						<button class="btn btn-outline-primary" disabled>
+							Receive
+						</button>
+						<button class="btn btn-outline-primary" @onclick="e=>creatorIsCreditor = false">
+							Send
+						</button>
+					</div>
+				}
+				else
+				{
+					<div class="btn-group">
+						<button class="btn btn-outline-primary" @onclick="e=>creatorIsCreditor = true">
+							Receive
+						</button>
+						<button class="btn btn-outline-primary" disabled>
+							Send
+						</button>
+					</div>
+				}
+			</div>
+			<div class="mb-2">
+				<SearchAccountFrame @bind-Value="creditor">
+					<UserFromSession />
+					<CitizenFromFrame />
+					<AccountFromFrame />
+					<div class="dropdown show mv-2">
+						<div class="input-group">
+							<div class="input-group-prepend">
+								<div class="input-group-text">
+									<Localize Value="Creditor" /> : @(creditor?.Name != null ? creditor.Name:SessionParent.Localize("None[male]"))
+								</div>
+							</div>
+							<NameInput />
+							<div class="input-group-append">
+								<SubmitButton />
+							</div>
+							<div class="input-group-append">
+								<ClearButton />
+							</div>
+						</div>
+						<ResultsDropdown />
+					</div>
+				</SearchAccountFrame>
+			</div>
+			<div class="mb-2">
+				<SearchAccountFrame @bind-Value="debtor">
+					<UserFromSession />
+					<CitizenFromFrame />
+					<AccountFromFrame />
+					<div class="dropdown show mv-2">
+						<div class="input-group">
+							<div class="input-group-prepend">
+								<div class="input-group-text">
+									<Localize Value="Debtor" /> : @(debtor?.Name != null ? debtor.Name:SessionParent.Localize("None[male]"))
+								</div>
+							</div>
+							<NameInput />
+							<div class="input-group-append">
+								<SubmitButton />
+							</div>
+							<div class="input-group-append">
+								<ClearButton />
+							</div>
+						</div>
+						<ResultsDropdown />
+					</div>
+				</SearchAccountFrame>
+			</div>
+			<div class="mb-2">
+				<div class="input-group">
+					<div class="input-group-prepend">
+						<div class="input-group-text">
+							<Localize Value="Value" />
+						</div>
+					</div>
+					<DecimalInput Type="TextInput.InputType.number" @bind-ParsedValue="parameter.Value" />
+				</div>
+			</div>
+			<div class="mb-2">
+				<div class="input-group">
+					<div class="input-group-prepend">
+						<div class="input-group-text">
+							<Localize Value="Currency" />
+						</div>
+					</div>
+					<SelectInput TOption="Guid" Options="currencyOptions" @bind-Value="parameter.CurrencyId" />
+				</div>
+			</div>
+			<div class="mb-2">
+				<div class="input-group">
+					<div class="input-group-prepend">
+						<div class="input-group-text">
+							<Localize Value="Additional Days Until Due" />
+						</div>
+					</div>
+					<Int32Input Type="TextInput.InputType.number" Max="28" Min="0" @bind-ParsedValue="parameter.AdditionalDaysUntilDue" />
+				</div>
+			</div>
+			<div class="mb-2">
+				<div class="btn-group">
+					<button class="btn btn-outline-primary" @onclick="Preview">
+						<Localize Value="Preview" />
+					</button>
+					@if (preview != null && preview.Validation.NoneInvalid)
+					{
+						<button class="btn btn-outline-primary" @onclick="Create">
+							<Localize Value="Create" />
+						</button>
+					}
+				</div>
+			</div>
+			@if (preview != null)
+			{
+				<div class="mb-2">
+					<ValidationCollection ValidationFields="validation" />
+				</div>
+			}
+		</ChildContent>
+	</DefaultFormBox>
+}
+@if (preview?.Data != null)
+{
+	<DefaultFormBox>
+		<Header>
+			<PBTitle>
+				<Localize Value="Preview" />
+			</PBTitle>
+		</Header>
+		<ChildContent>
+			<SourceTransactionDetails Transaction="preview.Data" />
+		</ChildContent>
+	</DefaultFormBox>
+}

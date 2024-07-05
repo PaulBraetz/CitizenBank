@@ -1,0 +1,7 @@
+﻿@inherits SearchAccountChild
+@code{ protected override void OnParametersSetAndSessionInitialized()
+			{
+				base.OnParametersSetAndSessionInitialized();
+				SearchAccountParent.Request.AsUserId = SessionParent.Session.User.Id;
+			}
+}

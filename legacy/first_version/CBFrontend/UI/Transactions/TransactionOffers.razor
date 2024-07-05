@@ -1,0 +1,58 @@
+﻿@inherits AccountsFrameChild
+<ShadowPageBox>
+	<Header>
+		<PBFrontend.UI.Formatting.PBTitle>
+			<LoadingFrame @ref="refreshLoadingFrameRef">
+				<Localize Value="Offers" />&nbsp;<Loading.Children.NotLoading><span class="text-primary clickable oi oi-reload" @onclick="async ()=>await refreshLoadingFrameRef.Load(async ()=>{await Refresh();Task.Delay(1500).Wait();})"></span></Loading.Children.NotLoading><Loading.Children.Loading><Loading.Spinner></Loading.Spinner></Loading.Children.Loading>
+			</LoadingFrame>
+		</PBFrontend.UI.Formatting.PBTitle>
+	</Header>
+	<ChildContent>
+		@if (response?.Data?.Any() ?? false)
+		{
+			<table class="table @GetTextThemeCss() col-xl-9">
+				<thead>
+					<tr>
+						<th>
+							<Localize Value="Offer" />
+						</th>
+						<th>
+							<Localize Value="Actions"/>
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var offer in response.Data)
+					{
+						<tr>
+							<td>
+								<TransactionOfferDetails Offer="offer" />
+							</td>
+							<td>
+								<div class="btn-group btn-group-sm">
+									<button class="btn btn-sm btn-outline-primary" @onclick="async e=>await Accept(offer)">
+										Accept
+									</button>
+									<button class="btn btn-sm btn-outline-primary" @onclick="async e=>await Reject(offer)">
+										Reject
+									</button>
+								</div>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		}
+		else
+		{
+			<PBFrontend.UI.Formatting.Box.Presets.InfoBox>
+				<Header>
+					<span class="oi oi-info"></span> Info
+				</Header>
+				<ChildContent>
+					<Localize Value="No Offers found." />
+				</ChildContent>
+			</PBFrontend.UI.Formatting.Box.Presets.InfoBox>
+		}
+	</ChildContent>
+</ShadowPageBox>
