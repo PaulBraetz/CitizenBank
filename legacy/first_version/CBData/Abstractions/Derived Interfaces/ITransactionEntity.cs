@@ -1,15 +1,11 @@
 ﻿
 using CBData.Entities;
 
-using PBData.Abstractions;
-
-using System;
-
 using static CBCommon.Enums.CitizenBankEnums;
 
 namespace CBData.Abstractions
 {
-	public interface ITransactionEntity<TCreditor, TDebtor, TCreator, TRecipient> : IExpiringEntity, IHasCurrency<CurrencyEntity>, IHasCreator<TCreator>, IHasTags
+    public interface ITransactionEntity<TCreditor, TDebtor, TCreator, TRecipient> : IExpiringEntity, IHasCurrency<CurrencyEntity>, IHasCreator<TCreator>, IHasTags
 		where TCreditor : IAccountEntity
 		where TDebtor : IAccountEntity
 		where TCreator : IAccountEntity

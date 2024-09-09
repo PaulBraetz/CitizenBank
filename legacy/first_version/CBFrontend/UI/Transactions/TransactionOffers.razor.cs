@@ -1,16 +1,16 @@
 ﻿using CBApplication.Requests;
 using CBApplication.Requests.Abstractions;
 using CBApplication.Services.Abstractions;
+
 using CBData.Entities;
+
 using CBFrontend.UI.DataFrames.Accounts.Children;
-using PBApplication.Responses.Abstractions;
-using PBFrontend.UI.Miscellaneous.Loading;
-using System.Threading.Tasks;
+
 using static CBCommon.Enums.CitizenBankEnums;
 
 namespace CBFrontend.UI.Transactions
 {
-	partial class TransactionOffers : AccountsFrameChild
+    partial class TransactionOffers : AccountsFrameChild
 	{
 		private IGetPaginatedEncryptableResponse<TransactionOfferEntity> response;
 		private IAsAccountGetPaginatedRequest<ITransactionService.GetTransactionOffersParameter> request;

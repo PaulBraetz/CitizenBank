@@ -2,17 +2,15 @@
 using CBApplication.Services.Abstractions;
 
 using CBData.Entities;
+
 using CBFrontend.UI.DataFrames.Citizens.Children;
-using Microsoft.AspNetCore.Components;
-using PBShared.Events;
-using System.Threading.Tasks;
 
 using static CBCommon.Enums.LogisticsEnums;
 using static CBFrontend.Classes.Formatting.Enums;
 
 namespace CBFrontend.UI.Logistics
 {
-	public partial class LogisticsOrderDetails : CitizensFrameChild
+    public partial class LogisticsOrderDetails : CitizensFrameChild
 	{
 		[Parameter]
 		public LogisticsOrderEntity Order { get; set; }

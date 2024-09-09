@@ -1,15 +1,6 @@
-﻿using PBCommon.Encryption;
-using PBCommon.Encryption.Abstractions;
-using PBData.Extensions;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace CBData.Entities
+﻿namespace CBData.Entities
 {
-	public class VirtualAccountEntity : AccountEntityBase
+    public class VirtualAccountEntity : AccountEntityBase
 	{
 		public VirtualAccountEntity(CitizenEntity creator, String name, CreditScoreEntity creditScore) : base(creator, name, creditScore)
 		{

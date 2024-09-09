@@ -1,14 +1,9 @@
 ﻿
 using CBData.Entities;
 
-using PBApplication.Events;
-using PBApplication.Services.Abstractions;
-using PBCommon.Globalization;
-using System.Collections.Generic;
-
 namespace CBApplication.Services.Abstractions
 {
-	public interface IEventfulCBMessageService : ICBMessageService, IEventfulService
+    public interface IEventfulCBMessageService : ICBMessageService, IEventfulService
 	{
 		//Payload : message
 		//Recipients : creator, recipients

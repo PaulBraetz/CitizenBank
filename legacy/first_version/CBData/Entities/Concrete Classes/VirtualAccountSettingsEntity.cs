@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace CBData.Entities
+﻿namespace CBData.Entities
 {
-	public class VirtualAccountSettingsEntity : AccountSettingsEntityBase
+    public class VirtualAccountSettingsEntity : AccountSettingsEntityBase
 	{
 		public VirtualAccountSettingsEntity(CurrencyBoolDictionaryEntity canReceiveTransactionOffersFor,
 											   CurrencyBoolDictionaryEntity canCreateTransactionOffersFor,

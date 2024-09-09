@@ -1,12 +1,10 @@
-﻿using PBCommon.Extensions;
-using System;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 using static CBCommon.Settings.CitizenBank;
 
 namespace CBCommon.Extensions
 {
-	public static class StringExtensions
+    public static class StringExtensions
 	{
 		public static Boolean IsValidHandle(this String strToCheck)
 		{

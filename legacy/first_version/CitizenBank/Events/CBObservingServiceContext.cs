@@ -2,19 +2,10 @@
 using CBApplication.Services.Abstractions;
 
 using CitizenBank.Events.Observers;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.SignalR;
-
-using PBApplication.Events.Abstractions;
-using PBApplication.Services.Abstractions;
-using PBCommon.Serialization;
-using PBServer.Context;
-using PBServer.Hubs;
-using Unity.Injection;
 
 namespace CitizenBank.Events
 {
-	public class CBObservingServiceContext : ObservingServiceContext
+    public class CBObservingServiceContext : ObservingServiceContext
 	{
 		public CBObservingServiceContext(IHttpContextAccessor httpContextAccessor, IHubContext<EventHub> hubContext, ISerializer serializer) : base(httpContextAccessor, hubContext, serializer)
 		{

@@ -1,11 +1,9 @@
 ﻿
 using CBData.Entities;
 
-using Microsoft.AspNetCore.Components;
-
 namespace CBFrontend.UI.Citizen.SearchCitizen
 {
-	public partial class SearchCitizenPreset
+    public partial class SearchCitizenPreset
 	{
 		[Parameter]
 		public EventCallback<CitizenEntity> ValueChanged { get; set; }

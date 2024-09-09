@@ -1,13 +1,8 @@
 ﻿using CBApplication.Requests.Abstractions;
 
-using PBApplication.Requests;
-using PBCommon.Encryption.Abstractions;
-using System;
-using System.Threading.Tasks;
-
 namespace CBApplication.Requests
 {
-	public class AsCitizenRequest : AsUserRequest, IAsCitizenRequest
+    public class AsCitizenRequest : AsUserRequest, IAsCitizenRequest
 	{
 		public Guid AsCitizenId { get; set; }
 	}

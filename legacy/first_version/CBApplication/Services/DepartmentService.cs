@@ -1,33 +1,20 @@
 ﻿using CBApplication.Extensions;
 using CBApplication.Requests.Abstractions;
 using CBApplication.Services.Abstractions;
+
 using CBCommon.Extensions;
+
 using CBData.Abstractions;
 using CBData.Entities;
-using PBApplication.Context.Abstractions;
-using PBApplication.Events;
-using PBApplication.Extensions;
-using PBApplication.Responses;
-using PBApplication.Responses.Abstractions;
-using PBApplication.Services.Abstractions;
-using PBCommon.Extensions;
-using PBCommon.Validation;
-using PBData.Abstractions;
-using PBData.Entities;
-using PBData.Extensions;
-using ScrapeX;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+
 using System.Text;
-using System.Threading.Tasks;
+
 using static CBApplication.Services.Abstractions.IDepartmentService;
 using static CBApplication.Services.Abstractions.IEventfulDepartmentService;
-using static PBCommon.Enums;
 
 namespace CBApplication.Services
 {
-	public class DepartmentService : CBService, IEventfulDepartmentService
+    public class DepartmentService : CBService, IEventfulDepartmentService
 	{
 		public DepartmentService(IServiceContext serviceContext) : base(serviceContext)
 		{

@@ -1,16 +1,10 @@
 ﻿using CBApplication.Requests.Abstractions;
+
 using CBData.Entities;
-using PBApplication.Responses.Abstractions;
-using PBApplication.Services.Abstractions;
-using PBCommon.Encryption;
-using PBCommon.Encryption.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace CBApplication.Services.Abstractions
 {
-	public interface ITagService : IService
+    public interface ITagService : IService
 	{
 		sealed class SearchTagsParameter : EncryptableBase<Guid>
 		{

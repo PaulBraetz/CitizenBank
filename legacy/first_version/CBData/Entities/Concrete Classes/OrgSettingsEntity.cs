@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace CBData.Entities
+﻿namespace CBData.Entities
 {
-	public class OrgSettingsEntity : DepartmentSettingsEntityBase
+    public class OrgSettingsEntity : DepartmentSettingsEntityBase
 	{
 		public OrgSettingsEntity() { }
 		protected OrgSettingsEntity(OrgSettingsEntity from, IDictionary<Guid, Object> circularReferenceHelperDictionary) : base(from, circularReferenceHelperDictionary) { }

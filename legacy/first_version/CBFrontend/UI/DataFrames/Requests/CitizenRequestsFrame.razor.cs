@@ -2,17 +2,9 @@
 
 using CBData.Entities;
 
-using Microsoft.AspNetCore.Components;
-using PBApplication.Extensions;
-using PBFrontend.UI.Authorization;
-using PBShared.Events;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace CBFrontend.UI.DataFrames.Requests
 {
-	public partial class CitizenRequestsFrame : SessionChild
+    public partial class CitizenRequestsFrame : SessionChild
 	{
 		[Parameter]
 		public RenderFragment ChildContent { get; set; }

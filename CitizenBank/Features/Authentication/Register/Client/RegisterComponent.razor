@@ -1,0 +1,13 @@
+﻿@inherits InjectedModelComponentBase<ClientRegisterModel>
+
+<div class="flex flex-col">
+    <div class="flex flex-row">
+        <CitizenNameInputGroup Value="Model.Name" class="mr-2" />
+        <ClearPasswordInputGroup Value="Model.Password" class="mr-2" />
+        <Button Value="Model.Register" />
+    </div>
+    @if (Model.Result.TryAsSome(out var result))
+    {
+        <ClientRegisterResult Value="result" />
+    }
+</div>

@@ -2,28 +2,15 @@
 
 using CBApplication.Requests.Abstractions;
 using CBApplication.Services.Abstractions;
+
 using CBData.Entities;
-using PBApplication.Context.Abstractions;
-using PBApplication.Events;
-using PBApplication.Extensions;
-using PBApplication.Requests.Abstractions;
-using PBApplication.Responses;
-using PBApplication.Responses.Abstractions;
-using PBApplication.Services.Abstractions;
-using PBCommon.Extensions;
-using PBCommon.Globalization;
-using PBCommon.Validation;
-using PBData.Entities;
-using PBData.Extensions;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+
 using static CBApplication.Services.Abstractions.ILogisticsService;
 using static CBCommon.Enums.LogisticsEnums;
 
 namespace CBApplication.Services
 {
-	public class LogisticsService : CBService, IEventfulLogisticsService
+    public class LogisticsService : CBService, IEventfulLogisticsService
 	{
 		public LogisticsService(IServiceContext serviceContext) : base(serviceContext)
 		{

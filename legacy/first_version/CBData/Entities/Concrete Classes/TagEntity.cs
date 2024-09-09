@@ -1,11 +1,6 @@
-﻿using PBData.Entities;
-
-using System;
-using System.Collections.Generic;
-
-namespace CBData.Entities
+﻿namespace CBData.Entities
 {
-	public class TagEntity : NamedEntityBase
+    public class TagEntity : NamedEntityBase
 	{
 		public TagEntity(String text) : base(text)
 		{

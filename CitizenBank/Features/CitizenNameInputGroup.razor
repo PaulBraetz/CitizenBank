@@ -9,11 +9,3 @@
         @Model.Description
     </div>
 </div>
-
-@code {
-    protected override void OnParametersSet()
-    {
-        ClassNames = ClassNames.Add(["flex", "flex-col"]);
-        base.OnParametersSet();
-    }
-}

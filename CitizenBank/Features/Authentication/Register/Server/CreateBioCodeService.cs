@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 using RhoMicro.ApplicationFramework.Aspects;
 
-sealed partial class CreateBioCodeService(IDoesBioCodeExistService existsService)
+sealed partial class CreateBioCodeService(IBioCodeExistenceChecker existsService)
 {
-    const String _alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const String _alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     [ServiceMethod]
     async ValueTask<BioCode> CreateBioCode(CitizenName name, CancellationToken ct)
     {

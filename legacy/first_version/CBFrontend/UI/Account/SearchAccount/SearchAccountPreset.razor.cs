@@ -1,10 +1,8 @@
 ﻿using CBData.Abstractions;
 
-using Microsoft.AspNetCore.Components;
-
 namespace CBFrontend.UI.Account.SearchAccount
 {
-	public partial class SearchAccountPreset
+    public partial class SearchAccountPreset
 	{
 		[Parameter]
 		public EventCallback<IAccountEntity> ValueChanged { get; set; }

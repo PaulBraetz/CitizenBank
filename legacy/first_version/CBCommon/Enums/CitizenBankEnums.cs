@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-
-namespace CBCommon.Enums
+﻿namespace CBCommon.Enums
 {
-	public static class CitizenBankEnums
+    public static class CitizenBankEnums
 	{
 		public enum AccountType : int
 		{

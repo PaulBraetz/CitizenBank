@@ -1,10 +1,8 @@
 ﻿using CBData.Abstractions;
 
-using PBData.Mapping;
-
 namespace CBData.Mapping
 {
-	internal class AccountSettingsMappingBase<TAccountSettingsEntity> : SettingsMappingBase<TAccountSettingsEntity>
+    internal class AccountSettingsMappingBase<TAccountSettingsEntity> : SettingsMappingBase<TAccountSettingsEntity>
 		where TAccountSettingsEntity : IAccountSettingsEntity
 	{
 		public AccountSettingsMappingBase()

@@ -1,13 +1,7 @@
-﻿using PBData.Abstractions;
-using PBData.Entities;
-
-using System;
-using System.Collections.Generic;
-
-namespace CBData.Entities
+﻿namespace CBData.Entities
 {
 
-	public class CitizenEntity : NamedEntityBase, ISessionAttachment
+    public class CitizenEntity : NamedEntityBase, ISessionAttachment
 	{
 		public CitizenEntity(String name) : base(name) { }
 

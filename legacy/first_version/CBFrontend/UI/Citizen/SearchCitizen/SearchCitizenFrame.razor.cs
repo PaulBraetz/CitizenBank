@@ -2,20 +2,9 @@
 
 using CBData.Entities;
 
-using Microsoft.AspNetCore.Components;
-
-using PBApplication.Requests;
-using PBApplication.Requests.Abstractions;
-using PBApplication.Responses;
-using PBApplication.Responses.Abstractions;
-
-using PBFrontend.UI.Authorization;
-
-using System.Threading.Tasks;
-
 namespace CBFrontend.UI.Citizen.SearchCitizen
 {
-	public partial class SearchCitizenFrame : SessionChild
+    public partial class SearchCitizenFrame : SessionChild
 	{
 		[Parameter]
 		public RenderFragment ChildContent { get; set; }

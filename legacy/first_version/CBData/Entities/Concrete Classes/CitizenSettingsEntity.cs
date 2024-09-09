@@ -1,11 +1,6 @@
-﻿using PBData.Entities;
-
-using System;
-using System.Collections.Generic;
-
-namespace CBData.Entities
+﻿namespace CBData.Entities
 {
-	public class CitizenSettingsEntity : SettingsEntityBase
+    public class CitizenSettingsEntity : SettingsEntityBase
 	{
 		public CitizenSettingsEntity()
 		{

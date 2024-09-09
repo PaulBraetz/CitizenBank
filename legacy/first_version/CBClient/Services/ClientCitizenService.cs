@@ -1,18 +1,11 @@
 ﻿using CBApplication.Requests.Abstractions;
 using CBApplication.Services.Abstractions;
+
 using CBData.Entities;
-using PBApplication.Context.Abstractions;
-using PBApplication.Requests.Abstractions;
-using PBApplication.Responses;
-using PBApplication.Responses.Abstractions;
-using PBClient.Access;
-using PBClient.Services;
-using System;
-using System.Threading.Tasks;
 
 namespace CitizenBank.Client.Services
 {
-	internal sealed class ClientCitizenService : ClientService, ICitizenService
+    internal sealed class ClientCitizenService : ClientService, ICitizenService
 	{
 		public ClientCitizenService(IServiceContext serviceContext, WebClient webClient) : base(serviceContext, webClient)
 		{

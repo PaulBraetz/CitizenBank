@@ -1,17 +1,8 @@
 ﻿using CBData.Abstractions;
-using PBCommon.Encryption;
-using PBCommon.Encryption.Abstractions;
-using PBData.Abstractions;
-using PBData.Entities;
-using PBData.Extensions;
-
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace CBData.Entities
 {
-	public class DepositAccountReferenceEntity : EntityBase, IActivable, IHasCurrency<CurrencyEntity>
+    public class DepositAccountReferenceEntity : EntityBase, IActivable, IHasCurrency<CurrencyEntity>
 	{
 		public DepositAccountReferenceEntity(RealAccountEntity depositAccount, CurrencyEntity currency)
 		{

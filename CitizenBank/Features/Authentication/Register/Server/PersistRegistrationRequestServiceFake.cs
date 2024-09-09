@@ -4,10 +4,18 @@ using RhoMicro.ApplicationFramework.Aspects;
 using RhoMicro.ApplicationFramework.Composition;
 
 [FakeService]
-sealed partial class PersistRegistrationRequestServiceFake
+sealed partial class PersistRegistrationRequestServiceFake(DbFake repository)
 {
-    [ServiceMethod]
-#pragma warning disable IDE0060 // Remove unused parameter
-    static PersistRegistrationRequest.Result PersistRegistrationRequest(CitizenName name, HashedPassword password, BioCode bioCode) => new CreateSuccess();
-#pragma warning restore IDE0060 // Remove unused parameter
+    [ServiceMethod(ServiceInterfaceName = "IRegistrationRequestPersister")]
+    PersistRegistrationRequest.Result PersistRegistrationRequest(CitizenName name, HashedPassword password, BioCode bioCode)
+    {
+        var newRequest = new RegistrationRequest(name, password, bioCode);
+        var added = repository.RegistrationRequests.AddOrUpdate(name, newRequest, (_,_)=>newRequest);
+
+        PersistRegistrationRequest.Result result = Object.ReferenceEquals(newRequest, added)
+            ? new OverwriteSuccess()
+            : new CreateSuccess();
+
+        return result;
+    }
 }

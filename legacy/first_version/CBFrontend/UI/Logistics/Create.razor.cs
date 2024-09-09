@@ -3,17 +3,9 @@ using CBApplication.Services.Abstractions;
 
 using CBData.Entities;
 
-using PBApplication.Responses;
-using PBApplication.Responses.Abstractions;
-using PBCommon.Globalization;
-using PBFrontend.UI.Authorization;
-using PBFrontend.UI.Miscellaneous.Loading;
-using System;
-using System.Threading.Tasks;
-
 namespace CBFrontend.UI.Logistics
 {
-	public partial class Create : SessionChild
+    public partial class Create : SessionChild
 	{
 		private AsCitizenRequest<ILogisticsService.CreateLogisticsOrderParameter> request = new()
 		{

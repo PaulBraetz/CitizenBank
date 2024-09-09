@@ -1,16 +1,6 @@
-﻿using PBCommon.Encryption;
-using PBCommon.Encryption.Abstractions;
-using PBData.Abstractions;
-using PBData.Entities;
-using PBData.Extensions;
-
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace CBData.Entities
+﻿namespace CBData.Entities
 {
-	public class CurrencyEntity : PluralNamedEntityBase, IHasCreator<UserEntity>
+    public class CurrencyEntity : PluralNamedEntityBase, IHasCreator<UserEntity>
 	{
 		public CurrencyEntity(UserEntity creator, String name, String pluralName, Decimal ingameTax) : base(name, pluralName)
 		{

@@ -1,10 +1,8 @@
 ﻿using CBData.Entities;
 
-using PBData.Mapping;
-
 namespace CBData.Mapping
 {
-	public class AccountMappingBase<TAccount> : NamedMappingBase<TAccount>
+    public class AccountMappingBase<TAccount> : NamedMappingBase<TAccount>
 		where TAccount : AccountEntityBase
 	{
 		public AccountMappingBase()

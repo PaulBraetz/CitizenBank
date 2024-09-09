@@ -19,7 +19,7 @@ await WebServerGuiApp.CreateBuilder(out var builder, s =>
     .AddTimeout()
     .AddBlazor()
     .AddApiServiceEndpoints()
-    .ConfigureOptions(o => o.Composer = Composers.WebGui + o.Composer)
+    .ConfigureOptions(o => o.Composer = Composers.WebServer + o.Composer)
     .ConfigureCapabilities(c =>
     {
         _ = c.Services

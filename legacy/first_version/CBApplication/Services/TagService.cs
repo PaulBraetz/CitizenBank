@@ -5,22 +5,12 @@ using CBCommon.Extensions;
 
 using CBData.Abstractions;
 using CBData.Entities;
-using PBApplication.Context.Abstractions;
-using PBApplication.Extensions;
-using PBApplication.Responses;
-using PBApplication.Responses.Abstractions;
-using PBCommon.Extensions;
-using PBCommon.Validation;
-using PBData.Extensions;
 
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using static CBApplication.Services.Abstractions.ITagService;
 
 namespace CBApplication.Services.Public
 {
-	sealed class TagService : CBService, IEventfulTagService
+    sealed class TagService : CBService, IEventfulTagService
 	{
 		public TagService(IServiceContext serviceContext) : base(serviceContext)
 		{

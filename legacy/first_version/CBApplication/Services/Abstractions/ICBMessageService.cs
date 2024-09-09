@@ -1,13 +1,10 @@
 ﻿using CBApplication.Requests.Abstractions;
 
 using CBData.Entities;
-using PBApplication.Responses.Abstractions;
-using PBApplication.Services.Abstractions;
-using System.Threading.Tasks;
 
 namespace CBApplication.Services.Abstractions
 {
-	public interface ICBMessageService : IService
+    public interface ICBMessageService : IService
 	{
 		sealed class GetCitizenMessagesParameter
 		{

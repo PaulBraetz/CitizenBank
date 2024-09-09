@@ -5,7 +5,7 @@
 /// </summary>
 public sealed class RegexPasswordGuideline : IPasswordGuideline
 {
-    public required List<RegexPasswordRule> Rules { get; set; }
+    public required List<RegexPasswordRule> Rules { get; set; } = [];
     /// <inheritdoc/>
     public PasswordValidity Assess(ClearPassword password)
     {

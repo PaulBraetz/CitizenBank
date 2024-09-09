@@ -1,4 +1,4 @@
-﻿namespace CitizenBank.Features.Authentication.Register.Server;
+﻿namespace CitizenBank.Features.Authentication;
 
 /// <summary>
 /// A bio code used for verifying an action related to a specific citizen.

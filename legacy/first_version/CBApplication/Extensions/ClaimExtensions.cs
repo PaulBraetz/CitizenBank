@@ -1,11 +1,6 @@
-﻿using PBApplication.Extensions;
-using PBData.Abstractions;
-using PBData.Access;
-using System.Collections.Generic;
-
-namespace CBApplication.Extensions
+﻿namespace CBApplication.Extensions
 {
-	public static class ClaimExtensions
+    public static class ClaimExtensions
 	{
 		public static IEnumerable<THolder> GetMemberClaimsHolders<THolder>(this IEntity value, IConnection connection)
 			where THolder : IEntity

@@ -1,20 +1,9 @@
 ﻿
 using CBData.Entities;
 
-using PBApplication.Events;
-using PBApplication.Services.Abstractions;
-using PBCommon.Encryption;
-using PBCommon.Encryption.Abstractions;
-using PBCommon.Globalization;
-
-using PBData.Entities;
-
-using System;
-using System.Threading.Tasks;
-
 namespace CBApplication.Services.Abstractions
 {
-	public interface IEventfulCitizenService : ICitizenService, IEventfulService
+    public interface IEventfulCitizenService : ICitizenService, IEventfulService
 	{
 		//Payload : new request
 		//Recipients : affected user

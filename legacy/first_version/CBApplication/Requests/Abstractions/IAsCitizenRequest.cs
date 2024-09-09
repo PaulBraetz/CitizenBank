@@ -1,10 +1,6 @@
-﻿using PBApplication.Requests.Abstractions;
-using PBCommon.Encryption.Abstractions;
-using System;
-
-namespace CBApplication.Requests.Abstractions
+﻿namespace CBApplication.Requests.Abstractions
 {
-	public interface IAsCitizenRequest : IAsUserRequest
+    public interface IAsCitizenRequest : IAsUserRequest
 	{
 		public Guid AsCitizenId { get; set; }
 	}

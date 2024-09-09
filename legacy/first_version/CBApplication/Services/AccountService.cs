@@ -1,28 +1,14 @@
 ﻿using CBApplication.Requests.Abstractions;
 using CBApplication.Services.Abstractions;
+
 using CBCommon.Enums;
+
 using CBData.Abstractions;
 using CBData.Entities;
-using PBApplication.Context.Abstractions;
-using PBApplication.Events;
-using PBApplication.Extensions;
-using PBApplication.Responses;
-using PBApplication.Responses.Abstractions;
-using PBApplication.Services.Abstractions;
-using PBCommon.Extensions;
-using PBCommon.Validation;
-using PBCommon.Validation.Abstractions;
-using PBData.Abstractions;
-using PBData.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using static PBCommon.Enums;
 
 namespace CBApplication.Services
 {
-	public class AccountService : CBService, IEventfulAccountService
+    public class AccountService : CBService, IEventfulAccountService
 	{
 		public AccountService(IServiceContext serviceContext) : base(serviceContext)
 		{

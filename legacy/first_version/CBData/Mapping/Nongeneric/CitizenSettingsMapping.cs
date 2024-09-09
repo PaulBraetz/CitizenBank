@@ -1,10 +1,8 @@
 ﻿using CBData.Entities;
 
-using PBData.Mapping;
-
 namespace CBData.Mapping
 {
-	internal class CitizenSettingsMapping : SettingsMappingBase<CitizenSettingsEntity>
+    internal class CitizenSettingsMapping : SettingsMappingBase<CitizenSettingsEntity>
 	{
 		public CitizenSettingsMapping()
 		{

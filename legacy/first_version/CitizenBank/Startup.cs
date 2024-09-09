@@ -1,23 +1,13 @@
 using CBData.Entities;
 using CBData.Mapping;
+
 using CitizenBank.Events;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using PBApp.Configuration;
-using PBData.Abstractions;
-using PBData.Entities;
-using PBData.Extensions;
-using PBServer.Configuration;
-using System;
-using System.Linq;
+
 using System.Reflection;
 
 namespace CitizenBank
 {
-	public class Startup
+    public class Startup
 	{
 		public Startup(IConfiguration configuration)
 		{

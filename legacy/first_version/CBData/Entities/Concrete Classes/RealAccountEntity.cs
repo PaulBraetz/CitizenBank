@@ -1,10 +1,6 @@
-﻿
-using System;
-using System.Collections.Generic;
-
-namespace CBData.Entities
+﻿namespace CBData.Entities
 {
-	public class RealAccountEntity : AccountEntityBase
+    public class RealAccountEntity : AccountEntityBase
 	{
 		public RealAccountEntity(CitizenEntity creator, CreditScoreEntity creditScore) : base(creator, creator.Name, creditScore)
 		{

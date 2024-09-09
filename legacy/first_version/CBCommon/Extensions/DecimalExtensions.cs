@@ -1,9 +1,6 @@
-﻿using System;
-using System.Linq;
-
-namespace CBCommon.Extensions
+﻿namespace CBCommon.Extensions
 {
-	public static class DecimalExtensions
+    public static class DecimalExtensions
 	{
 		public static String ToFormattedString(this Decimal d, Int32 decimalPlaces)
 		{

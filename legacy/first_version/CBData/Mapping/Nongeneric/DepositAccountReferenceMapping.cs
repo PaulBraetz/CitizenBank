@@ -1,10 +1,8 @@
 ﻿using CBData.Entities;
 
-using PBData.Mapping;
-
 namespace CBData.Mapping
 {
-	internal class DepositAccountReferenceMapping : MappingBase<DepositAccountReferenceEntity>
+    internal class DepositAccountReferenceMapping : MappingBase<DepositAccountReferenceEntity>
 	{
 		public DepositAccountReferenceMapping()
 		{

@@ -35,7 +35,7 @@ class Program
         .ConfigureBuilder(b => b.RootComponents.Add<EntryPoint>("app"))
         .ConfigureOptions(o =>
         {
-            o.Composer = Composers.LocalGui + o.Composer;
+            o.Composer = Composers.LocalClient + o.Composer;
             o.OnContainerAdd += o =>
             {
                 _ = o.Services
@@ -67,7 +67,7 @@ class Program
 
             _ = app.MainWindow
                 .SetIconFile("favicon.ico")
-                .SetTitle("Photino Blazor Sample")
+                .SetTitle("CitizenBank")
                 .SetDevToolsEnabled(isDevToolsEnabled);
 
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>

@@ -1,15 +1,13 @@
 ﻿using CBData.Abstractions;
 using CBData.Entities;
 
-using System;
-using System.Linq;
 using System.Linq.Expressions;
 
 using static CBCommon.Enums.CitizenBankEnums;
 
 namespace CBApplication.Extensions
 {
-	internal static class Linq
+    internal static class Linq
 	{
 		public static IOrderedQueryable<T> OrderTransactions<T, TCreditor, TDebtor, TCreator, TRecipient>(this IQueryable<T> query, SimpleTransactionContractProperty orderBy, Boolean orderDescending)
 			where T : ITransactionEntity<TCreditor, TDebtor, TCreator, TRecipient>

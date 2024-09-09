@@ -1,10 +1,8 @@
 ﻿using CBData.Abstractions;
 
-using PBData.Mapping;
-
 namespace CBData.Mapping
 {
-	public class DepartmentMappingBase<TDepartment> : NamedMappingBase<TDepartment>
+    public class DepartmentMappingBase<TDepartment> : NamedMappingBase<TDepartment>
 		where TDepartment : IDepartmentEntity
 	{
 		public DepartmentMappingBase()

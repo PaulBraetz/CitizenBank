@@ -1,10 +1,8 @@
 ﻿using CBData.Abstractions;
 
-using PBData.Mapping;
-
 namespace CBData.Mapping
 {
-	internal class TransactionMappingBase<TTransaction, TCreditor, TDebtor, TCreator, TRecipient> : ExpiringMappingBase<TTransaction>
+    internal class TransactionMappingBase<TTransaction, TCreditor, TDebtor, TCreator, TRecipient> : ExpiringMappingBase<TTransaction>
 		where TTransaction : ITransactionEntity<TCreditor, TDebtor, TCreator, TRecipient>
 		where TCreditor : IAccountEntity
 		where TDebtor : IAccountEntity

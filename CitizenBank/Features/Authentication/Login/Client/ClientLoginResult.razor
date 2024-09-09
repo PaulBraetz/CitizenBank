@@ -1,0 +1,26 @@
+﻿@inherits ModelComponentBase<ClientLogin.Result>
+
+@if (Model.TryAsFailure(out var failure) && failure.Reason.TryAsSome(out var reason))
+{
+    <span class="text-red-700">
+        @reason
+    </span>
+}
+else if (Model.TryAsPasswordMismatch(out var mismatch))
+{
+    <dl class="text-red-700">
+        Password Mismatch
+    </dl>
+}
+else if (Model.TryAsSuccess(out var success))
+{
+    <span class="text-green-700">
+        Successfully logged in.
+    </span>
+}
+else
+{
+    <span class="text-red-700">
+        An unknown error has occurred.
+    </span>
+}

@@ -2,18 +2,9 @@
 using CBData.Abstractions;
 using CBData.Entities;
 
-using PBApplication.Events;
-using PBApplication.Services.Abstractions;
-using PBCommon.Encryption;
-using PBCommon.Encryption.Abstractions;
-
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
 namespace CBApplication.Services.Abstractions
 {
-	public interface IEventfulDepartmentService : IDepartmentService, IEventfulService
+    public interface IEventfulDepartmentService : IDepartmentService, IEventfulService
 	{
 		//Payload : new department
 		//Recipients : superadmins

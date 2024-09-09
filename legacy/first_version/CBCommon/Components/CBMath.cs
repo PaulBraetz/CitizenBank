@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace CBCommon.Components
+﻿namespace CBCommon.Components
 {
-	public static class CBMath
+    public static class CBMath
 	{
 		public static IEnumerable<Int32> PadOut(Int32 current, Int32 lowerLimit, Int32 upperLimit, Int32 padding)
 		{

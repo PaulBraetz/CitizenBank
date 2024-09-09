@@ -1,17 +1,8 @@
-﻿
-using PBCommon.Encryption;
-using PBCommon.Encryption.Abstractions;
-using PBData.Entities;
-using PBData.Extensions;
-
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using static CBCommon.Enums.LogisticsEnums;
+﻿using static CBCommon.Enums.LogisticsEnums;
 
 namespace CBData.Entities
 {
-	public class LogisticsOrderEntity : ExpiringEntityBase, PBData.Abstractions.IHasVerification
+    public class LogisticsOrderEntity : ExpiringEntityBase, PBData.Abstractions.IHasVerification
 	{
 		public LogisticsOrderEntity() { }
 		public LogisticsOrderEntity(DateTimeOffset deadline, String target, CitizenEntity client, OrderType type, String details, String id)

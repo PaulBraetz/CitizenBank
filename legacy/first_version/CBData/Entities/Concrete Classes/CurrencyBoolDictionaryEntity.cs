@@ -1,15 +1,10 @@
-﻿using PBData.Entities;
-using PBData.Extensions;
+﻿using System.Collections;
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using static CBData.Entities.CurrencyBoolDictionaryEntity;
 
 namespace CBData.Entities
 {
-	public class CurrencyBoolDictionaryEntity : EntityBase, IEnumerable<CurrencyBoolDictionaryEntryEntity>
+    public class CurrencyBoolDictionaryEntity : EntityBase, IEnumerable<CurrencyBoolDictionaryEntryEntity>
 	{
 		public class CurrencyBoolDictionaryEntryEntity : EntityBase
 		{

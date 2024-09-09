@@ -1,9 +1,7 @@
-﻿using PBApplication.Context.Abstractions;
-
-namespace CBApplication.Services
+﻿namespace CBApplication.Services
 {
 #if DEBUG
-	public class SearchService : CBService
+    public class SearchService : CBService
 	{
 		/*
 		 public ISearchService.ISearchResponse<TResponse, TNamed> Search<TResponse, TNamed>(ISearchService.SearchRequestBase<TResponse, TNamed> request)

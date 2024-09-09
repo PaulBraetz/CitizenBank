@@ -1,9 +1,8 @@
-﻿using PBData.Mapping;
-using static CBData.Entities.CurrencyBoolDictionaryEntity;
+﻿using static CBData.Entities.CurrencyBoolDictionaryEntity;
 
 namespace CBData.Mapping.Nongeneric
 {
-	class CurrencyBoolDictionaryEntryMapping : MappingBase<CurrencyBoolDictionaryEntryEntity>
+    class CurrencyBoolDictionaryEntryMapping : MappingBase<CurrencyBoolDictionaryEntryEntity>
 	{
 		public CurrencyBoolDictionaryEntryMapping()
 		{

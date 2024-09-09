@@ -1,16 +1,8 @@
 ﻿using CBApplication.Services.Abstractions;
 
-using Microsoft.AspNetCore.SignalR;
-
-using PBApplication.Services.Abstractions;
-using PBCommon.Serialization;
-
-using PBServer.Context.Observers;
-using PBServer.Hubs;
-
 namespace CitizenBank.Events.Observers
 {
-	public sealed class LogisticsServiceObserver : ServiceBaseObserver<IEventfulLogisticsService>
+    public sealed class LogisticsServiceObserver : ServiceBaseObserver<IEventfulLogisticsService>
 	{
 		public LogisticsServiceObserver(IHubContext<EventHub> hubContext, IEncryptionService encryptionService, ISerializer serializer) : base(hubContext, encryptionService, serializer)
 		{

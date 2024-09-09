@@ -10,8 +10,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Photino.Blazor" Version="3.0.11" />
-		<PackageReference Include="RhoMicro.ApplicationFramework.Common" Version="0.0.0-alpha.74" />
-		<PackageReference Include="RhoMicro.ApplicationFramework.Hosting.Blazor.LocalGui" Version="0.0.0-alpha.74" />
+		<PackageReference Include="RhoMicro.ApplicationFramework.Common" Version="0.0.0-alpha.78" />
+		<PackageReference Include="RhoMicro.ApplicationFramework.Hosting.Blazor.LocalGui" Version="0.0.0-alpha.78" />
 	</ItemGroup>
 
 	<ItemGroup>

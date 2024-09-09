@@ -1,12 +1,8 @@
 ﻿using CBData.Entities;
-using Microsoft.AspNetCore.Components;
-using PBFrontend.Extensions;
-using PBFrontend.UI.Authorization;
-using System;
 
 namespace CBFrontend.UI.Details
 {
-	partial class SourceTransactionDetails : SessionChild
+    partial class SourceTransactionDetails : SessionChild
 	{
 		[Parameter]
 		public SourceTransactionContractEntity Transaction { get; set; }

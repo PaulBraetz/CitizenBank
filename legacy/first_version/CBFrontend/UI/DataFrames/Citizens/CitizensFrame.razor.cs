@@ -2,18 +2,9 @@
 
 using CBData.Entities;
 
-using Microsoft.AspNetCore.Components;
-
-using PBData.Entities;
-using PBFrontend.UI.Authorization;
-using PBShared.Events;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace CBFrontend.UI.DataFrames.Citizens
 {
-	public partial class CitizensFrame : SessionChild
+    public partial class CitizensFrame : SessionChild
 	{
 		private CitizenEntity currentCitizen;
 

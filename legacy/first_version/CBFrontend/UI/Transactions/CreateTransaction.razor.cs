@@ -1,21 +1,15 @@
 ﻿using CBApplication.Requests;
 using CBApplication.Requests.Abstractions;
 using CBApplication.Services.Abstractions;
+
 using CBData.Abstractions;
 using CBData.Entities;
+
 using CBFrontend.UI.DataFrames.Accounts.Children;
-using PBApplication.Requests;
-using PBApplication.Responses.Abstractions;
-using PBCommon.Validation;
-using PBFrontend.UI.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CBFrontend.UI.Transactions
 {
-	partial class CreateTransaction : AccountsFrameChild
+    partial class CreateTransaction : AccountsFrameChild
 	{
 		private Boolean creatorIsCreditor;
 		private IAccountEntity debtor;

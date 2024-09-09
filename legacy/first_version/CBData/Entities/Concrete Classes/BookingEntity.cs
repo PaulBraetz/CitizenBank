@@ -1,11 +1,6 @@
-﻿using PBData.Entities;
-
-using System;
-using System.Collections.Generic;
-
-namespace CBData.Entities
+﻿namespace CBData.Entities
 {
-	public class BookingEntity : EntityBase
+    public class BookingEntity : EntityBase
 	{
 		public BookingEntity(Decimal value)
 		{

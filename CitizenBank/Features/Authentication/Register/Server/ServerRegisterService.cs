@@ -9,7 +9,7 @@ sealed partial class ServerRegisterService(
     ICreatePasswordParametersService parametersService,
     IHashPasswordService hashingService,
     ICreateBioCodeService bioCodeService,
-    IPersistRegistrationRequestService persistService)
+    IRegistrationRequestPersister persistService)
 {
     [ServiceMethod]
     async ValueTask<ServerRegister.Result> ServerRegister(CitizenName name, PrehashedPassword password, CancellationToken ct)

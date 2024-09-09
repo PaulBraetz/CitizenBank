@@ -1,13 +1,8 @@
 ﻿using CBData.Entities;
 
-using PBApplication.Events;
-using PBApplication.Services.Abstractions;
-
-using System;
-
 namespace CBApplication.Services.Abstractions
 {
-	public interface IEventfulAccountService : IAccountService, IEventfulService
+    public interface IEventfulAccountService : IAccountService, IEventfulService
 	{
 		//Payload : new settings
 		//Recipients : affected settings

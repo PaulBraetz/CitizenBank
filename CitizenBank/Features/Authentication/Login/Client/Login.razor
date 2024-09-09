@@ -1,0 +1,12 @@
+﻿@page "/login"
+@inherits RhoMicro.ApplicationFramework.Presentation.Views.Blazor.Abstractions.ComponentBase
+
+<LoginComponent />
+
+@code {
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        this.OptionalRenderMode = new InteractiveAutoRenderMode(prerender: true);// new InteractiveWebAssemblyRenderMode(prerender: false);
+    }
+}

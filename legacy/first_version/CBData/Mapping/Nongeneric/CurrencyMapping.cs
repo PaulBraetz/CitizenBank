@@ -1,10 +1,8 @@
 ﻿using CBData.Entities;
 
-using PBData.Mapping;
-
 namespace CBData.Mapping
 {
-	internal class CurrencyMapping : PluralNamedMappingBase<CurrencyEntity>
+    internal class CurrencyMapping : PluralNamedMappingBase<CurrencyEntity>
 	{
 		public CurrencyMapping()
 		{

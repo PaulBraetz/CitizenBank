@@ -1,18 +1,13 @@
 ﻿
 using CBApplication.Requests.Abstractions;
+
 using CBData.Entities;
-using PBApplication.Requests.Abstractions;
-using PBApplication.Responses.Abstractions;
-using PBApplication.Services.Abstractions;
-using PBCommon.Encryption;
-using PBCommon.Encryption.Abstractions;
-using System;
-using System.Threading.Tasks;
+
 using static CBCommon.Enums.LogisticsEnums;
 
 namespace CBApplication.Services.Abstractions
 {
-	public interface ILogisticsService : IService
+    public interface ILogisticsService : IService
 	{
 		sealed class CreateLogisticsOrderParameter
 		{

@@ -2,18 +2,11 @@
 using CBData.Abstractions;
 using CBData.Entities;
 
-
-
-using PBApplication.Events;
-using PBApplication.Services.Abstractions;
-
-using System;
-using System.Collections.Generic;
 using static CBCommon.Enums.CitizenBankEnums;
 
 namespace CBApplication.Services.Abstractions
 {
-	public interface IEventfulTransactionService : ITransactionService, IEventfulService
+    public interface IEventfulTransactionService : ITransactionService, IEventfulService
 	{
 		//Payload : new offer
 		//Recipients : creditor, debtor

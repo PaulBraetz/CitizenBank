@@ -1,22 +1,9 @@
 ﻿using CBData.Abstractions;
 using CBData.Entities;
-using Microsoft.AspNetCore.Components;
-using PBApplication.Extensions;
-using PBApplication.Requests;
-using PBApplication.Requests.Abstractions;
-using PBApplication.Responses;
-using PBApplication.Responses.Abstractions;
-using PBApplication.Services.Abstractions;
-using PBApplication.Utilities;
-using PBData.Entities;
-using PBFrontend.UI.Authorization;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace CBFrontend.UI.DataFrames.Session
 {
-	partial class BankingSession : SessionChild
+    partial class BankingSession : SessionChild
 	{
 		[Parameter]
 		public RenderFragment ChildContent { get; set; }

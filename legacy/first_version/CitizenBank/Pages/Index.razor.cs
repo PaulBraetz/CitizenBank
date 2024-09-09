@@ -1,14 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
-
-using PBApplication.Services.Abstractions;
-
-using PBFrontend.UI.Authorization;
-using System;
-using System.Threading.Tasks;
-
-namespace CitizenBank.Pages
+﻿namespace CitizenBank.Pages
 {
-	public partial class Index : SessionChild
+    public partial class Index : SessionChild
 	{
 		[Parameter]
 		public String Verification { get; set; }

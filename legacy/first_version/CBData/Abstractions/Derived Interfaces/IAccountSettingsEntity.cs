@@ -1,12 +1,8 @@
 ﻿using CBData.Entities;
 
-using PBData.Abstractions;
-
-using System;
-
 namespace CBData.Abstractions
 {
-	public interface IAccountSettingsEntity : ISettingsEntity
+    public interface IAccountSettingsEntity : ISettingsEntity
 	{
 		CurrencyBoolDictionaryEntity CanReceiveTransactionOffersFor { get; }
 		CurrencyBoolDictionaryEntity CanCreateTransactionOffersFor { get; }

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace CBData.Entities
+﻿namespace CBData.Entities
 {
-	public class SubDepartmentEntity : DepartmentEntityBase
+    public class SubDepartmentEntity : DepartmentEntityBase
 	{
 		public SubDepartmentEntity(CitizenEntity creator, String name) : base(creator, name)
 		{

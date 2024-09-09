@@ -6,15 +6,9 @@ using CBData.Entities;
 
 using CBFrontend.UI.DataFrames.Citizens.Children;
 
-using Microsoft.AspNetCore.Components;
-using PBShared.Events;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace CBFrontend.UI.DataFrames.Accounts
 {
-	public partial class AccountsFrame : CitizensFrameChild
+    public partial class AccountsFrame : CitizensFrameChild
 	{
 		[Parameter]
 		public RenderFragment ChildContent { get; set; }

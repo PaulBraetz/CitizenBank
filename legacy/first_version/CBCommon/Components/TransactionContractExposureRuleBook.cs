@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-using static CBCommon.Enums.CitizenBankEnums;
+﻿using static CBCommon.Enums.CitizenBankEnums;
 
 namespace CBCommon.Components
 {
-	public class TransactionContractExposureRuleBook
+    public class TransactionContractExposureRuleBook
 	{
 		public ICollection<TransactionContractExposureRule> Rules { get; set; }
 		public IEnumerable<TransactionPartnersRelationship> GetSuccessors(TransactionPartnersRelationship precursor)

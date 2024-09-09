@@ -1,19 +1,12 @@
 ﻿using CBApplication.Requests.Abstractions;
-using CBData.Entities;
-using PBApplication.Requests.Abstractions;
-using PBApplication.Responses.Abstractions;
-using PBApplication.Services.Abstractions;
-using PBCommon.Encryption;
-using PBCommon.Encryption.Abstractions;
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using CBData.Entities;
+
 using static CBCommon.Enums.CitizenBankEnums;
 
 namespace CBApplication.Services.Abstractions
 {
-	public interface ITransactionService : IService
+    public interface ITransactionService : IService
 	{
 		sealed class CreateTransactionOfferParameter : EncryptableBase<Guid>
 		{

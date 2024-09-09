@@ -14,7 +14,8 @@ public readonly partial struct ClearPassword
 
         return new ClearPassword(value);
     }
-
+    /// <inheritdoc/>
+    public override String ToString() => "***";
     /// <summary>
     /// Gets an empty clear password.
     /// </summary>

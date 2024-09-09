@@ -1,19 +1,10 @@
 ﻿using CBApplication.Requests.Abstractions;
 
 using CBData.Entities;
-using PBApplication.Requests.Abstractions;
-using PBApplication.Responses.Abstractions;
-using PBApplication.Services.Abstractions;
-using PBCommon.Encryption;
-using PBCommon.Encryption.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using static PBCommon.Enums;
 
 namespace CBApplication.Services.Abstractions
 {
-	public interface ICitizenService : IService
+    public interface ICitizenService : IService
 	{
 		sealed class CreateCitizenLinkRequestParameter
 		{

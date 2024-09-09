@@ -1,17 +1,10 @@
 ﻿using CBData.Abstractions;
-using PBCommon.Encryption;
-using PBCommon.Encryption.Abstractions;
-using PBData.Abstractions;
-using PBData.Extensions;
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using static CBCommon.Enums.CitizenBankEnums;
 
 namespace CBData.Entities
 {
-	public class TransactionOfferEntity : TransactionEntityBase<AccountEntityBase, AccountEntityBase, AccountEntityBase, AccountEntityBase>, IExpiringEntity
+    public class TransactionOfferEntity : TransactionEntityBase<AccountEntityBase, AccountEntityBase, AccountEntityBase, AccountEntityBase>, IExpiringEntity
 	{
 		public TransactionOfferEntity(SourceTransactionContractEntity sourceTransactionContract,
 									  TimeSpan lifeSpan) : base(sourceTransactionContract.Creator,

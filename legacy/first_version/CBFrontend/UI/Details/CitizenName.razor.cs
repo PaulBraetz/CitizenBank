@@ -1,14 +1,10 @@
 ﻿using CBApplication.Services.Abstractions;
-using CBData.Entities;
 
-using Microsoft.AspNetCore.Components;
-using PBFrontend.UI.Authorization;
-using PBShared.Events;
-using System.Threading.Tasks;
+using CBData.Entities;
 
 namespace CBFrontend.UI.Details
 {
-	partial class CitizenName : SessionChild
+    partial class CitizenName : SessionChild
 	{
 		[Parameter]
 		public CitizenEntity Citizen { get; set; }

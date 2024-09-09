@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace CBCommon.Settings
+﻿namespace CBCommon.Settings
 {
-	public static class CitizenBank
+    public static class CitizenBank
 	{
 		public static readonly String DefaultGeneratedMessage = "[Generated]";
 		public static readonly Decimal MAX_CURRENCY_VAL = 1000000000000;

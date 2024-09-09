@@ -1,13 +1,9 @@
 ﻿
 using CBData.Entities;
 
-using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-
 namespace CBFrontend.UI.Details
 {
-	public partial class CitizenDetails
+    public partial class CitizenDetails
 	{
 		[Parameter]
 		public CitizenEntity Citizen { get; set; }

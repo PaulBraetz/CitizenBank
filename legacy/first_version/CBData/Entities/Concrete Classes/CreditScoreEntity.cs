@@ -1,11 +1,6 @@
-﻿using PBData.Entities;
-
-using System;
-using System.Collections.Generic;
-
-namespace CBData.Entities
+﻿namespace CBData.Entities
 {
-	public class CreditScoreEntity : EntityBase
+    public class CreditScoreEntity : EntityBase
 	{
 		public CreditScoreEntity()
 		{

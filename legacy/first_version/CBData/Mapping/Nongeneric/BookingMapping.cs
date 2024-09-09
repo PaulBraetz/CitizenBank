@@ -1,10 +1,8 @@
 ﻿using CBData.Entities;
 
-using PBData.Mapping;
-
 namespace CBData.Mapping
 {
-	internal class BookingMapping : MappingBase<BookingEntity>
+    internal class BookingMapping : MappingBase<BookingEntity>
 	{
 		public BookingMapping()
 		{

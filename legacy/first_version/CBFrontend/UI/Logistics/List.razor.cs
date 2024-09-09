@@ -1,18 +1,11 @@
 ﻿
 using CBApplication.Services.Abstractions;
+
 using CBData.Entities;
-using PBApplication.Requests;
-using PBApplication.Requests.Abstractions;
-using PBApplication.Responses;
-using PBApplication.Responses.Abstractions;
-using PBFrontend.UI.Authorization;
-using PBFrontend.UI.Miscellaneous.Loading;
-using PBShared.Events;
-using System.Threading.Tasks;
 
 namespace CBFrontend.UI.Logistics
 {
-	public partial class List : SessionChild
+    public partial class List : SessionChild
 	{
 		private IGetPaginatedResponse<LogisticsOrderEntity> orders = new GetPaginatedResponse<LogisticsOrderEntity>();
 		private readonly IGetPaginatedEncryptableRequest<IEventfulLogisticsService.GetLogisticsOrdersParameter> request = new GetPaginatedEncryptableRequest<IEventfulLogisticsService.GetLogisticsOrdersParameter>()

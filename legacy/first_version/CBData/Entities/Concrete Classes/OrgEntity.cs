@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace CBData.Entities
+﻿namespace CBData.Entities
 {
-	public class OrgEntity : DepartmentEntityBase
+    public class OrgEntity : DepartmentEntityBase
 	{
 		public OrgEntity(String name, String sid) : base(name)
 		{

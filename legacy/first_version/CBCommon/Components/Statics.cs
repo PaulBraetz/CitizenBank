@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-
-using static CBCommon.Enums.CitizenBankEnums;
+﻿using static CBCommon.Enums.CitizenBankEnums;
 
 namespace CBCommon.Components
 {
-	public static class Statics
+    public static class Statics
 	{
 		public static readonly Dictionary<TransactionPartnersRelationship, TransactionContractExposureRuleBook> TransactionContractExposureRuleBookDictionary = new()
 		{

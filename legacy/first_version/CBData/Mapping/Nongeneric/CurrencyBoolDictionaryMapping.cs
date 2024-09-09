@@ -1,10 +1,8 @@
 ﻿using CBData.Entities;
 
-using PBData.Mapping;
-
 namespace CBData.Mapping
 {
-	internal class CurrencyBoolDictionaryMapping : MappingBase<CurrencyBoolDictionaryEntity>
+    internal class CurrencyBoolDictionaryMapping : MappingBase<CurrencyBoolDictionaryEntity>
 	{
 		public CurrencyBoolDictionaryMapping()
 		{

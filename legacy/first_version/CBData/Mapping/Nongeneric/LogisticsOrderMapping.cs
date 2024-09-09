@@ -1,10 +1,8 @@
 ﻿using CBData.Entities;
 
-using PBData.Mapping;
-
 namespace CBData.Mapping
 {
-	public sealed class LogisticsOrderMapping : ExpiringMappingBase<LogisticsOrderEntity>
+    public sealed class LogisticsOrderMapping : ExpiringMappingBase<LogisticsOrderEntity>
 	{
 		public LogisticsOrderMapping()
 		{

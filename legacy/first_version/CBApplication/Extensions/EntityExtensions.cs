@@ -3,17 +3,10 @@ using CBCommon.Extensions;
 
 using CBData.Abstractions;
 using CBData.Entities;
-using PBApplication.Extensions;
-
-using PBData.Abstractions;
-using PBData.Access;
-
-using System;
-using System.Linq;
 
 namespace CBApplication.Extensions
 {
-	internal static class EntityExtensions
+    internal static class EntityExtensions
 	{
 		public static Decimal CalculateCreditScore(this CreditScoreEntity creditScore)
 		{

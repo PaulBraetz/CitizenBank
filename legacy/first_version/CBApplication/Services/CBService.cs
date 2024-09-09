@@ -2,21 +2,10 @@
 
 using CBData.Abstractions;
 using CBData.Entities;
-using PBApplication.Context.Abstractions;
-using PBApplication.Extensions;
-using PBApplication.Responses.Abstractions;
-using PBApplication.Services;
-using PBCommon.Validation;
-using PBCommon.Validation.Abstractions;
-using PBData.Abstractions;
-using PBData.Extensions;
-
-using System;
-using System.Linq;
 
 namespace CBApplication.Services
 {
-	public abstract class CBService : DBConnectedService
+    public abstract class CBService : DBConnectedService
 	{
 		protected CBService(IServiceContext serviceContext) : base(serviceContext)
 		{

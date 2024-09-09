@@ -1,15 +1,8 @@
-﻿
-using PBFrontend.UI.Input;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using static CBCommon.Enums.LogisticsEnums;
+﻿using static CBCommon.Enums.LogisticsEnums;
 
 namespace CBFrontend.Classes
 {
-	public static class HelperEnumerables
+    public static class HelperEnumerables
 	{
 		public static readonly IEnumerable<SelectInput<OrderStatus>.OptionModel> OrderStatusOptions = Enum.GetValues<OrderStatus>()
 			.Select(s => new SelectInput<OrderStatus>.OptionModel(s, s.ToString()))

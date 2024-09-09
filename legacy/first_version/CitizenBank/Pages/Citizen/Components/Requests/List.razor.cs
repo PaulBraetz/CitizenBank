@@ -4,16 +4,11 @@ using CBData.Entities;
 
 using CBFrontend.UI.DataFrames.Requests.Children;
 
-using PBApplication.Requests;
-
-using System;
-using System.Threading.Tasks;
-
 using static CBApplication.Services.Abstractions.ICitizenService;
 
 namespace CitizenBank.Pages.Citizen.Components.Requests
 {
-	public partial class List : CitizenRequestsChild
+    public partial class List : CitizenRequestsChild
 	{
 		private async Task Verify(CitizenLinkRequestEntity request)
 		{

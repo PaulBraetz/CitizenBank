@@ -2,19 +2,10 @@
 
 using CBData.Abstractions;
 using CBData.Entities;
-using PBApplication.Responses.Abstractions;
-using PBApplication.Services.Abstractions;
-using PBCommon.Encryption;
-using PBCommon.Encryption.Abstractions;
-
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using static PBCommon.Enums;
 
 namespace CBApplication.Services.Abstractions
 {
-	public interface IAccountService : IService
+    public interface IAccountService : IService
 	{
 		abstract class SetAccountSettingsParameterBase : EncryptableBase<Guid>
 		{

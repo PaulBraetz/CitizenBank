@@ -1,21 +1,12 @@
 ﻿using CBCommon.Extensions;
 
 using CBData.Abstractions;
-using PBCommon.Encryption;
-using PBCommon.Encryption.Abstractions;
-using PBCommon.Globalization;
-using PBData.Entities;
-using PBData.Extensions;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using static CBCommon.Enums.CitizenBankEnums;
 
 namespace CBData.Entities
 {
-	public abstract class TransactionEntityBase<TCreditor, TDebtor, TCreator, TRecipient> : ExpiringEntityBase, ITransactionEntity<TCreditor, TDebtor, TCreator, TRecipient>
+    public abstract class TransactionEntityBase<TCreditor, TDebtor, TCreator, TRecipient> : ExpiringEntityBase, ITransactionEntity<TCreditor, TDebtor, TCreator, TRecipient>
 		where TCreditor : AccountEntityBase
 		where TDebtor : AccountEntityBase
 		where TCreator : AccountEntityBase

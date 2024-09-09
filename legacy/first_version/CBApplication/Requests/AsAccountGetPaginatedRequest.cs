@@ -1,11 +1,8 @@
 ﻿using CBApplication.Requests.Abstractions;
-using PBCommon.Encryption.Abstractions;
-using System;
-using System.Threading.Tasks;
 
 namespace CBApplication.Requests
 {
-	public class AsAccountGetPaginatedRequest : AsCitizenGetPaginatedRequest, IAsAccountGetPaginatedRequest
+    public class AsAccountGetPaginatedRequest : AsCitizenGetPaginatedRequest, IAsAccountGetPaginatedRequest
 	{
 		public Guid AsAccountId { get; set; }
 	}

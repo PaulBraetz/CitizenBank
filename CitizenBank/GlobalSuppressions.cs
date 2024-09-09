@@ -7,3 +7,4 @@ using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("RhoMicro.CodeAnalysis.UnionsGenerator", "RUG0008:Union Type Option Ignored", Justification = "Unnecessary warning that does not indicate actual problems.")]
 [assembly: SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "Managed via SynchronizationContextDiscardingDecorator.")]
+[assembly: SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "generated consumer")]

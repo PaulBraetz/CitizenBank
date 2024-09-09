@@ -12,9 +12,9 @@ sealed partial class CreatePasswordParametersService
     static PasswordParameters CreatePasswordParameters() => 
         new(
             new PasswordParameterNumerics(
-                Iterations: 1024,
+                Iterations: 128,
                 DegreeOfParallelism: 4,
-                MemorySize: 1024 * 32,
+                MemorySize: 1024 * 8,
                 OutputLength: 1024),
             new PasswordParameterData(
                 AssociatedData: [.. RandomNumberGenerator.GetBytes(64)],

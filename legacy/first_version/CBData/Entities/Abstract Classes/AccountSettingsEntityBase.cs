@@ -1,17 +1,10 @@
 ﻿using CBData.Abstractions;
-using PBCommon.Encryption;
-using PBCommon.Encryption.Abstractions;
-using PBData.Entities;
-using PBData.Extensions;
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using static CBCommon.Enums.CitizenBankEnums;
 
 namespace CBData.Entities
 {
-	public abstract class AccountSettingsEntityBase : SettingsEntityBase, IAccountSettingsEntity
+    public abstract class AccountSettingsEntityBase : SettingsEntityBase, IAccountSettingsEntity
 	{
 		protected AccountSettingsEntityBase() { }
 		protected AccountSettingsEntityBase(AccountSettingsEntityBase from, IDictionary<Guid, Object> circularReferenceHelperDictionary) : base(from, circularReferenceHelperDictionary)

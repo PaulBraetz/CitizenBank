@@ -4,14 +4,19 @@ using System.Threading.Tasks;
 
 using CitizenBank.Features;
 using CitizenBank.Features.Authentication;
+using CitizenBank.Features.Authentication.Login.Client;
 using CitizenBank.Features.Authentication.Register.Client;
 using CitizenBank.Features.Authentication.Register.Server;
+
+using Microsoft.AspNetCore.Cryptography.KeyDerivation.PBKDF2;
 
 using RhoMicro.ApplicationFramework.Common;
 using RhoMicro.ApplicationFramework.Common.Abstractions;
 using RhoMicro.ApplicationFramework.Common.Environment;
 using RhoMicro.ApplicationFramework.Composition;
 using RhoMicro.ApplicationFramework.Presentation.Models.Abstractions;
+using RhoMicro.ApplicationFramework.Presentation.Views.Blazor.Components;
+using RhoMicro.ApplicationFramework.Presentation.Views.Blazor.Components.Primitives;
 
 using SimpleInjector;
 
@@ -28,15 +33,21 @@ public static class Composers
     }
     private static IComposer Core { get; } = Composer.Create(c =>
     {
-        c.RegisterSingleton<IStaticFormatter<ServerRegister>, ServerRegisterFormatter>();
+        c.RegisterSingleton<IInputControlCssStyle, InputControlCssStyle>();
+
+        c.Register<IClipboardModel, JsClipboardModel>();
+
+        c.Register<IInputModel<CitizenName, String>, CitizenNameInputModel>();
+        c.RegisterSingleton<IDefaultValueProvider<CitizenName>, CitizenNameDefaultProvider>();
+        c.RegisterSingleton<IDefaultValueProvider<ClearPassword>, ClearPasswordDefaultValueProvider>();
+
+        c.Register<ClientLoginModel>();
+        c.Register<IInputModel<ClearPassword, ValidatePassword.PasswordMismatch>, Features.Authentication.Login.Client.ClearPasswordInputModel>();
+        c.RegisterSingleton<IDefaultValueProvider<ValidatePassword.PasswordMismatch>, PasswordMismatchDefaultValueProvider>();
 
         c.Register<ClientRegisterModel>();
-        c.RegisterSingleton<IDefaultValueProvider<CitizenName>, CitizenNameDefaultProvider>();
         c.RegisterSingleton<IDefaultValueProvider<Optional<ClientRegister.Result>>, OptionalClientRegisterResultDefaultValueProvider>();
-        c.Register<IInputModel<CitizenName, String>, CitizenNameInputModel>();
-
-        c.Register<IInputModel<ClearPassword, PasswordValidity>, ClearPasswordInputModel>();
-        c.RegisterSingleton<IDefaultValueProvider<ClearPassword>, ClearPasswordDefaultValueProvider>();
+        c.Register<IInputModel<ClearPassword, PasswordValidity>, Features.Authentication.Register.Client.ClearPasswordInputModel>();
         c.RegisterSingleton<IDefaultValueProvider<PasswordValidity>, PasswordValidityDefaultValueProvider>();
 
 #if DEBUG
@@ -54,8 +65,12 @@ public static class Composers
     /// <summary>
     /// Gets the default composition root for web application servers.
     /// </summary>
-    public static IComposer WebGui { get; } = Core + Composer.Create(c =>
+    public static IComposer WebServer { get; } = Core + Composer.Create(c =>
     {
+        c.RegisterSingleton<YieldingManagedPbkdf2Provider>();
+        c.RegisterSingleton<DbFake>();
+        c.RegisterInstance(new Yielder());
+
         c.RegisterServices(typeof(Composers).Assembly, options: new()
         {
             RegistrationPredicate = static ctx =>
@@ -86,6 +101,12 @@ public static class Composers
         ];
     private static IComposer Client { get; } = Core + Composer.Create(c =>
     {
+        c.RegisterSingleton<YieldingManagedPbkdf2Provider>();
+        c.RegisterInstance(
+            new Yielder(
+                yieldInterval: TimeSpan.FromMilliseconds(100),
+                yieldTime: TimeSpan.FromMilliseconds(100)));
+
         c.RegisterServices(typeof(Composers).Assembly, options: new()
         {
             RegistrationPredicate = static ctx =>
@@ -106,6 +127,7 @@ public static class Composers
                 {
                     container.Register(service, serviceImpl, Lifestyle.Scoped);
                 }
+
                 container.Register(tradiditionalService, traditionalImpl, Lifestyle.Scoped);
             }
         });
@@ -114,9 +136,9 @@ public static class Composers
     /// <summary>
     /// Gets the default composition root for web application clients.
     /// </summary>
-    public static IComposer WebGuiClient { get; } = Client;
+    public static IComposer WebClient { get; } = Client;
     /// <summary>
     /// Gets the default composition root for local application.
     /// </summary>
-    public static IComposer LocalGui { get; } = Client;
+    public static IComposer LocalClient { get; } = Client;
 }

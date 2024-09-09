@@ -2,16 +2,9 @@
 using CBData.Abstractions;
 using CBData.Entities;
 
-using PBFrontend.UI.Input;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace CBFrontend.UI.DataFrames.Accounts.Children
 {
-	partial class SelectCurrentAccount : AccountsFrameChild
+    partial class SelectCurrentAccount : AccountsFrameChild
 	{
 		private IEnumerable<SelectInput<Guid>.OptionModel> options;
 

@@ -1,11 +1,8 @@
 ﻿using CBData.Abstractions;
 
-using System;
-using System.Collections.Generic;
-
 namespace CBData.Entities
 {
-	public abstract class TransactionContractEntityBase<TCreditor, TDebtor, TCreator, TRecipient> : TransactionEntityBase<TCreditor, TDebtor, TCreator, TRecipient>, ITransactionContractEntity<TCreditor, TDebtor, TCreator, TRecipient>
+    public abstract class TransactionContractEntityBase<TCreditor, TDebtor, TCreator, TRecipient> : TransactionEntityBase<TCreditor, TDebtor, TCreator, TRecipient>, ITransactionContractEntity<TCreditor, TDebtor, TCreator, TRecipient>
 		where TCreditor : AccountEntityBase
 		where TDebtor : AccountEntityBase
 		where TCreator : AccountEntityBase

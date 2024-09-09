@@ -1,10 +1,8 @@
-﻿using FluentNHibernate.Utils;
-using System;
-using static CBFrontend.Classes.Formatting.Enums;
+﻿using static CBFrontend.Classes.Formatting.Enums;
 
 namespace CBFrontend.Classes.Formatting
 {
-	internal static class Extensions
+    internal static class Extensions
 	{
 		public static String ToCssString(this CssColor color)
 		{

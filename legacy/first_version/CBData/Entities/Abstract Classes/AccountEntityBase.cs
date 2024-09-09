@@ -1,17 +1,8 @@
 ﻿using CBData.Abstractions;
-using PBCommon.Encryption;
-using PBCommon.Encryption.Abstractions;
-using PBData.Entities;
-using PBData.Extensions;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CBData.Entities
 {
-	public abstract class AccountEntityBase : NamedEntityBase, IAccountEntity
+    public abstract class AccountEntityBase : NamedEntityBase, IAccountEntity
 	{
 		protected AccountEntityBase() { }
 		protected AccountEntityBase(AccountEntityBase from, IDictionary<Guid, Object> circularReferenceHelperDictionary) : base(from, circularReferenceHelperDictionary)

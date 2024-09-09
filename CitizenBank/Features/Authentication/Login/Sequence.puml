@@ -46,23 +46,22 @@ ClientLogin -> ServerLogin: (CitizenName, PrehashedPassword)
 activate ServerLogin
 
 ==Complete Registration==
-
 ServerLogin -> LoadRegistrationRequest: CitizenName
 activate LoadRegistrationRequest
-alt#Gold #LightGreen RegistrationRequest with CitizenName exists
+alt#Gold #LightGreen RegistrationRequest with CitizenName doea not exist
+    LoadRegistrationRequest -> ServerLogin: success
+    deactivate LoadRegistrationRequest
+else #LightGreen RegistrationRequest with CitizenName exists
     ServerLogin -> CompleteRegistration: (CitizenName, HashedPassword, BioCode, PrehashedPassword)
     activate CompleteRegistration
     alt#Gold #LightGreen success
         CompleteRegistration -> ServerLogin: success
-    else #Pink failure
+    else #Pink BioCode Mismatch
         CompleteRegistration -> ServerLogin: failure
         deactivate CompleteRegistration
         ServerLogin -> ClientLogin: failure
         ClientLogin -> User: failure
     end
-else #Pink RegistrationRequest with CitizenName doea not exist
-    LoadRegistrationRequest -> ServerLogin: failure
-    deactivate LoadRegistrationRequest
 end
 
 ==Login==

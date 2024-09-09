@@ -1,9 +1,6 @@
-﻿using PBCommon.Encryption.Abstractions;
-using System;
-
-namespace CBApplication.Requests.Abstractions
+﻿namespace CBApplication.Requests.Abstractions
 {
-	public interface IAsAccountRequest : IAsCitizenRequest
+    public interface IAsAccountRequest : IAsCitizenRequest
 	{
 		public Guid AsAccountId { get; set; }
 	}

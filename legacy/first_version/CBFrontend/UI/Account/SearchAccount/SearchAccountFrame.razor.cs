@@ -1,18 +1,11 @@
 ﻿using CBApplication.Requests;
 using CBApplication.Services.Abstractions;
+
 using CBData.Abstractions;
-
-using Microsoft.AspNetCore.Components;
-using PBApplication.Responses;
-using PBApplication.Responses.Abstractions;
-
-using PBFrontend.UI.Authorization;
-
-using System.Threading.Tasks;
 
 namespace CBFrontend.UI.Account.SearchAccount
 {
-	public partial class SearchAccountFrame : SessionChild
+    public partial class SearchAccountFrame : SessionChild
 	{
 		[Parameter]
 		public RenderFragment ChildContent { get; set; }
