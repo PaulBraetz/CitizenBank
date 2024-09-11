@@ -1,10 +1,11 @@
 ﻿namespace CitizenBank.Features.Authentication.CompleteRegistration;
+
+using RhoMicro.ApplicationFramework.Common;
 using RhoMicro.CodeAnalysis;
 
 partial record struct DeleteRegistrationRequest
 {
-    [UnionType<DeleteRegistrationRequestFailure, Success>]
+    [UnionType<Failure, Success>]
     public readonly partial struct Result;
-    public readonly struct DeleteRegistrationRequestFailure;
     public readonly struct Success;
 }

@@ -13,9 +13,9 @@ sealed partial class ValidateBioService(
         if(loadBioResult.TryAsUnknownCitizen(out var unknownCitizen))
             return unknownCitizen;
 
-        ValidateBioCode.Result result = loadBioResult.AsBio.Content.Contains(code.Value, StringComparison.InvariantCulture)
-            ? new Success()
-            : new ValidateBioCode.BioCodeMismatch();
+        ValidateBioCode.Result result = loadBioResult.AsBio!.Content.Contains(code.Value, StringComparison.InvariantCulture)
+            ? new ValidateBioCode.Success()
+            : new ValidateBioCode.Mismatch();
 
         return result;
     }

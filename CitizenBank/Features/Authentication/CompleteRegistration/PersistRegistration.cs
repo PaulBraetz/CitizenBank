@@ -1,11 +1,12 @@
 ﻿namespace CitizenBank.Features.Authentication.CompleteRegistration;
+
+using RhoMicro.ApplicationFramework.Common;
 using RhoMicro.CodeAnalysis;
 
 partial record struct PersistRegistration
 {
-    [UnionType<PersistRegistrationOverwriteSuccess, PersistRegistrationSuccess, PersistRegistrationFailure>]
+    [UnionType<OverwriteSuccess, Success, Failure>]
     public readonly partial struct Result;
-    public readonly struct PersistRegistrationOverwriteSuccess;
-    public readonly struct PersistRegistrationSuccess;
-    public readonly struct PersistRegistrationFailure;
+    public readonly struct OverwriteSuccess;
+    public readonly struct Success;
 }

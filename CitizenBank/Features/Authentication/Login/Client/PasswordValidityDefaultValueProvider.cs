@@ -3,7 +3,7 @@ using CitizenBank.Features.Authentication.Register.Client;
 
 using RhoMicro.ApplicationFramework.Presentation.Models.Abstractions;
 
-sealed class PasswordMismatchDefaultValueProvider : IDefaultValueProvider<ValidatePassword.PasswordMismatch>
+sealed class PasswordMismatchDefaultValueProvider : IDefaultValueProvider<ValidatePassword.Mismatch>
 {
-    public ValidatePassword.PasswordMismatch GetDefault() => new();
+    public ValidatePassword.Mismatch GetDefault() => new();
 }

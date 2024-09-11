@@ -36,13 +36,13 @@ sealed partial class ServerLoginService(
         Debug.Assert(loadRegistrationResult.AsRegistration != null);
 
         var validateResult = await validatePasswordService.ValidatePassword(password, loadRegistrationResult.AsRegistration.Password, ct);
-        if(validateResult.TryAsPasswordMismatch(out var passwordMismatch))
+        if(validateResult.TryAsMismatch(out var passwordMismatch))
             return (ServerLogin.Failure)passwordMismatch;
 
         //identity integration here
         //TODO: update sequence diagram
         logger.LogWarning($"Authenticated {name}. TODO: identity integration");
 
-        return new Success();
+        return new ServerLogin.Success();
     }
 }

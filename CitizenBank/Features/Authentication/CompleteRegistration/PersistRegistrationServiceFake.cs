@@ -10,8 +10,8 @@ sealed partial class PersistRegistrationServiceFake(DbFake db)
         var newRegistration = new Registration(name, password);
         var createdRegistration = db.Registrations.AddOrUpdate(name, newRegistration, (n,old)=>new Registration(n,password));
         PersistRegistration.Result result = Object.ReferenceEquals(newRegistration, createdRegistration)
-            ? new PersistRegistration.PersistRegistrationSuccess()
-            : new PersistRegistration.PersistRegistrationOverwriteSuccess();
+            ? new PersistRegistration.Success()
+            : new PersistRegistration.OverwriteSuccess();
 
         return ValueTask.FromResult(result);
     }

@@ -1,6 +1,8 @@
 using CitizenBank.Composition;
 using CitizenBank.WebServerGui;
 
+using Microsoft.Extensions.Options;
+
 using RhoMicro.ApplicationFramework.Common.Environment;
 using RhoMicro.ApplicationFramework.Hosting;
 
@@ -19,6 +21,7 @@ await WebServerGuiApp.CreateBuilder(out var builder, s =>
     .AddTimeout()
     .AddBlazor()
     .AddApiServiceEndpoints()
+    .AddConsoleLogging()
     .ConfigureOptions(o => o.Composer = Composers.WebServer + o.Composer)
     .ConfigureCapabilities(c =>
     {

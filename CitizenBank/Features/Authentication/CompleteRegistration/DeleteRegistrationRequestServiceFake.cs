@@ -1,5 +1,6 @@
 ﻿namespace CitizenBank.Features.Authentication.CompleteRegistration;
 using RhoMicro.ApplicationFramework.Aspects;
+using RhoMicro.ApplicationFramework.Common;
 using RhoMicro.ApplicationFramework.Composition;
 
 [FakeService]
@@ -10,7 +11,7 @@ sealed partial class DeleteRegistrationRequestServiceFake(DbFake db)
     {
         DeleteRegistrationRequest.Result result = db.RegistrationRequests.Remove(name, out _)
             ? new DeleteRegistrationRequest.Success()
-            : new DeleteRegistrationRequest.DeleteRegistrationRequestFailure();
+            : new Failure();
 
         return ValueTask.FromResult(result);
     }

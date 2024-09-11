@@ -1,6 +1,7 @@
 ﻿namespace CitizenBank.LocalGui;
 
 using System;
+using System.Numerics;
 
 using CitizenBank.Composition;
 using CitizenBank.Features.Authentication.Register.Client;

@@ -1,8 +1,8 @@
 ﻿namespace CitizenBank.Features.Authentication.Register.Client;
 
 using RhoMicro.CodeAnalysis;
-using RhoMicro.ApplicationFramework.Common;
 using CitizenBank.Features.Authentication.Register.Server;
+using RhoMicro.ApplicationFramework.Common;
 
 partial record struct ClientRegister
 {

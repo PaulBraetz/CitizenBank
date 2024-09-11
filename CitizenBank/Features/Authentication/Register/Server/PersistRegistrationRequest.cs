@@ -7,4 +7,6 @@ partial record struct PersistRegistrationRequest
 {
     [UnionType<CreateSuccess, OverwriteSuccess, Failure>]
     public readonly partial struct Result;
+    public readonly struct OverwriteSuccess;
+    public readonly struct CreateSuccess;
 }

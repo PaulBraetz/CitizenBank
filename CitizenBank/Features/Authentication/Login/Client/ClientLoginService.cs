@@ -1,6 +1,8 @@
 ﻿namespace CitizenBank.Features.Authentication.Login.Client;
+
 using System.Threading.Tasks;
 
+using CitizenBank.Features.Authentication.CompleteRegistration;
 using CitizenBank.Features.Authentication.Login.Server;
 
 using RhoMicro.ApplicationFramework.Aspects;
@@ -17,12 +19,16 @@ sealed partial class ClientLoginService(
         var loginResult = await serverLoginService.ServerLogin(name, prehashedPassword, ct);
 
         var result = loginResult.Match(
-            f => f.Match<ClientLogin.Result>(
-                f => new Failure(),
-                f => new Failure(),
-                f => new Failure(),
-                (ValidatePassword.PasswordMismatch f) => f),
-            s => new Success());
+            (ServerLogin.Failure f) => f.Match<ClientLogin.Result>(
+                (CompleteRegistration.Failure f) => f.Match(
+                    (LoadBio.UnknownCitizen _) => new Failure("Unknown citizen name."),
+                    (Failure f) => f,
+                    (ValidatePassword.Mismatch _) => new Failure("Password mismatch detected."),
+                    (ValidateBioCode.Mismatch _) => new Failure("Bio does not contain required bio code.")),
+                (Failure f) => f,
+                (LoadRegistration.DoesNotExist _) => new Failure("Citizen is not registered yet."),
+                (ValidatePassword.Mismatch m) => m),
+            (ServerLogin.Success s) => new ClientLogin.Success());
 
         return result;
     }

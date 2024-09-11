@@ -10,7 +10,7 @@ public sealed class ClientLoginModel : HasObservableProperties
 {
     public ClientLoginModel(
         IInputGroupModel<CitizenName, String> name,
-        IInputGroupModel<ClearPassword, ValidatePassword.PasswordMismatch> password,
+        IInputGroupModel<ClearPassword, ValidatePassword.Mismatch> password,
         IButtonModel login,
         IClientLoginService loginService)
     {
@@ -33,7 +33,7 @@ public sealed class ClientLoginModel : HasObservableProperties
     private readonly IClientLoginService _loginService;
 
     public IInputGroupModel<CitizenName, String> Name { get; }
-    public IInputGroupModel<ClearPassword, ValidatePassword.PasswordMismatch> Password { get; }
+    public IInputGroupModel<ClearPassword, ValidatePassword.Mismatch> Password { get; }
     public IButtonModel Login { get; }
     private Optional<ClientLogin.Result> _result = Optional<ClientLogin.Result>.None();
     public Optional<ClientLogin.Result> Result
@@ -50,7 +50,7 @@ public sealed class ClientLoginModel : HasObservableProperties
             cancellationToken: args.CancellationToken);
 
         Result = result;
-        if(result.TryAsPasswordMismatch(out var passwordMismatch))
+        if(result.TryAsMismatch(out var passwordMismatch))
         {
             Password.Input.SetInvalid(passwordMismatch);
         } else

@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using CitizenBank.Features;
 using CitizenBank.Features.Authentication;
 using CitizenBank.Features.Authentication.Login.Client;
+using CitizenBank.Features.Authentication.Login.Server;
 using CitizenBank.Features.Authentication.Register.Client;
 using CitizenBank.Features.Authentication.Register.Server;
 
 using Microsoft.AspNetCore.Cryptography.KeyDerivation.PBKDF2;
+using Microsoft.Extensions.Logging;
 
 using RhoMicro.ApplicationFramework.Common;
 using RhoMicro.ApplicationFramework.Common.Abstractions;
@@ -42,8 +44,8 @@ public static class Composers
         c.RegisterSingleton<IDefaultValueProvider<ClearPassword>, ClearPasswordDefaultValueProvider>();
 
         c.Register<ClientLoginModel>();
-        c.Register<IInputModel<ClearPassword, ValidatePassword.PasswordMismatch>, Features.Authentication.Login.Client.ClearPasswordInputModel>();
-        c.RegisterSingleton<IDefaultValueProvider<ValidatePassword.PasswordMismatch>, PasswordMismatchDefaultValueProvider>();
+        c.Register<IInputModel<ClearPassword, ValidatePassword.Mismatch>, Features.Authentication.Login.Client.ClearPasswordInputModel>();
+        c.RegisterSingleton<IDefaultValueProvider<ValidatePassword.Mismatch>, PasswordMismatchDefaultValueProvider>();
 
         c.Register<ClientRegisterModel>();
         c.RegisterSingleton<IDefaultValueProvider<Optional<ClientRegister.Result>>, OptionalClientRegisterResultDefaultValueProvider>();
@@ -59,7 +61,8 @@ public static class Composers
 
     //Server requires these as stubs when verifying ui components (mainly)
     static readonly HashSet<Type> _requiredUnsupportedServerServices = [
-        typeof(IService<ClientRegister, ClientRegister.Result>)
+        typeof(IService<ClientRegister, ClientRegister.Result>),
+        typeof(IService<ClientLogin, ClientLogin.Result>)
     ];
 
     /// <summary>
@@ -97,11 +100,13 @@ public static class Composers
     });
     //Client requires these as adapters around api clients.
     static readonly HashSet<Type> _requiredClientServicesAdapters = [
-        typeof(IService<ServerRegister, ServerRegister.Result>)
+        typeof(IService<ServerRegister, ServerRegister.Result>),
+        typeof(IService<ServerLogin, ServerLogin.Result>),
         ];
     private static IComposer Client { get; } = Core + Composer.Create(c =>
     {
         c.RegisterSingleton<YieldingManagedPbkdf2Provider>();
+        c.RegisterSingleton<DbFake>(); //TODO: add actual fake
         c.RegisterInstance(
             new Yielder(
                 yieldInterval: TimeSpan.FromMilliseconds(100),
@@ -123,6 +128,7 @@ public static class Composers
             {
                 var (info, container) = ctx;
                 var (service, serviceImpl, tradiditionalService, traditionalImpl) = info;
+
                 if(!_requiredClientServicesAdapters.Contains(info.ServiceType))
                 {
                     container.Register(service, serviceImpl, Lifestyle.Scoped);

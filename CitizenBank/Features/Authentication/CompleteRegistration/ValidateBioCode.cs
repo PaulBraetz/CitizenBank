@@ -1,10 +1,11 @@
 ﻿namespace CitizenBank.Features.Authentication.CompleteRegistration;
-using RhoMicro.ApplicationFramework.Common;
+
 using RhoMicro.CodeAnalysis;
 
 public partial record struct ValidateBioCode
 {
-    [UnionType<Success, LoadBio.UnknownCitizen, BioCodeMismatch>]
+    [UnionType<Success, LoadBio.UnknownCitizen, Mismatch>]
     public readonly partial struct Result;
-    public readonly struct BioCodeMismatch;
+    public readonly struct Mismatch;
+    public readonly struct Success;
 }

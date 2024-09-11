@@ -1,12 +1,17 @@
 using CitizenBank.Composition;
 using CitizenBank.Features.Authentication.Register.Client;
 
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Options;
 
 using RhoMicro.ApplicationFramework.Common.Environment;
 using RhoMicro.ApplicationFramework.Hosting;
 
-await WebClientGuiApp.CreateBuilder(out var builder, s =>
+#if DEBUG
+try
+{
+#endif
+    await WebClientGuiApp.CreateBuilder(out var builder, s =>
     {
         s.Args = args;
 #if DEBUG
@@ -18,6 +23,7 @@ await WebClientGuiApp.CreateBuilder(out var builder, s =>
     .AddTimeout()
     .AddBlazor()
     .AddApiServiceClients()
+    .AddConsoleLogging()
     .ConfigureOptions(o =>
     {
         o.Composer = Composers.WebClient + o.Composer;
@@ -41,3 +47,9 @@ await WebClientGuiApp.CreateBuilder(out var builder, s =>
     .Build()
     .RunAsync()
     .ConfigureAwait(ConfigureAwaitOptions.ContinueOnCapturedContext);
+#if DEBUG
+} catch(Exception ex)
+{
+    Console.WriteLine(ex);
+}
+#endif

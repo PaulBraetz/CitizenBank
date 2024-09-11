@@ -10,11 +10,11 @@ sealed partial class PersistRegistrationRequestServiceFake(DbFake repository)
     PersistRegistrationRequest.Result PersistRegistrationRequest(CitizenName name, HashedPassword password, BioCode bioCode)
     {
         var newRequest = new RegistrationRequest(name, password, bioCode);
-        var added = repository.RegistrationRequests.AddOrUpdate(name, newRequest, (_,_)=>newRequest);
+        var added = repository.RegistrationRequests.AddOrUpdate(name, newRequest, (_, _) => newRequest);
 
         PersistRegistrationRequest.Result result = Object.ReferenceEquals(newRequest, added)
-            ? new OverwriteSuccess()
-            : new CreateSuccess();
+            ? new PersistRegistrationRequest.OverwriteSuccess()
+            : new PersistRegistrationRequest.CreateSuccess();
 
         return result;
     }
