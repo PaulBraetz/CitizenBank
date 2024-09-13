@@ -1,13 +1,10 @@
-namespace Tests;
+namespace Tests.Unit;
 
-using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 
 using CitizenBank.Features.Authentication;
 
 using Konscious.Security.Cryptography;
-
-
 
 [SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "<Pending>")]
 public class HashPasswordServiceTests
@@ -25,7 +22,7 @@ public class HashPasswordServiceTests
     public async Task HashPassword_hashes_using_argon_2id(Int32 seed)
     {
         var (prehashedPassword, parameters) = PasswordHelpers.CreatePrehashedPasswordAndParameters(seed);
-        using var argon = new Argon2id(prehashedPassword)
+        using var argon = new Argon2id([.. prehashedPassword.Digest])
         {
             AssociatedData = [.. parameters.Data.AssociatedData],
             KnownSecret = [.. parameters.Data.KnownSecret],
@@ -35,7 +32,7 @@ public class HashPasswordServiceTests
             MemorySize = parameters.Numerics.MemorySize,
         };
         var expectedHash = await argon.GetBytesAsync(parameters.Numerics.OutputLength);
-        var actualHash = ( await HashPasswordService.HashPassword(prehashedPassword.ToImmutableArray(), parameters) ).Hash;
+        var actualHash = ( await HashPasswordService.HashPassword(prehashedPassword, parameters) ).Digest;
 
         Assert.Equal(expectedHash, actualHash);
 
@@ -46,7 +43,7 @@ public class HashPasswordServiceTests
     public async Task HashPassword_includes_parameters_in_result(Int32 seed)
     {
         var (prehashedPassword, expectedParameters) = PasswordHelpers.CreatePrehashedPasswordAndParameters(seed);
-        var actualParameters = ( await HashPasswordService.HashPassword(prehashedPassword.ToImmutableArray(), expectedParameters) ).Parameters;
+        var actualParameters = ( await HashPasswordService.HashPassword(prehashedPassword, expectedParameters) ).Parameters;
         Assert.Equal(expectedParameters, actualParameters);
     }
 }

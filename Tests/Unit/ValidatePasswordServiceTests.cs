@@ -1,32 +1,10 @@
-﻿namespace Tests;
+﻿namespace Tests.Unit;
 
-using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
 using CitizenBank.Features.Authentication;
-
-using Microsoft.AspNetCore.Cryptography.KeyDerivation.PBKDF2;
-
-public class PrehashPasswordServiceTests
-{
-    [Theory]
-    [InlineData(1)]
-    [InlineData(1024)]
-    [InlineData(512)]
-    [InlineData(100)]
-    [InlineData(123)]
-    [InlineData(12)]
-    [InlineData(2)]
-    [InlineData(0)]
-    [InlineData(Int32.MaxValue)]
-    public async Task Foo()
-    {
-        var expected = new ManagedPbkdf2Provider().DeriveKey()
-        var result = await new PrehashPasswordService(new YieldingManagedPbkdf2Provider(new())).PrehashPassword("", default);
-    }
-}
 
 [SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "<Pending>")]
 public class ValidatePasswordServiceTests
@@ -53,9 +31,9 @@ public class ValidatePasswordServiceTests
     {
         var (prehashedPassword, parameters) = PasswordHelpers.CreatePrehashedPasswordAndParameters(seed);
         var hashService = new HashPasswordServiceImpl();
-        var hashedPassword = await hashService.HashPassword(prehashedPassword.ToImmutableArray(), parameters, default);
+        var hashedPassword = await hashService.HashPassword(prehashedPassword, parameters, default);
         var validatePasswordService = new ValidatePasswordService(hashService);
-        var result = await validatePasswordService.ValidatePassword(prehashedPassword.ToImmutableArray(), hashedPassword, default);
+        var result = await validatePasswordService.ValidatePassword(prehashedPassword, hashedPassword, default);
         Assert.True(result.IsSuccess);
     }
     [Theory]
@@ -72,15 +50,15 @@ public class ValidatePasswordServiceTests
     {
         var (prehashedPassword, parameters) = PasswordHelpers.CreatePrehashedPasswordAndParameters(seed);
         var hashService = new HashPasswordServiceImpl();
-        var hashedPassword = await hashService.HashPassword(prehashedPassword.ToImmutableArray(), parameters, default);
+        var hashedPassword = await hashService.HashPassword(prehashedPassword, parameters, default);
         var validatePasswordService = new ValidatePasswordService(hashService);
 
         var (differentPrehashedPassword, differentParameters) = PasswordHelpers.CreatePrehashedPasswordAndParameters(differentSeed);
 
         Debug.Assert(!differentParameters.Equals(parameters));
-        Debug.Assert(!differentPrehashedPassword.SequenceEqual(prehashedPassword));
+        Debug.Assert(!differentPrehashedPassword.Digest.SequenceEqual(prehashedPassword.Digest));
 
-        var result = await validatePasswordService.ValidatePassword(differentPrehashedPassword.ToImmutableArray(), hashedPassword, default);
+        var result = await validatePasswordService.ValidatePassword(differentPrehashedPassword, hashedPassword, default);
         Assert.True(result.IsMismatch);
     }
 }

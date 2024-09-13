@@ -10,7 +10,6 @@ using CitizenBank.Features.Authentication.Register.Client;
 using CitizenBank.Features.Authentication.Register.Server;
 
 using Microsoft.AspNetCore.Cryptography.KeyDerivation.PBKDF2;
-using Microsoft.Extensions.Logging;
 
 using RhoMicro.ApplicationFramework.Common;
 using RhoMicro.ApplicationFramework.Common.Abstractions;
@@ -71,7 +70,6 @@ public static class Composers
     public static IComposer WebServer { get; } = Core + Composer.Create(c =>
     {
         c.RegisterSingleton<YieldingManagedPbkdf2Provider>();
-        c.RegisterSingleton<DbFake>();
         c.RegisterInstance(new Yielder());
 
         c.RegisterServices(typeof(Composers).Assembly, options: new()
@@ -107,7 +105,6 @@ public static class Composers
     private static IComposer Client { get; } = Core + Composer.Create(c =>
     {
         c.RegisterSingleton<YieldingManagedPbkdf2Provider>();
-        c.RegisterSingleton<DbFake>(); //TODO: add actual fake
         c.RegisterInstance(
             new Yielder(
                 yieldInterval: TimeSpan.FromMilliseconds(100),

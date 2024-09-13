@@ -1,18 +1,21 @@
-﻿namespace Tests;
+﻿namespace Tests.Unit;
 
 using System.Diagnostics.CodeAnalysis;
 
 using CitizenBank.Features.Authentication;
 
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+
 static class PasswordHelpers
 {
     [SuppressMessage("Security", "CA5394:Do not use insecure randomness", Justification = "<Pending>")]
-    public static (Byte[] prehashedPassword, PasswordParameters parameters) CreatePrehashedPasswordAndParameters(Int32 seed)
+    public static (PrehashedPassword password, PasswordParameters parameters) CreatePrehashedPasswordAndParameters(Int32 seed)
     {
         var random = new Random(seed);
         var associatedData = getRandomBytes();
         var knownSecret = getRandomBytes();
         var salt = getRandomBytes();
+        var prehashSalt = getRandomBytes();
         var prehashedPassword = getRandomBytes();
         var parameters = new PasswordParameters(
             new PasswordParameterNumerics(
@@ -24,8 +27,13 @@ static class PasswordHelpers
                 AssociatedData: [.. associatedData],
                 KnownSecret: [.. knownSecret],
                 Salt: [.. salt]));
+        var prehashedParameters = new PrehashedPasswordParameters(
+            Salt: [.. prehashSalt],
+            HashSize: 512,
+            Prf: KeyDerivationPrf.HMACSHA512,
+            Iterations: 100);
 
-        return (prehashedPassword, parameters);
+        return (new([.. prehashedPassword], prehashedParameters), parameters);
 
         Byte[] getRandomBytes()
         {

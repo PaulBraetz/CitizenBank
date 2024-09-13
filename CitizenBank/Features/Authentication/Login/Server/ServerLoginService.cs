@@ -8,9 +8,8 @@ using CitizenBank.Features.Authentication.CompleteRegistration;
 using Microsoft.Extensions.Logging;
 
 using RhoMicro.ApplicationFramework.Aspects;
-using RhoMicro.ApplicationFramework.Common;
 
-sealed partial class ServerLoginService(
+public sealed partial class ServerLoginService(
     IValidatePrehashedPasswordParametersService validateParametersService,
     ILoadRegistrationRequestService loadRegistrationRequestService,
     ICompleteRegistrationService completeRegistrationService,

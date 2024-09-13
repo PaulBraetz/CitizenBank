@@ -1,7 +1,6 @@
 ﻿namespace CitizenBank.Features.Authentication;
 
 using RhoMicro.ApplicationFramework.Common;
-using RhoMicro.ApplicationFramework.Common.Abstractions;
 using RhoMicro.CodeAnalysis;
 
 partial record struct ValidatePrehashedPasswordParameters

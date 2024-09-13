@@ -26,6 +26,8 @@
 		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.8" />
 		<PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.8" />
 		<PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="8.0.8" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.8" />
 		<PackageReference Include="RhoMicro.ApplicationFramework.Aspects.Generator" Version="0.0.0-alpha.83">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

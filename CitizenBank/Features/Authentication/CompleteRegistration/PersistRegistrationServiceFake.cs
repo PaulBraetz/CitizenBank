@@ -2,19 +2,30 @@
 using RhoMicro.ApplicationFramework.Aspects;
 using CitizenBank.Features.Authentication;
 using RhoMicro.ApplicationFramework.Composition;
+using CitizenBank.Features.Authentication.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
-[FakeService]
-sealed partial class PersistRegistrationService(DbFake db)
+sealed partial class PersistRegistrationService(CitizenBankContext context)
 {
-    [ServiceMethod(ServiceInterfaceName = "IPersistRegistrationService")]
-    ValueTask<PersistRegistration.Result> PersistRegistration(CitizenName name, HashedPassword password)
+    [ServiceMethod]
+    async ValueTask<PersistRegistration.Result> PersistRegistration(CitizenName name, HashedPassword password, CancellationToken ct)
     {
-        var newRegistration = new Registration(name, password);
-        var createdRegistration = db.Registrations.AddOrUpdate(name, newRegistration, (n,old)=>new Registration(n,password));
-        PersistRegistration.Result result = Object.ReferenceEquals(newRegistration, createdRegistration)
-            ? new PersistRegistration.Success()
-            : new PersistRegistration.OverwriteSuccess();
+        var newRegistration = new RegistrationEntity()
+        {
+            Name = name,
+            Password = HashedPasswordEntity.FromHashedPassword(password)
+        };
 
-        return ValueTask.FromResult(result);
+        var tracker = context.Registrations.Update(newRegistration);
+        _ = await context.SaveChangesAsync(ct);
+
+        PersistRegistration.Result result = tracker.State switch
+        {
+            EntityState.Added => new PersistRegistration.Success(),
+            EntityState.Modified => new PersistRegistration.OverwriteSuccess(),
+            _ => throw new InvalidOperationException("Unexpected registration entity state encountered after update.")
+        };
+
+        return result;
     }
 }

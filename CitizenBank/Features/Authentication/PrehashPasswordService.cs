@@ -1,9 +1,4 @@
 ﻿namespace CitizenBank.Features.Authentication;
-
-using System.Collections.Immutable;
-using System.Security.Cryptography;
-
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation.PBKDF2;
 
 using RhoMicro.ApplicationFramework.Aspects;

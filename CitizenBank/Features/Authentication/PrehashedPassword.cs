@@ -2,6 +2,4 @@
 
 using System.Collections.Immutable;
 
-using RhoMicro.CodeAnalysis;
-
-public readonly record struct PrehashedPassword(ImmutableArray<Byte> Bytes, PrehashedPasswordParameters Parameters);
+public readonly record struct PrehashedPassword(ImmutableArray<Byte> Digest, PrehashedPasswordParameters Parameters);

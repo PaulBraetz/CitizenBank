@@ -13,7 +13,7 @@ public sealed partial class HashPasswordService
     {
         ArgumentNullException.ThrowIfNull(parameters);
 
-        var clearBytes = password.Bytes.ToArray();
+        var clearBytes = password.Digest.ToArray();
         using var argon = new Argon2id(clearBytes)
         {
             DegreeOfParallelism = parameters.Numerics.DegreeOfParallelism,

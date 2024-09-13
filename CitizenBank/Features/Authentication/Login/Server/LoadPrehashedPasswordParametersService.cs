@@ -1,18 +1,36 @@
 ﻿namespace CitizenBank.Features.Authentication.Login.Server;
 
-using RhoMicro.ApplicationFramework.Aspects;
-using RhoMicro.ApplicationFramework.Common;
+using CitizenBank.Features.Authentication.Infrastructure;
 
-sealed partial class LoadPrehashedPasswordParametersService(DbFake db)
+using RhoMicro.ApplicationFramework.Aspects;
+
+public enum PrehashedPasswordParametersSource
+{
+    RegistrationRequest,
+    Registration
+}
+
+public sealed partial class LoadPrehashedPasswordParametersService(CitizenBankContext context)
 {
     [ServiceMethod]
-    public LoadPrehashedPasswordParameters.Result LoadPrehashedPasswordParameters(CitizenName name)
+    public LoadPrehashedPasswordParameters.Result LoadPrehashedPasswordParameters(CitizenName name, PrehashedPasswordParametersSource source)
     {
-        LoadPrehashedPasswordParameters.Result result = db.Registrations.TryGetValue(name, out var registration)
-            ? registration.Password.PrehashedPasswordParameters
-            : db.RegistrationRequests.TryGetValue(name, out var registrationRequest)
-                ? registrationRequest.Password.PrehashedPasswordParameters
-                : new LoadPrehashedPasswordParameters.NotFound();
+        var nameString = name.AsString;
+        LoadPrehashedPasswordParameters.Result result =
+            source switch
+            {
+                PrehashedPasswordParametersSource.RegistrationRequest =>
+                   context.RegistrationRequests.SingleOrDefault(r => r.Name == nameString)?
+                       .Password,
+                PrehashedPasswordParametersSource.Registration =>
+                   context.Registrations.SingleOrDefault(r => r.Name == nameString)?
+                       .Password,
+                _ => throw new ArgumentOutOfRangeException(nameof(source), source, $"Unable to handle prehashed password parameters source '{source}'.")
+            } switch
+            {
+                { } pw => pw.PrehashedPasswordParameters.ToPrehashedPasswordParameters(),
+                null => new LoadPrehashedPasswordParameters.NotFound()
+            };
 
         return result;
     }

@@ -12,7 +12,7 @@ public sealed partial class ValidatePasswordService(IHashPasswordService hashPas
     {
         var hashed = await hashPasswordService.HashPassword(password, other.Parameters, ct);
 
-        ValidatePassword.Result result = hashed.Hash.SequenceEqual(other.Hash)
+        ValidatePassword.Result result = hashed.Digest.SequenceEqual(other.Digest)
             ? new ValidatePassword.Success()
             : new ValidatePassword.Mismatch();
 

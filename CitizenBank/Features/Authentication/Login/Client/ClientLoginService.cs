@@ -14,9 +14,13 @@ sealed partial class ClientLoginService(
     IServerLoginService serverLoginService)
 {
     [ServiceMethod]
-    async ValueTask<ClientLogin.Result> ClientLogin(CitizenName name, ClearPassword password, CancellationToken ct)
+    async ValueTask<ClientLogin.Result> ClientLogin(
+        CitizenName name,
+        ClearPassword password,
+        PrehashedPasswordParametersSource parametersSource,
+        CancellationToken ct)
     {
-        var loadParametersResult = await parametersService.LoadPrehashedPasswordParameters(name, ct);
+        var loadParametersResult = await parametersService.LoadPrehashedPasswordParameters(name, parametersSource, ct);
         if(loadParametersResult.IsNotFound)
             return new Failure("Citizen is not registered yet.");
 

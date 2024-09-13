@@ -5,12 +5,12 @@ using CitizenBank.Features.Authentication;
 using System.Threading.Tasks;
 using RhoMicro.ApplicationFramework.Aspects;
 
-sealed partial class ServerRegisterService(
+public partial class ServerRegisterService(
     IValidatePrehashedPasswordParametersService validateService,
     ICreatePasswordParametersService parametersService,
     IHashPasswordService hashingService,
     ICreateBioCodeService bioCodeService,
-    IRegistrationRequestPersister persistService)
+    IPersistRegistrationRequestService persistService)
 {
     [ServiceMethod]
     async ValueTask<ServerRegister.Result> ServerRegister(CitizenName name, PrehashedPassword password, CancellationToken ct)

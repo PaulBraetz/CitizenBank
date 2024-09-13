@@ -1,7 +1,6 @@
 ﻿namespace CitizenBank.Features.Authentication.CompleteRegistration;
 using RhoMicro.ApplicationFramework.Aspects;
 using CitizenBank.Features.Authentication;
-using RhoMicro.ApplicationFramework.Common;
 using RhoMicro.ApplicationFramework.Composition;
 
 [FakeService]

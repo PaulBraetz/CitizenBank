@@ -12,9 +12,9 @@ partial record struct LoadPrehashedPasswordParameters
         LoadPrehashedPasswordParameters.Dto,
         LoadPrehashedPasswordParameters.Result.Dto>
 {
-    sealed record Dto(String Name) : IApiRequestDto<LoadPrehashedPasswordParameters, Result>
+    sealed record Dto(String Name, PrehashedPasswordParametersSource Source) : IApiRequestDto<LoadPrehashedPasswordParameters, Result>
     {
-        LoadPrehashedPasswordParameters IApiRequestDto<LoadPrehashedPasswordParameters, Result>.ToRequest() => new(Name);
+        LoadPrehashedPasswordParameters IApiRequestDto<LoadPrehashedPasswordParameters, Result>.ToRequest() => new(Name, Source);
     }
 
     [UnionType<PrehashedPasswordParameters, NotFound>]
@@ -36,5 +36,5 @@ partial record struct LoadPrehashedPasswordParameters
     }
     public readonly struct NotFound;
 
-    Dto IApiRequest<LoadPrehashedPasswordParameters, Result, Dto, Result.Dto>.ToDto() => new(Name);
+    Dto IApiRequest<LoadPrehashedPasswordParameters, Result, Dto, Result.Dto>.ToDto() => new(Name, Source);
 }

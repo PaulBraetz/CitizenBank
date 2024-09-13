@@ -1,10 +1,7 @@
 ﻿namespace CitizenBank.Features.Authentication.Login.Server;
 
-using System.Collections.Immutable;
-
 using CitizenBank.Features.Authentication.CompleteRegistration;
 
-using RhoMicro.ApplicationFramework.Common;
 using RhoMicro.ApplicationFramework.Common.Abstractions;
 using RhoMicro.CodeAnalysis;
 
@@ -73,13 +70,13 @@ partial record struct ServerLogin : IApiRequest<ServerLogin, ServerLogin.Result,
         (
             Name: Name,
             Password: new(
-                Bytes: [.. Convert.FromBase64String(Password)],
+                Digest: [.. Convert.FromBase64String(Password)],
                 Parameters: Parameters)
         );
     }
 
     Dto IApiRequest<ServerLogin, Result, Dto, Result.Dto>.ToDto() => new(
         Name: Name,
-        Password: Convert.ToBase64String(Password.Bytes.ToArray()),
+        Password: Convert.ToBase64String(Password.Digest.ToArray()),
         Parameters: Password.Parameters);
 }

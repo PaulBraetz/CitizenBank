@@ -1,7 +1,6 @@
 using CitizenBank.Composition;
 using CitizenBank.Features.Authentication.Register.Client;
 
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Options;
 
 using RhoMicro.ApplicationFramework.Common.Environment;

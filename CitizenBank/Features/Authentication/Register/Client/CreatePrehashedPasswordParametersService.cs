@@ -5,7 +5,6 @@ using System.Security.Cryptography;
 using CitizenBank.Features.Authentication;
 
 using RhoMicro.ApplicationFramework.Aspects;
-using RhoMicro.ApplicationFramework.Common;
 
 sealed partial class CreatePrehashedPasswordParametersService
 {
