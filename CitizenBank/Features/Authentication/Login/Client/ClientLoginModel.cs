@@ -22,12 +22,14 @@ public sealed class ClientLoginModel : HasObservableProperties
 
         Name.Label = "Name";
         Name.PropertyValueChanged += (_, _) => Result = Optional<ClientLogin.Result>.None();
+        Name.Input.Entered += OnLoginClicked;
 
         Password.Label = "Password";
         Password.PropertyValueChanged += (_, _) => Result = Optional<ClientLogin.Result>.None();
+        Name.Input.Entered += OnLoginClicked;
 
         Login.Label = "Login";
-        Login.Clicked += OnRegisterClicked;
+        Login.Clicked += OnLoginClicked;
     }
 
     private readonly IClientLoginService _loginService;
@@ -42,7 +44,7 @@ public sealed class ClientLoginModel : HasObservableProperties
         private set => base.ExchangeBackingField(ref _result, value);
     }
 
-    private async Task OnRegisterClicked(Object? _, IAsyncEventArguments args)
+    private async Task OnLoginClicked(Object? _, IAsyncEventArguments args)
     {
         var result = await _loginService.ClientLogin(
             name: Name.Input.Value,

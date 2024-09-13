@@ -14,6 +14,7 @@ partial record struct ServerLogin : IApiRequest<ServerLogin, ServerLogin.Result,
     [UnionType<RhoMicro.ApplicationFramework.Common.Failure>(Alias = "GenericFailure")]
     [UnionType<LoadRegistration.DoesNotExist>(Alias = "LoadRegistrationDoesNotExist")]
     [UnionType<ValidatePassword.Mismatch>(Alias = "PasswordMismatch")]
+    [UnionType<ValidatePrehashedPasswordParameters.Insecure>(Alias = "InsecurePrehashParameters")]
     public readonly partial struct Failure;
     public readonly struct Success;
     [UnionType<Failure, Success>]
@@ -34,8 +35,9 @@ partial record struct ServerLogin : IApiRequest<ServerLogin, ServerLogin.Result,
 
                     4 => (Failure)new LoadRegistration.DoesNotExist(),
                     5 => (Failure)new ValidatePassword.Mismatch(),
+                    6 => (Failure)new ValidatePrehashedPasswordParameters.Insecure(),
 
-                    6 => new Success(),
+                    7 => new Success(),
                     _ => throw new InvalidOperationException("Invalid dto data received.")
                 };
         }
@@ -51,9 +53,10 @@ partial record struct ServerLogin : IApiRequest<ServerLogin, ServerLogin.Result,
                         (ValidateBioCode.Mismatch _) => 3),
                     (RhoMicro.ApplicationFramework.Common.Failure _) => 1,
                     (LoadRegistration.DoesNotExist _) => 4,
-                    (ValidatePassword.Mismatch _) => 5),
-                (Success _) => 6),
-            Reason = 
+                    (ValidatePassword.Mismatch _) => 5,
+                    (ValidatePrehashedPasswordParameters.Insecure _) => 6),
+                (Success _) => 7),
+            Reason =
                 TryAsFailure(out var f0)
                 ? f0.TryAsGenericFailure(out var f1) && f1.Reason.TryAsSome(out var r0)
                     ? r0
@@ -64,20 +67,19 @@ partial record struct ServerLogin : IApiRequest<ServerLogin, ServerLogin.Result,
         };
     }
 
-    public sealed class Dto : IApiRequestDto<ServerLogin, Result>
+    public sealed record Dto(String Name, String Password, PrehashedPasswordParameters Parameters) : IApiRequestDto<ServerLogin, Result>
     {
-        public required String Name { get; set; }
-        public required String Password { get; set; }
         ServerLogin IApiRequestDto<ServerLogin, Result>.ToRequest() => new
         (
             Name: Name,
-            Password: Convert.FromBase64String(Password).ToImmutableArray()
+            Password: new(
+                Bytes: [.. Convert.FromBase64String(Password)],
+                Parameters: Parameters)
         );
     }
 
-    Dto IApiRequest<ServerLogin, Result, Dto, Result.Dto>.ToDto() => new()
-    {
-        Name = Name,
-        Password = Convert.ToBase64String(Password.AsImmutableArray_of_Byte.ToArray())
-    };
+    Dto IApiRequest<ServerLogin, Result, Dto, Result.Dto>.ToDto() => new(
+        Name: Name,
+        Password: Convert.ToBase64String(Password.Bytes.ToArray()),
+        Parameters: Password.Parameters);
 }

@@ -22,9 +22,11 @@ public sealed class ClientRegisterModel : HasObservableProperties
 
         Name.Label = "Name";
         Name.PropertyValueChanged += (_, _) => Result = Optional<ClientRegister.Result>.None();
+        Name.Input.Entered += OnRegisterClicked;
 
         Password.Label = "Password";
         Password.PropertyValueChanged += (_, _) => Result = Optional<ClientRegister.Result>.None();
+        Name.Input.Entered += OnRegisterClicked;
 
         Register.Label = "Register";
         Register.Clicked += OnRegisterClicked;

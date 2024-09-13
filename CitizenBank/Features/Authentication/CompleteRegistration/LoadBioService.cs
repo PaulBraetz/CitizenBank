@@ -3,7 +3,7 @@ using RhoMicro.ApplicationFramework.Aspects;
 using RhoMicro.ApplicationFramework.Composition;
 
 [FakeService]
-sealed partial class LoadBioServiceFake
+sealed partial class LoadBioService
 {
     [ServiceMethod(ServiceInterfaceName = "ILoadBioService")]
     ValueTask<LoadBio.Result> LoadBio(CitizenName name, CancellationToken ct)

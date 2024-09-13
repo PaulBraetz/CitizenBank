@@ -2,30 +2,34 @@
 
 !pragma teoz true
 
+title Register
+
 actor User
 
 box Client
-box Register Feature #Snow
-participant ClientRegister
-participant ValidatePasswordAgainstGuideline
-end box
+    box Register Feature #Snow
+        participant ClientRegister
+        participant ValidatePasswordAgainstGuideline
+        participant CreatePrehashedPasswordParameters
+    end box
 
-box Authentication Feature #Snow
-participant PrehashPassword
-end box
+    box Authentication Feature #Snow
+        participant PrehashPassword
+    end box
 end box
 
 box Server
-box Register Feature #Snow
-participant ServerRegister
-participant GeneratePasswordParameters
-participant CreateBioCode
-participant PersistRegistrationRequest
-end box
+    box Register Feature #Snow
+        participant ServerRegister
+        participant CreatePasswordParameters
+        participant CreateBioCode
+        participant PersistRegistrationRequest
+    end box
 
-box Authentication Feature #Snow
-participant HashPassword
-end box
+    box Authentication Feature #Snow
+        participant ValidatePrehashedPasswordParameters
+        participant HashPassword
+    end box
 end box
 
 User -> ClientRegister: (CitizenName, ClearPassword)
@@ -33,21 +37,40 @@ activate ClientRegister
 
 ClientRegister -> ValidatePasswordAgainstGuideline: ClearPassword
 activate ValidatePasswordAgainstGuideline
-ValidatePasswordAgainstGuideline -> ClientRegister: PasswordValidity
-deactivate ValidatePasswordAgainstGuideline
-ClientRegister -> User: PasswordValidity
+alt#Gold #LightGreen password is valid
+    ValidatePasswordAgainstGuideline -> ClientRegister: success
+else #Pink password is invalid
+    ValidatePasswordAgainstGuideline -> ClientRegister: ValidationResult
+    deactivate ValidatePasswordAgainstGuideline
+    ClientRegister -> User: ValidationResult
+end
 
-ClientRegister -> PrehashPassword: ClearPassword
+ClientRegister -> CreatePrehashedPasswordParameters
+activate CreatePrehashedPasswordParameters
+CreatePrehashedPasswordParameters -> ClientRegister: PrehashedPasswordParameters
+deactivate CreatePrehashedPasswordParameters
+
+ClientRegister -> PrehashPassword: (ClearPassword, PrehashedPasswordParameters)
 activate PrehashPassword
-PrehashPassword -> ClientRegister: PrehashedPassword
+PrehashPassword -> ClientRegister: (PrehashedPassword, PrehashedPasswordParameters)
 deactivate PrehashPassword
 
-ClientRegister -> ServerRegister: (CitizenName, PrehashedPassword)
+ClientRegister -> ServerRegister: (CitizenName, PrehashedPassword, PrehashedPasswordParameters)
 activate ServerRegister
-ServerRegister -> GeneratePasswordParameters
-activate GeneratePasswordParameters
-GeneratePasswordParameters -> ServerRegister: PasswordParameters
-deactivate GeneratePasswordParameters
+ServerRegister -> ValidatePrehashedPasswordParameters: PrehashedPasswordParameters
+activate ValidatePrehashedPasswordParameters
+alt#Gold #LightGreen parameters are valid
+    ValidatePrehashedPasswordParameters -> ServerRegister: success
+else #Pink parameters are invalid
+    ValidatePrehashedPasswordParameters -> ServerRegister: failure
+    deactivate ValidatePrehashedPasswordParameters
+    ServerRegister -> ClientRegister: failure
+    ClientRegister -> User: failure
+end
+ServerRegister -> CreatePasswordParameters
+activate CreatePasswordParameters
+CreatePasswordParameters -> ServerRegister: PasswordParameters
+deactivate CreatePasswordParameters
 ServerRegister -> HashPassword: (PrehashedPassword, PasswordParameters)
 activate HashPassword
 HashPassword -> ServerRegister: HashedPassword

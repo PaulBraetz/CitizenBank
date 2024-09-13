@@ -2,33 +2,37 @@
 
 !pragma teoz true
 
+title Login
+
 actor User
 
 box Client
-box Login Feature #Snow
-participant ClientLogin
-end box
+    box Login Feature #Snow
+        participant ClientLogin
+    end box
 
-box Authentication Feature #Snow
-participant PrehashPassword
-end box
+    box Authentication Feature #Snow
+        participant PrehashPassword
+    end box
 end box
 
 box Server
-box Login Feature #Snow
-participant ServerLogin
-participant LoadRegistrationRequest
-participant LoadRegistration
-end box
+    box Login Feature #Snow
+        participant LoadPrehashedPasswordParameters
+        participant ServerLogin
+        participant LoadRegistrationRequest
+        participant LoadRegistration
+    end box
 
-box CompleteRegistration Feature #Snow
-participant CompleteRegistration
-end box
+    box CompleteRegistration Feature #Snow
+        participant CompleteRegistration
+    end box
 
-box Authentication Feature #Snow
-participant ValidatePassword
-participant HashPassword
-end box
+    box Authentication Feature #Snow
+        participant ValidatePrehashedPasswordParameters
+        participant ValidatePassword
+        participant HashPassword
+    end box
 end box
 
 box External #LightSkyBlue
@@ -37,13 +41,32 @@ end box
 
 User -> ClientLogin: (CitizenName, ClearPassword)
 activate ClientLogin
-ClientLogin -> PrehashPassword: ClearPassword
+ClientLogin -> LoadPrehashedPasswordParameters: CitizenName
+activate LoadPrehashedPasswordParameters
+alt#Gold #LightGreen parameters found
+    LoadPrehashedPasswordParameters -> ClientLogin: PrehashedPasswordParameters
+else #Pink parameters not found
+    LoadPrehashedPasswordParameters -> ClientLogin: failure
+    deactivate LoadPrehashedPasswordParameters
+    ClientLogin -> User: failure
+end
+ClientLogin -> PrehashPassword: (ClearPassword, PrehashedPasswordParameters)
 activate PrehashPassword
-PrehashPassword -> ClientLogin: PrehashedPassword
+PrehashPassword -> ClientLogin: (PrehashedPassword, PrehashedPasswordParameters)
 deactivate PrehashPassword
 
-ClientLogin -> ServerLogin: (CitizenName, PrehashedPassword)
+ClientLogin -> ServerLogin: (CitizenName, PrehashedPassword, PrehashedPasswordParameters)
 activate ServerLogin
+ServerLogin -> ValidatePrehashedPasswordParameters: PrehashedPasswordParameters
+activate ValidatePrehashedPasswordParameters
+alt#Gold #LightGreen parameters are valid
+    ValidatePrehashedPasswordParameters -> ServerLogin: success
+else #Pink parameters are invalid
+    ValidatePrehashedPasswordParameters -> ServerLogin: failure
+    deactivate ValidatePrehashedPasswordParameters
+    ServerLogin -> ClientLogin: failure
+    ClientLogin -> User: failure
+end
 
 ==Complete Registration==
 ServerLogin -> LoadRegistrationRequest: CitizenName

@@ -11,6 +11,7 @@ using RhoMicro.ApplicationFramework.Aspects;
 using RhoMicro.ApplicationFramework.Common;
 
 sealed partial class ServerLoginService(
+    IValidatePrehashedPasswordParametersService validateParametersService,
     ILoadRegistrationRequestService loadRegistrationRequestService,
     ICompleteRegistrationService completeRegistrationService,
     ILoadRegistrationService loadRegistrationService,
@@ -20,6 +21,10 @@ sealed partial class ServerLoginService(
     [ServiceMethod]
     async ValueTask<ServerLogin.Result> ServerLogin(CitizenName name, PrehashedPassword password, CancellationToken ct)
     {
+        var validateParametersResult = await validateParametersService.ValidatePrehashedPasswordParameters(password.Parameters, ct);
+        if(validateParametersResult.TryAsInsecure(out var f))
+            return (ServerLogin.Failure)f;
+
         var loadRequestResult = await loadRegistrationRequestService.LoadRegistrationRequest(name, ct);
 
         if(loadRequestResult.TryAsRegistrationRequest(out var registrationRequest))

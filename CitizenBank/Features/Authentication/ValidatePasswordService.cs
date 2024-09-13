@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 
 using RhoMicro.ApplicationFramework.Aspects;
 
-sealed partial class ValidatePasswordService(IHashPasswordService hashPasswordFactory)
+public sealed partial class ValidatePasswordService(IHashPasswordService hashPasswordService)
 {
     [ServiceMethod]
-    async ValueTask<ValidatePassword.Result> ValidatePassword(PrehashedPassword password, HashedPassword other, CancellationToken ct)
+    public async ValueTask<ValidatePassword.Result> ValidatePassword(PrehashedPassword password, HashedPassword other, CancellationToken ct)
     {
-        var hashed = await hashPasswordFactory.HashPassword(password, other.Parameters, ct);
+        var hashed = await hashPasswordService.HashPassword(password, other.Parameters, ct);
 
         ValidatePassword.Result result = hashed.Hash.SequenceEqual(other.Hash)
             ? new ValidatePassword.Success()

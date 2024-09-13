@@ -8,49 +8,55 @@ using RhoMicro.CodeAnalysis;
 
 partial record struct ServerRegister : IApiRequest<ServerRegister, ServerRegister.Result, ServerRegister.Dto, ServerRegister.Result.Dto>
 {
-    [UnionType<CreateSuccess, OverwriteSuccess, Failure>]
+    public sealed record Dto(String Name, String Password, PrehashedPasswordParameters Parameters) : IApiRequestDto<ServerRegister, Result>
+    {
+        ServerRegister IApiRequestDto<ServerRegister, Result>.ToRequest() => new
+        (
+            Name: Name,
+            Password: new PrehashedPassword(
+                Bytes: [.. Convert.FromBase64String(Password)],
+                Parameters: Parameters)
+        );
+    }
+    [UnionType<CreateSuccess, OverwriteSuccess, ValidatePrehashedPasswordParameters.Insecure, Failure>]
     public readonly partial struct Result : IApiResult<Result, Result.Dto>
     {
-        public sealed class Dto : IApiResultDto<Result>
+        public sealed record Dto(Int32 Kind, String? BioCode, String? Reason) : IApiResultDto<Result>
         {
-            public Int32 Kind { get; set; }
-            public String? BioCode { get; set; }
-
             Result IApiResultDto<Result>.ToResult() => Kind switch
             {
                 0 => new CreateSuccess(new BioCode(BioCode ?? String.Empty)),
                 1 => new OverwriteSuccess(new BioCode(BioCode ?? String.Empty)),
-                2 => new Failure(),
+                2 => new ValidatePrehashedPasswordParameters.Insecure(),
+                3 => new Failure(Reason ?? ""),
                 _ => throw new InvalidOperationException("Invalid dto data received.")
             };
         }
-        Dto IApiResult<Result, Dto>.ToDto() => new()
-        {
-            Kind = Match(
+        Dto IApiResult<Result, Dto>.ToDto() => new
+        (
+            Kind: Match(
                 onCreateSuccess: _ => 0,
                 onOverwriteSuccess: _ => 1,
-                onFailure: _ => 2),
-            BioCode = Match<String?>(
+                onInsecure: _ => 2,
+                onFailure: _ => 3),
+            BioCode: Match<String?>(
                 onCreateSuccess: s => s.BioCode.Value,
                 onOverwriteSuccess: s => s.BioCode.Value,
-                onFailure: _ => null)
-        };
+                onInsecure: _ => null,
+                onFailure: _ => null),
+            Reason: Match<String?>(
+                onCreateSuccess: _ => null,
+                onOverwriteSuccess: _ => null,
+                onInsecure: _ => null,
+                onFailure: f => f.Reason.TryAsSome(out var r) ? r : "")
+        );
     }
     public readonly record struct CreateSuccess(BioCode BioCode);
     public readonly record struct OverwriteSuccess(BioCode BioCode);
-    public sealed class Dto : IApiRequestDto<ServerRegister, Result>
-    {
-        public required String Name { get; set; }
-        public required String Password { get; set; }
-        ServerRegister IApiRequestDto<ServerRegister, Result>.ToRequest() => new
-        (
-            Name: Name,
-            Password: Convert.FromBase64String(Password).ToImmutableArray()
-        );
-    }
-    Dto IApiRequest<ServerRegister, Result, Dto, Result.Dto>.ToDto() => new()
-    {
-        Name = Name,
-        Password = Convert.ToBase64String(Password.AsImmutableArray_of_Byte.ToArray())
-    };
+    Dto IApiRequest<ServerRegister, Result, Dto, Result.Dto>.ToDto() => new
+    (
+        Name: Name,
+        Password: Convert.ToBase64String(Password.Bytes.ToArray()),
+        Parameters: Password.Parameters
+    );
 }

@@ -26,16 +26,16 @@
 		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.8" />
 		<PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.8" />
 		<PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="8.0.8" />
-		<PackageReference Include="RhoMicro.ApplicationFramework.Aspects.Generator" Version="0.0.0-alpha.82">
+		<PackageReference Include="RhoMicro.ApplicationFramework.Aspects.Generator" Version="0.0.0-alpha.83">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="RhoMicro.ApplicationFramework.Common" Version="0.0.0-alpha.82" />
+		<PackageReference Include="RhoMicro.ApplicationFramework.Common" Version="0.0.0-alpha.83" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="RhoMicro.ApplicationFramework.Presentation.Views.Blazor" Version="0.0.0-alpha.82" />
-		<PackageReference Include="RhoMicro.ApplicationFramework.Presentation.Views.Blazor.RenderModeGenerator" Version="0.0.0-alpha.82">
+		<PackageReference Include="RhoMicro.ApplicationFramework.Presentation.Views.Blazor" Version="0.0.0-alpha.83" />
+		<PackageReference Include="RhoMicro.ApplicationFramework.Presentation.Views.Blazor.RenderModeGenerator" Version="0.0.0-alpha.83">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>

@@ -9,8 +9,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="RhoMicro.ApplicationFramework.Common" Version="0.0.0-alpha.82" />
-		<PackageReference Include="RhoMicro.ApplicationFramework.Hosting.Blazor.LocalGui" Version="0.0.0-alpha.81" />
+		<PackageReference Include="RhoMicro.ApplicationFramework.Common" Version="0.0.0-alpha.83" />
+		<PackageReference Include="RhoMicro.ApplicationFramework.Hosting.Blazor.LocalGui" Version="0.0.0-alpha.83" />
 	</ItemGroup>
 
 	<ItemGroup>

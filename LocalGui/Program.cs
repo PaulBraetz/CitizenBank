@@ -1,7 +1,6 @@
 ﻿namespace CitizenBank.LocalGui;
 
 using System;
-using System.Numerics;
 
 using CitizenBank.Composition;
 using CitizenBank.Features.Authentication.Register.Client;
@@ -33,6 +32,7 @@ class Program
         .AddBlazor()
         .AddAppSettings()
         .AddApiServiceClients()
+        .AddFileLogging()
         .ConfigureBuilder(b => b.RootComponents.Add<EntryPoint>("app"))
         .ConfigureOptions(o =>
         {

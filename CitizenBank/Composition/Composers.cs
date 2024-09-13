@@ -102,6 +102,7 @@ public static class Composers
     static readonly HashSet<Type> _requiredClientServicesAdapters = [
         typeof(IService<ServerRegister, ServerRegister.Result>),
         typeof(IService<ServerLogin, ServerLogin.Result>),
+        typeof(IService<LoadPrehashedPasswordParameters, LoadPrehashedPasswordParameters.Result>),
         ];
     private static IComposer Client { get; } = Core + Composer.Create(c =>
     {

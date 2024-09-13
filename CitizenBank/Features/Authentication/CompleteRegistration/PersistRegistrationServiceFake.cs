@@ -1,8 +1,10 @@
 ﻿namespace CitizenBank.Features.Authentication.CompleteRegistration;
 using RhoMicro.ApplicationFramework.Aspects;
 using CitizenBank.Features.Authentication;
+using RhoMicro.ApplicationFramework.Composition;
 
-sealed partial class PersistRegistrationServiceFake(DbFake db)
+[FakeService]
+sealed partial class PersistRegistrationService(DbFake db)
 {
     [ServiceMethod(ServiceInterfaceName = "IPersistRegistrationService")]
     ValueTask<PersistRegistration.Result> PersistRegistration(CitizenName name, HashedPassword password)

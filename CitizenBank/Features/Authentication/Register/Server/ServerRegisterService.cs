@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using RhoMicro.ApplicationFramework.Aspects;
 
 sealed partial class ServerRegisterService(
+    IValidatePrehashedPasswordParametersService validateService,
     ICreatePasswordParametersService parametersService,
     IHashPasswordService hashingService,
     ICreateBioCodeService bioCodeService,
@@ -14,6 +15,10 @@ sealed partial class ServerRegisterService(
     [ServiceMethod]
     async ValueTask<ServerRegister.Result> ServerRegister(CitizenName name, PrehashedPassword password, CancellationToken ct)
     {
+        var validationResult = await validateService.ValidatePrehashedPasswordParameters(password.Parameters, ct);
+        if(validationResult.TryAsInsecure(out var f))
+            return f;
+
         var parameters = await parametersService.CreatePasswordParameters(ct);
         var hashedPw = await hashingService.HashPassword(password, parameters, ct);
         var bioCode = await bioCodeService.CreateBioCode(name, ct);

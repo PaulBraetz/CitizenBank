@@ -12,7 +12,7 @@ using System.Text;
 
 namespace Microsoft.AspNetCore.Cryptography.KeyDerivation.PBKDF2;
 
-sealed class Yielder
+public sealed class Yielder
 {
     public Yielder(TimeSpan yieldInterval, TimeSpan yieldTime)
     {

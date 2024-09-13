@@ -4,7 +4,7 @@ using RhoMicro.ApplicationFramework.Aspects;
 using RhoMicro.ApplicationFramework.Composition;
 
 [FakeService]
-sealed partial class PersistRegistrationRequestServiceFake(DbFake repository)
+sealed partial class PersistRegistrationRequestService(DbFake repository)
 {
     [ServiceMethod(ServiceInterfaceName = "IRegistrationRequestPersister")]
     PersistRegistrationRequest.Result PersistRegistrationRequest(CitizenName name, HashedPassword password, BioCode bioCode)

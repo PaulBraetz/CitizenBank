@@ -2,27 +2,29 @@
 
 !pragma teoz true
 
+title Complete Registration
+
 box Server
-box Login Feature #Snow
-participant ServerLogin
-end box
+    box Login Feature #Snow
+        participant ServerLogin
+    end box
 
-box CompleteRegistration Feature #Snow
-participant CompleteRegistration
-participant ValidatePassword
-participant ValidateBio
-participant LoadBio
-participant PersistRegistration
-participant DeleteRegistrationRequest
-end box
+    box CompleteRegistration Feature #Snow
+        participant CompleteRegistration
+        participant ValidatePassword
+        participant ValidateBio
+        participant LoadBio
+        participant PersistRegistration
+        participant DeleteRegistrationRequest
+    end box
 
-box Authentication Feature #Snow
-participant HashPassword
-end box
+    box Authentication Feature #Snow
+        participant HashPassword
+    end box
 end box
 
 box External
-boundary CIG
+    boundary CIG
 end box
 
 ServerLogin -> CompleteRegistration: (CitizenName, HashedPassword, BioCode, PrehashedPassword)

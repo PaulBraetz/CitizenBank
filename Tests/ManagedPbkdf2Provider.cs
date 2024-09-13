@@ -1,37 +1,21 @@
-﻿//the following file is derived from:
-//https://source.dot.net/#Microsoft.AspNetCore.Cryptography.KeyDerivation/PBKDF2/ManagedPbkdf2Provider.cs
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 namespace Microsoft.AspNetCore.Cryptography.KeyDerivation.PBKDF2;
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 
-using CitizenBank.Features.Authentication;
-
 /// <summary>
 /// A PBKDF2 provider which utilizes the managed hash algorithm classes as PRFs.
 /// This isn't the preferred provider since the implementation is slow, but it is provided as a fallback.
 /// </summary>
-public sealed class YieldingManagedPbkdf2Provider(Yielder yielder)
+internal sealed class ManagedPbkdf2Provider
 {
-    public async Task<Byte[]> DeriveKey(
-        String password,
-        PrehashedPasswordParameters parameters,
-        CancellationToken ct)
+    public Byte[] DeriveKey(String password, Byte[] salt, KeyDerivationPrf prf, Int32 iterationCount, Int32 numBytesRequested)
     {
-        ArgumentNullException.ThrowIfNull(parameters);
-
-        ct.ThrowIfCancellationRequested();
-
-        var salt = parameters.Salt.ToArray();
-        var iterationCount = parameters.Iterations;
-        var prf = parameters.Prf;
-        var numBytesRequested = parameters.HashSize;
-
         Debug.Assert(password != null);
         Debug.Assert(salt != null);
         Debug.Assert(iterationCount > 0);
@@ -52,8 +36,6 @@ public sealed class YieldingManagedPbkdf2Provider(Yielder yielder)
         {
             for(UInt32 blockIndex = 1; numBytesRemaining > 0; blockIndex++)
             {
-                ct.ThrowIfCancellationRequested();
-
                 // write the block index out as big-endian
                 saltWithBlockIndex[^4] = (Byte)( blockIndex >> 24 );
                 saltWithBlockIndex[^3] = (Byte)( blockIndex >> 16 );
@@ -69,16 +51,9 @@ public sealed class YieldingManagedPbkdf2Provider(Yielder yielder)
 
                 for(var iter = 1; iter < iterationCount; iter++)
                 {
-                    ct.ThrowIfCancellationRequested();
-
                     U_iter = hashAlgorithm.ComputeHash(U_iter);
                     XorBuffers(src: U_iter, dest: T_blockIndex);
                     // At this point, the 'U_iter' variable actually contains U_{iter+1} (due to indexing differences).
-
-                    if(iter % 100 == 0)
-                    {
-                        await yielder.Yield();
-                    }
                 }
 
                 // At this point, we're done iterating on this block, so copy the transformed block into retVal.
@@ -103,7 +78,7 @@ public sealed class YieldingManagedPbkdf2Provider(Yielder yielder)
                 KeyDerivationPrf.HMACSHA1 => new HMACSHA1(passwordBytes),
                 KeyDerivationPrf.HMACSHA256 => new HMACSHA256(passwordBytes),
                 KeyDerivationPrf.HMACSHA512 => new HMACSHA512(passwordBytes),
-                _ => throw new CryptographicException("Assertion failed:  Unrecognized PRF."),
+                _ => throw new ArgumentOutOfRangeException(nameof(prf), prf, "Unrecognized PRF."),
             };
         } finally
         {

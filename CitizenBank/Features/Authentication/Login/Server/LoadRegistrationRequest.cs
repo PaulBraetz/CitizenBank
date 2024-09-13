@@ -4,7 +4,7 @@ using RhoMicro.CodeAnalysis;
 
 partial record struct LoadRegistrationRequest
 {
-    [UnionType<RegistrationRequest, DoesNotExist>]
+    [UnionType<RegistrationRequest, NotFound>]
     public readonly partial struct Result;
-    public readonly struct DoesNotExist;
+    public readonly struct NotFound;
 }

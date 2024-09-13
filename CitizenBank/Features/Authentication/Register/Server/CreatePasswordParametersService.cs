@@ -9,7 +9,7 @@ using RhoMicro.ApplicationFramework.Aspects;
 sealed partial class CreatePasswordParametersService
 {
     [ServiceMethod]
-    static PasswordParameters CreatePasswordParameters() => 
+    static PasswordParameters CreatePasswordParameters() =>
         new(
             new PasswordParameterNumerics(
                 Iterations: 128,

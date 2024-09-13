@@ -3,8 +3,10 @@
 using System.Threading.Tasks;
 
 using RhoMicro.ApplicationFramework.Aspects;
+using RhoMicro.ApplicationFramework.Composition;
 
-sealed partial class LoadRegistrationServiceFake(DbFake db)
+[FakeService]
+sealed partial class LoadRegistrationService(DbFake db)
 {
     [ServiceMethod(ServiceInterfaceName = "ILoadRegistrationService")]
     ValueTask<LoadRegistration.Result> LoadRegistration(CitizenName name)

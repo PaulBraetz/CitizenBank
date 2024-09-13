@@ -4,7 +4,7 @@ using RhoMicro.ApplicationFramework.Common;
 using RhoMicro.ApplicationFramework.Composition;
 
 [FakeService]
-sealed partial class DeleteRegistrationRequestServiceFake(DbFake db)
+sealed partial class DeleteRegistrationRequestService(DbFake db)
 {
     [ServiceMethod(ServiceInterfaceName = "IDeleteRegistrationRequestService")]
     ValueTask<DeleteRegistrationRequest.Result> DeleteRegistrationRequest(CitizenName name, CancellationToken ct)
