@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<RootNamespace>CitizenBank</RootNamespace>
+		<AssemblyName>CitizenBank.Core</AssemblyName>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<LangVersion>latest</LangVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Content Include="..\Diagrams\out\Features\Authentication\CompleteRegistration\Sequence\Sequence.png" Link="Features\Authentication\CompleteRegistration\Sequence.png" />
+	  <Content Include="..\Diagrams\out\Features\Authentication\Login\Sequence\Sequence.png" Link="Features\Authentication\Login\Sequence.png" />
+	  <Content Include="..\Diagrams\out\Features\Authentication\Registration\Sequence\Sequence.png" Link="Features\Authentication\Register\Sequence.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="CitizenBank.WebServerGui" />
+		<InternalsVisibleTo Include="CitizenBank.Tests" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="8.0.8" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+		<PackageReference Include="RhoMicro.ApplicationFramework.Common" Version="0.0.0-alpha.95" />
+		<PackageReference Include="RhoMicro.ApplicationFramework.Composition" Version="0.0.0-alpha.95" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="RhoMicro.ApplicationFramework.Aspects.Generator" Version="0.0.0-alpha.95">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="RhoMicro.CodeAnalysis.UnionsGenerator" Version="15.1.7">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="SimpleInjector.Integration.ServiceCollection" Version="5.5.0" />
+	</ItemGroup>
+
+</Project>

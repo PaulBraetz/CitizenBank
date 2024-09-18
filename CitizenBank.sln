@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CitizenBank", "CitizenBank\CitizenBank.csproj", "{9F068633-B4D4-4144-A157-DA034D1935D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CitizenBank.Serverside", "CitizenBank\CitizenBank.Serverside.csproj", "{9F068633-B4D4-4144-A157-DA034D1935D0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalGui", "LocalGui\LocalGui.csproj", "{3E40872A-2906-4683-B5FE-56F7210B014C}"
 EndProject
@@ -21,7 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "legacy", "legacy\legacy.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{84D3A95D-BCCC-4776-ABA1-D88E034C1E64}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CitizenBank.Client", "CitizenBank.Client\CitizenBank.Client.csproj", "{C8630B75-D79C-4D85-8992-F72750D13BB2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CitizenBank.Clientside", "CitizenBank.Client\CitizenBank.Clientside.csproj", "{C8630B75-D79C-4D85-8992-F72750D13BB2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CitizenBank.Core", "CitizenBank.Core\CitizenBank.Core.csproj", "{F7910245-8DFE-44CD-B5E0-82A787F92FDD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{C8630B75-D79C-4D85-8992-F72750D13BB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8630B75-D79C-4D85-8992-F72750D13BB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8630B75-D79C-4D85-8992-F72750D13BB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7910245-8DFE-44CD-B5E0-82A787F92FDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7910245-8DFE-44CD-B5E0-82A787F92FDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7910245-8DFE-44CD-B5E0-82A787F92FDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7910245-8DFE-44CD-B5E0-82A787F92FDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

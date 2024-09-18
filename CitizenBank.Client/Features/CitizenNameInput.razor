@@ -1,0 +1,12 @@
+﻿@inherits ModelComponentBase<IInputModel<CitizenName, string>>
+@namespace CitizenBank.Features
+
+<InputControl @attributes="Attributes"
+              Value="Model"
+              TValue="CitizenName"
+              TError="String"
+              Parse="v=>v"
+              CanParse="v=>true"
+              UpdateOnFocusLost="false"
+              ErrorTitleParse="e=>e"
+              InitialValueParse="v=>v" />

@@ -2,17 +2,18 @@
 
 using RhoMicro.ApplicationFramework.Aspects;
 using RhoMicro.ApplicationFramework.Common;
+using RhoMicro.ApplicationFramework.Composition;
 
-using static CitizenBank.Features.Authentication.ValidatePrehashedPasswordParameters;
-
+[FakeService]
 partial class ValidatePrehashedPasswordParametersService
 {
-    [ServiceMethod]
+    [ServiceMethodImplementation(Request = typeof(ValidatePrehashedPasswordParameters), Service = typeof(IValidatePrehashedPasswordParametersService))]
     static ValidatePrehashedPasswordParameters.Result ValidatePrehashedPasswordParameters(PrehashedPasswordParameters parameters) =>
-        parameters.HashSize >= PrehashedPasswordDefaultParameters.HashSize
-        && parameters.Iterations >= PrehashedPasswordDefaultParameters.Iterations
-        && parameters.Prf >= PrehashedPasswordDefaultParameters.Prf
-        && parameters.Salt.Length >= PrehashedPasswordDefaultParameters.SaltLength
-        ? new Success()
-        : new Insecure();
+        //parameters.HashSize >= PrehashedPasswordMinimumParameters.HashSize
+        //&& parameters.Iterations >= PrehashedPasswordMinimumParameters.Iterations
+        //&& parameters.Prf >= PrehashedPasswordMinimumParameters.Prf
+        //&& parameters.Salt.Length >= PrehashedPasswordMinimumParameters.SaltLength
+        //? new Success()
+        //: new ValidatePrehashedPasswordParameters.Insecure();
+        new Success();
 }

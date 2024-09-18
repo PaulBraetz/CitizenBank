@@ -1,0 +1,12 @@
+﻿@page "/register"
+@namespace CitizenBank.Features.Authentication.Register
+
+<RegisterComponent />
+
+@code {
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        this.OptionalRenderMode = new InteractiveWebAssemblyRenderMode(prerender: false);
+    }
+}

@@ -1,0 +1,13 @@
+﻿@page "/login"
+@inherits RhoMicro.ApplicationFramework.Presentation.Views.Blazor.Abstractions.ComponentBase
+@namespace CitizenBank.Features.Authentication.Login
+
+<LoginComponent />
+
+@code {
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        this.OptionalRenderMode = new InteractiveWebAssemblyRenderMode(prerender: true);
+    }
+}

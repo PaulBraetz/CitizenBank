@@ -1,7 +1,7 @@
 ﻿namespace Tests.Integration;
 
 using CitizenBank.Features.Authentication;
-using CitizenBank.Features.Authentication.Register.Client;
+using CitizenBank.Features.Authentication.Register;
 
 using RhoMicro.ApplicationFramework.Composition;
 

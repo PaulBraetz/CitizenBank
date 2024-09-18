@@ -3,17 +3,16 @@
 using System;
 
 using CitizenBank.Composition;
-using CitizenBank.Features.Authentication.Register.Client;
-
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 using NReco.Logging.File;
 
 using RhoMicro.ApplicationFramework.Common;
 using RhoMicro.ApplicationFramework.Common.Abstractions;
 using RhoMicro.ApplicationFramework.Common.Environment;
+using RhoMicro.ApplicationFramework.Composition;
 using RhoMicro.ApplicationFramework.Hosting;
+
+using SimpleInjector;
 
 class Program
 {
@@ -31,25 +30,23 @@ class Program
         .AddTimeout()
         .AddBlazor()
         .AddAppSettings()
-        .AddApiServiceClients()
+        .AddApiServiceClients(o => { })
         .AddFileLogging()
         .ConfigureBuilder(b => b.RootComponents.Add<EntryPoint>("app"))
         .ConfigureOptions(o =>
         {
-            o.Composer = Composers.LocalClient + o.Composer;
-            o.OnContainerAdd += o =>
-            {
-                _ = o.Services
-                    .AddTransient<IPasswordGuideline>(sp =>
-                        sp.GetRequiredService<IOptions<RegexPasswordGuideline>>().Value
-                        ?? throw new InvalidOperationException($"Unable to resolve password guidelines."))
-                    .AddOptions<RegexPasswordGuideline>()
-                    .BindConfiguration("PasswordGuideline")
-                    .Validate(
-                        o => true,
-                        "")
-                    .ValidateOnStart();
-            };
+            o.Composer += ClientsideComposers.LocalClient + Composer.Create(c =>
+                c.RegisterServices(
+                    ConventionalServiceRegistrationOptions.PreferAssembly(typeof(ClientsideComposers).Assembly)
+#if !DEBUG
+                    with { RegistrationPredicate = ConventionalServiceRegistrationPredicates.IgnoreAttributeFakes }
+#endif
+                    ,
+                    typeof(CoreComposers).Assembly,
+                    typeof(ClientsideComposers).Assembly));
+
+            o.OnContainerAdd += CoreComposers.SimpleinjectorAddHandler;
+            o.OnContainerAdd += ClientsideComposers.SimpleinjectorAddHandler;
         })
         .ConfigureCapabilities(c =>
         {

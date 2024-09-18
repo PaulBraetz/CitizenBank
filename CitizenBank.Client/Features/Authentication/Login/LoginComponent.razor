@@ -1,0 +1,14 @@
+﻿@inherits InjectedModelComponentBase<ClientLoginModel>
+@namespace CitizenBank.Features.Authentication.Login
+
+<div class="flex flex-col">
+    <div class="flex flex-row">
+        <CitizenNameInputGroup Value="Model.Name" class="mr-2" />
+        <ClearPasswordInputGroup Value="Model.Password" class="mr-2" />
+        <Button Value="Model.Login" />
+    </div>
+    @if (Model.Result.TryAsSome(out var result))
+    {
+        <ClientLoginResult Value="result" />
+    }
+</div>

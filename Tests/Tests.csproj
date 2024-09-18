@@ -8,6 +8,7 @@
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
 		<RootNamespace>Tests</RootNamespace>
+		<AssemblyName>CitizenBank.Tests</AssemblyName>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -15,14 +16,19 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-		<PackageReference Include="RhoMicro.ApplicationFramework.Hosting.Blazor.Extensions" Version="0.0.0-alpha.84" />
-		<PackageReference Include="xunit" Version="2.5.3" />
-		<PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+		<PackageReference Include="RhoMicro.ApplicationFramework.Hosting.Blazor.Extensions" Version="0.0.0-alpha.95" />
+		<PackageReference Include="xunit" Version="2.9.0" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\CitizenBank\CitizenBank.csproj" />
+		<ProjectReference Include="..\CitizenBank.Client\CitizenBank.Clientside.csproj" />
+		<ProjectReference Include="..\CitizenBank.Core\CitizenBank.Core.csproj" />
+		<ProjectReference Include="..\CitizenBank\CitizenBank.Serverside.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

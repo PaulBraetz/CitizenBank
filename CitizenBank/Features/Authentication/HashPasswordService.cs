@@ -1,15 +1,16 @@
 ﻿namespace CitizenBank.Features.Authentication;
 
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 using Konscious.Security.Cryptography;
 
 using RhoMicro.ApplicationFramework.Aspects;
 
-public sealed partial class HashPasswordService
+partial class HashPasswordService
 {
-    [ServiceMethod]
-    public static async ValueTask<HashedPassword> HashPassword(PrehashedPassword password, PasswordParameters parameters)
+    [ServiceMethodImplementation(Request = typeof(HashPassword), Service = typeof(IHashPasswordService))]
+    internal static async ValueTask<HashedPassword> HashPassword(PrehashedPassword password, PasswordParameters parameters)
     {
         ArgumentNullException.ThrowIfNull(parameters);
 

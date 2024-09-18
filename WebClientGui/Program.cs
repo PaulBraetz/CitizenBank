@@ -1,9 +1,7 @@
 using CitizenBank.Composition;
-using CitizenBank.Features.Authentication.Register.Client;
-
-using Microsoft.Extensions.Options;
 
 using RhoMicro.ApplicationFramework.Common.Environment;
+using RhoMicro.ApplicationFramework.Composition;
 using RhoMicro.ApplicationFramework.Hosting;
 
 #if DEBUG
@@ -21,31 +19,29 @@ try
     })
     .AddTimeout()
     .AddBlazor()
-    .AddApiServiceClients()
+    .AddApiServiceClients(o => { })
     .AddConsoleLogging()
     .ConfigureOptions(o =>
     {
-        o.Composer = Composers.WebClient + o.Composer;
-        o.OnContainerAdd += o =>
-        {
-            _ = o.Services
-                .AddTransient<IPasswordGuideline>(sp =>
-                    sp.GetRequiredService<IOptions<RegexPasswordGuideline>>().Value
-                    ?? throw new InvalidOperationException($"Unable to resolve password guidelines."))
-                .AddOptions<RegexPasswordGuideline>()
-                .BindConfiguration("PasswordGuideline")
-                .Validate(
-                    o => true,
-                    "")
-                .ValidateOnStart();
-        };
+        o.Composer += ClientsideComposers.WebClient + Composer.Create(c =>
+            c.RegisterServices(
+                ConventionalServiceRegistrationOptions.PreferAssembly(typeof(ClientsideComposers).Assembly)
+#if !DEBUG
+                    with { RegistrationPredicate = ConventionalServiceRegistrationPredicates.IgnoreAttributeFakes }
+#endif
+                ,
+                typeof(CoreComposers).Assembly,
+                typeof(ClientsideComposers).Assembly));
+
+        o.OnContainerAdd += CoreComposers.SimpleinjectorAddHandler;
+        o.OnContainerAdd += ClientsideComposers.SimpleinjectorAddHandler;
     })
     .ConfigureCapabilities(c => c.Components
         .Add(typeof(CitizenBank.Shared.Presentation.Views.App).Assembly)
         .Add(typeof(CitizenBank.WebClientGui.EntryPoint)))
     .Build()
     .RunAsync()
-    .ConfigureAwait(ConfigureAwaitOptions.ContinueOnCapturedContext);
+    .ConfigureAwait(true);
 #if DEBUG
 } catch(Exception ex)
 {

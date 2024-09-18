@@ -1,0 +1,151 @@
+@startuml
+
+!pragma teoz true
+
+title Register
+
+actor User
+
+box Client
+box Register Feature #Snow
+participant ClientRegister
+participant ValidatePasswordAgainstGuideline
+participant CreatePrehashedPasswordParameters
+end box
+
+box Authentication Feature #Snow
+participant PrehashPassword
+end box
+end box
+
+box Server
+box Register Feature #Snow
+participant ServerRegister
+participant CreatePasswordParameters
+participant CreateBioCode
+participant PersistRegistrationRequest
+end box
+
+box Authentication Feature #Snow
+participant ValidatePrehashedPasswordParameters
+participant HashPassword
+end box
+end box
+
+box Core
+box Authentication Feature #Snow
+participant DoesCitizenExist
+end box
+end box
+
+box External #LightSkyBlue
+boundary CIG
+end box
+
+User -> ClientRegister: (CitizenName, ClearPassword)
+activate ClientRegister
+
+ClientRegister -> DoesCitizenExist: CitizenName
+activate DoesCitizenExist
+DoesCitizenExist -> CIG: CitizenName
+activate CIG
+alt#Gold #LightGreen citizen does exist
+    CIG -> DoesCitizenExist: 200
+    DoesCitizenExist -> ClientRegister: success
+else #Pink citizen does not exist
+    CIG -> DoesCitizenExist: 404
+    deactivate CIG
+    DoesCitizenExist -> ClientRegister: failure
+    deactivate DoesCitizenExist
+    ClientRegister -> User: failure
+end
+
+ClientRegister -> ValidatePasswordAgainstGuideline: ClearPassword
+activate ValidatePasswordAgainstGuideline
+alt#Gold #LightGreen password is valid
+    ValidatePasswordAgainstGuideline -> ClientRegister: success
+else #Pink password is invalid
+    ValidatePasswordAgainstGuideline -> ClientRegister: ValidationResult
+    deactivate ValidatePasswordAgainstGuideline
+    ClientRegister -> User: ValidationResult
+end
+
+ClientRegister -> CreatePrehashedPasswordParameters
+activate CreatePrehashedPasswordParameters
+CreatePrehashedPasswordParameters -> ClientRegister: PrehashedPasswordParameters
+deactivate CreatePrehashedPasswordParameters
+
+ClientRegister -> PrehashPassword: (ClearPassword, PrehashedPasswordParameters)
+activate PrehashPassword
+PrehashPassword -> ClientRegister: (PrehashedPassword, PrehashedPasswordParameters)
+deactivate PrehashPassword
+
+ClientRegister -> ServerRegister: (CitizenName, PrehashedPassword, PrehashedPasswordParameters)
+activate ServerRegister
+
+ServerRegister -> DoesCitizenExist: CitizenName
+activate DoesCitizenExist
+DoesCitizenExist -> CIG: CitizenName
+activate CIG
+alt#Gold #LightGreen citizen does exist
+    CIG -> DoesCitizenExist: 200
+    DoesCitizenExist -> ServerRegister: success
+else #Pink citizen does not exist
+    CIG -> DoesCitizenExist: 404
+    deactivate CIG
+    DoesCitizenExist -> ServerRegister: failure
+    deactivate DoesCitizenExist
+    ServerRegister -> ClientRegister: failure
+    ClientRegister -> User: failure
+end
+
+ServerRegister -> ValidatePrehashedPasswordParameters: PrehashedPasswordParameters
+activate ValidatePrehashedPasswordParameters
+alt#Gold #LightGreen parameters are valid
+    ValidatePrehashedPasswordParameters -> ServerRegister: success
+else #Pink parameters are invalid
+    ValidatePrehashedPasswordParameters -> ServerRegister: failure
+    deactivate ValidatePrehashedPasswordParameters
+    ServerRegister -> ClientRegister: failure
+    ClientRegister -> User: failure
+end
+ServerRegister -> CreatePasswordParameters
+activate CreatePasswordParameters
+CreatePasswordParameters -> ServerRegister: PasswordParameters
+deactivate CreatePasswordParameters
+ServerRegister -> HashPassword: (PrehashedPassword, PasswordParameters)
+activate HashPassword
+HashPassword -> ServerRegister: HashedPassword
+deactivate HashPassword
+
+ServerRegister -> CreateBioCode: CitizenName
+activate CreateBioCode
+loop#Gold #LightBlue BioCode is default or RegistrationRequest with (BioCode, CitizenName) exists
+    CreateBioCode -> CreateBioCode: BioCode
+end
+CreateBioCode -> ServerRegister: BioCode
+deactivate CreateBioCode
+
+ServerRegister -> PersistRegistrationRequest: (CitizenName, HashedPassword, BioCode)
+activate PersistRegistrationRequest
+alt#Gold #LightGreen insert overwrote existing with CitizenName
+    PersistRegistrationRequest -> ServerRegister: overwrite-success
+
+    ServerRegister -> ClientRegister: (overwrite-success, BioCode)
+    ClientRegister -> User: (overwrite-success, BioCode)
+else #LightGreen insert succeeded
+    PersistRegistrationRequest -> ServerRegister: success
+
+    ServerRegister -> ClientRegister: (success, BioCode)
+
+    ClientRegister -> User: (success, BioCode)
+else #Pink insert failed
+    PersistRegistrationRequest -> ServerRegister: failure
+    deactivate PersistRegistrationRequest
+    ServerRegister -> ClientRegister: failure
+    deactivate ServerRegister
+    ClientRegister -> User: failure
+    deactivate ClientRegister
+end
+
+@enduml

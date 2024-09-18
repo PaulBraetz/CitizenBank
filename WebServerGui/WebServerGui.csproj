@@ -8,12 +8,13 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.8" />
-		<PackageReference Include="RhoMicro.ApplicationFramework.Common" Version="0.0.0-alpha.83" />
-		<PackageReference Include="RhoMicro.ApplicationFramework.Hosting.Blazor.WebServerGui" Version="0.0.0-alpha.83" />
+		<PackageReference Include="RhoMicro.ApplicationFramework.Common" Version="0.0.0-alpha.95" />
+		<PackageReference Include="RhoMicro.ApplicationFramework.Hosting.Blazor.WebServerGui" Version="0.0.0-alpha.95" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\CitizenBank\CitizenBank.csproj" />
+		<ProjectReference Include="..\CitizenBank.Client\CitizenBank.Clientside.csproj" />
+		<ProjectReference Include="..\CitizenBank\CitizenBank.Serverside.csproj" />
 		<ProjectReference Include="..\WebClientGui\WebClientGui.csproj" />
 	</ItemGroup>
 

@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<RootNamespace>CitizenBank</RootNamespace>
+		<AssemblyName>CitizenBank.Serverside</AssemblyName>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<LangVersion>latest</LangVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="CitizenBank.WebServerGui" />
+		<InternalsVisibleTo Include="CitizenBank.Tests" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.3.1" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.8" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="RhoMicro.ApplicationFramework.Common" Version="0.0.0-alpha.95" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="RhoMicro.ApplicationFramework.Aspects.Generator" Version="0.0.0-alpha.95">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="RhoMicro.CodeAnalysis.UnionsGenerator" Version="15.1.7">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="SimpleInjector.Integration.ServiceCollection" Version="5.5.0" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <ProjectReference Include="..\CitizenBank.Core\CitizenBank.Core.csproj" />
+	</ItemGroup>
+
+</Project>

@@ -1,23 +1,22 @@
 ﻿namespace CitizenBank.Features.Authentication.CompleteRegistration;
 using RhoMicro.ApplicationFramework.Aspects;
-using CitizenBank.Features.Authentication;
 using Microsoft.Extensions.Logging;
 
 partial class CompleteRegistrationService(
     IValidatePasswordService validatePasswordService,
-    IValidateBioService validateBioService,
+    IValidateBioCodeService validateBioService,
     IDeleteRegistrationRequestService deleteRegistrationRequestService,
     IPersistRegistrationService persistRegistrationService,
     ILogger logger)
 {
-    [ServiceMethod]
+    [ServiceMethodImplementation(Request = typeof(CompleteRegistration), Service = typeof(ICompleteRegistrationService))]
     async ValueTask<CompleteRegistration.Result> CompleteRegistration(RegistrationRequest request, PrehashedPassword password, CancellationToken ct)
     {
         var validatePasswordResult = await validatePasswordService.ValidatePassword(password, request.Password, ct);
         if(validatePasswordResult.TryAsMismatch(out var passwordMismatch))
             return (CompleteRegistration.Failure)passwordMismatch;
 
-        var validateBioCodeResult = await validateBioService.ValidateBio(request.Name, request.BioCode, ct);
+        var validateBioCodeResult = await validateBioService.ValidateBioCode(request.Name, request.BioCode, ct);
         if(validateBioCodeResult.TryAsMismatch(out var bioCodeMismatch))
             return (CompleteRegistration.Failure)bioCodeMismatch;
         if(validateBioCodeResult.TryAsUnknownCitizen(out var unknownCitizen))

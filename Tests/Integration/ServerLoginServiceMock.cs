@@ -3,7 +3,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-using CitizenBank.Features.Authentication.Login.Server;
+using CitizenBank.Features.Authentication.Login;
 
 using RhoMicro.ApplicationFramework.Common.Abstractions;
 using RhoMicro.ApplicationFramework.Composition;

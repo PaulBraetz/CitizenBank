@@ -42,5 +42,4 @@ static class PasswordHelpers
             return result;
         }
     }
-
 }

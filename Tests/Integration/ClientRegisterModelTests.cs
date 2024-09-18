@@ -1,38 +1,26 @@
 ﻿namespace Tests.Integration;
 
-using CitizenBank.Composition;
+using System.Data;
+using System.Threading;
+
+using CitizenBank.Features;
 using CitizenBank.Features.Authentication;
-using CitizenBank.Features.Authentication.Login.Server;
-using CitizenBank.Features.Authentication.Register.Client;
-using CitizenBank.Features.Authentication.Register.Server;
+using CitizenBank.Features.Authentication.Register;
 
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-
+using RhoMicro.ApplicationFramework.Common;
 using RhoMicro.ApplicationFramework.Composition;
+
+using SimpleInjector;
 
 public class ClientRegisterModelTests : IntegrationTestBase
 {
-    private static void ConfigureMockContext(MockRegistrationContext ctx)
-    {
-        ctx.PasswordGuideline = new PasswordGuidelineMock(static p => PasswordValidity.Empty);
-        ctx.ServerRegisterService = new ServerRegisterServiceMock((r, ct) => ValueTask.FromResult<ServerRegister.Result>(new ServerRegister.CreateSuccess(new BioCode(""))));
-        ctx.LoadPrehashedPasswordParametersService = new LoadPrehashedPasswordParametersServiceMock(static (r, ct) =>
-        {
-            var salt = new Byte[512];
-            new Random(0).NextBytes(salt);
-            var result = ValueTask.FromResult<LoadPrehashedPasswordParameters.Result>(new PrehashedPasswordParameters(
-                Salt: [.. salt],
-                HashSize: 512,
-                Prf: KeyDerivationPrf.HMACSHA256,
-                Iterations: 100));
-
-            return result;
-        });
-    }
     [Fact]
     public async Task LocalClientRegister_yields_success_on_new_register()
     {
-        var model = GetService<ClientRegisterModel>(Composers.LocalClient,ConfigureMockContext);
+        using var scope = CreateService<ClientRegisterModel>(
+            (typeof(IDoesCitizenExistService), new DoesCitizenExistServiceMock(async (_, _) => new Success())));
+        var model = scope.Service;
+
         model.Name.Input.Value = "SleepWellPupper";
         model.Password.Input.Value = "SuperSecretPassword1.";
         await model.Register.Click(default);
@@ -40,16 +28,83 @@ public class ClientRegisterModelTests : IntegrationTestBase
         Assert.True(model.Result.AsSome.IsCreateSuccess);
     }
     [Fact]
+    public async Task LocalClientRegister_yields_failure_on_nonexisting_name()
+    {
+        using var scope = CreateService<ClientRegisterModel>(
+            (typeof(IDoesCitizenExistService), new DoesCitizenExistServiceMock(async (_, _) => new DoesCitizenExist.DoesNotExist())));
+        var model = scope.Service;
+
+        model.Name.Input.Value = "SleepWellPupper";
+        model.Password.Input.Value = "SuperSecretPassword1.";
+        await model.Register.Click(default);
+        Assert.True(model.Result.IsSome);
+        Assert.True(model.Result.AsSome.IsCitizenDoesNotExist);
+    }
+    [Fact]
+    public async Task LocalClientRegister_yields_violated_rules_on_invalid_password()
+    {
+        IPasswordRule rule = new NeverMatchingPasswordRuleMock();
+
+        using var scope = CreateService<ClientRegisterModel>(
+            (typeof(IPasswordGuideline), new PasswordGuideline([rule])),
+            (typeof(IDoesCitizenExistService), new DoesCitizenExistServiceMock(async (_, _) => new Success())));
+        var model = scope.Service;
+
+        model.Name.Input.Value = "SleepWellPupper";
+        model.Password.Input.Value = "SuperSecretPassword1.";
+        await model.Register.Click(default);
+        Assert.True(model.Result.IsSome);
+        Assert.True(model.Result.AsSome.IsViolatedGuidelines);
+        Assert.Equal(model.Result.AsSome.AsViolatedGuidelines.RulesViolated, new[] { rule });
+    }
+    [Fact]
     public async Task LocalClientRegister_yields_overwrite_success_on_duplicate_register()
     {
-        var model = GetService<ClientRegisterModel>(
-            Composers.LocalClient,
-            ConfigureMockContext);
+        using var scope = CreateService<ClientRegisterModel>(
+            (typeof(IDoesCitizenExistService), new DoesCitizenExistServiceMock(async (_, _) => new Success())));
+        var model = scope.Service;
+
         model.Name.Input.Value = "SleepWellPupper";
         model.Password.Input.Value = "SuperSecretPassword1.";
         await model.Register.Click(default);
         await model.Register.Click(default);
         Assert.True(model.Result.IsSome);
         Assert.True(model.Result.AsSome.IsOverwriteSuccess);
+    }
+    [Fact]
+    public void LocalClientRegister_register_button_is_disabled_if_name_input_is_empty()
+    {
+        using var scope = CreateService<ClientRegisterModel>();
+        var model = scope.Service;
+
+        model.Password.Input.Value = "SuperSecretPassword1.";
+        Assert.True(model.Register.Disabled);
+    }
+    [Fact]
+    public void LocalClientRegister_register_button_is_disabled_if_password_input_is_empty()
+    {
+        using var scope = CreateService<ClientRegisterModel>();
+        var model = scope.Service;
+
+        model.Name.Input.Value = "SleepWellPupper";
+        Assert.True(model.Register.Disabled);
+    }
+    [Fact]
+    public void LocalClientRegister_register_button_is_disabled_if_inputs_are_empty()
+    {
+        using var scope = CreateService<ClientRegisterModel>();
+        var model = scope.Service;
+
+        Assert.True(model.Register.Disabled);
+    }
+    [Fact]
+    public void LocalClientRegister_register_button_is_disabled_if_inputs_are_nonempty()
+    {
+        using var scope = CreateService<ClientRegisterModel>();
+        var model = scope.Service;
+
+        model.Name.Input.Value = "SleepWellPupper";
+        model.Password.Input.Value = "SuperSecretPassword1.";
+        Assert.False(model.Register.Disabled);
     }
 }
