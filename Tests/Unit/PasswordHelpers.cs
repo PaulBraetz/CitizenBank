@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 static class PasswordHelpers
 {
-    [SuppressMessage("Security", "CA5394:Do not use insecure randomness", Justification = "<Pending>")]
     public static (PrehashedPassword password, PasswordParameters parameters) CreatePrehashedPasswordAndParameters(Int32 seed)
     {
         var random = new Random(seed);
@@ -24,16 +23,16 @@ static class PasswordHelpers
                 MemorySize: 8,
                 OutputLength: 512),
             new PasswordParameterData(
-                AssociatedData: [.. associatedData],
-                KnownSecret: [.. knownSecret],
-                Salt: [.. salt]));
+                AssociatedData: associatedData,
+                KnownSecret: knownSecret,
+                Salt: salt));
         var prehashedParameters = new PrehashedPasswordParameters(
-            Salt: [.. prehashSalt],
+            Salt: prehashSalt,
             HashSize: 512,
             Prf: KeyDerivationPrf.HMACSHA512,
             Iterations: 100);
 
-        return (new([.. prehashedPassword], prehashedParameters), parameters);
+        return (new(prehashedPassword, prehashedParameters), parameters);
 
         Byte[] getRandomBytes()
         {

@@ -3,15 +3,16 @@
 using System.Threading;
 using System.Threading.Tasks;
 
+using CitizenBank.Features.Authentication;
 using CitizenBank.Features.Authentication.Login;
+using CitizenBank.Features.Shared;
 
-using RhoMicro.ApplicationFramework.Common.Abstractions;
 using RhoMicro.ApplicationFramework.Composition;
 
 [FakeService]
-sealed class LoadPrehashedPasswordParametersServiceMock(Func<LoadPrehashedPasswordParameters, CancellationToken, ValueTask<LoadPrehashedPasswordParameters.Result>> impl) :
-    IService<LoadPrehashedPasswordParameters, LoadPrehashedPasswordParameters.Result>
+sealed class LoadPrehashedPasswordParametersServiceMock(Func<CitizenName, PrehashedPasswordParametersSource, CancellationToken, ValueTask<LoadPrehashedPasswordParameters.Result>> impl) : ILoadPrehashedPasswordParametersService
 {
-    public ValueTask<LoadPrehashedPasswordParameters.Result> Execute(LoadPrehashedPasswordParameters request, CancellationToken cancellationToken) =>
-        impl.Invoke(request, cancellationToken);
+    public LoadPrehashedPasswordParametersServiceMock(LoadPrehashedPasswordParameters.Result result) : this((_, _, _) => ValueTask.FromResult(result)) { }
+    public ValueTask<LoadPrehashedPasswordParameters.Result> LoadPrehashedPasswordParameters(CitizenName name, PrehashedPasswordParametersSource source, CancellationToken cancellationToken = default) =>
+        impl.Invoke(name, source, cancellationToken);
 }

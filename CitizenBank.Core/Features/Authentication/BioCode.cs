@@ -1,4 +1,5 @@
 ﻿namespace CitizenBank.Features.Authentication;
+using System.Collections.Immutable;
 
 /// <summary>
 /// A bio code used for verifying an action related to a specific citizen.

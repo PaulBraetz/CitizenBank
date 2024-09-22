@@ -4,6 +4,7 @@ using RhoMicro.CodeAnalysis;
 using RhoMicro.ApplicationFramework.Common;
 using RhoMicro.ApplicationFramework.Composition;
 using RhoMicro.ApplicationFramework.Aspects;
+using CitizenBank.Features.Shared;
 
 [FakeService]
 partial class ClientRegisterServiceDefinition

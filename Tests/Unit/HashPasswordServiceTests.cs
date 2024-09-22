@@ -22,11 +22,11 @@ public class HashPasswordServiceTests
     public async Task HashPassword_hashes_using_argon_2id(Int32 seed)
     {
         var (prehashedPassword, parameters) = PasswordHelpers.CreatePrehashedPasswordAndParameters(seed);
-        using var argon = new Argon2id([.. prehashedPassword.Digest])
+        using var argon = new Argon2id(prehashedPassword.Digest)
         {
-            AssociatedData = [.. parameters.Data.AssociatedData],
-            KnownSecret = [.. parameters.Data.KnownSecret],
-            Salt = [.. parameters.Data.Salt],
+            AssociatedData = parameters.Data.AssociatedData,
+            KnownSecret = parameters.Data.KnownSecret,
+            Salt = parameters.Data.Salt,
             Iterations = parameters.Numerics.Iterations,
             DegreeOfParallelism = parameters.Numerics.DegreeOfParallelism,
             MemorySize = parameters.Numerics.MemorySize,

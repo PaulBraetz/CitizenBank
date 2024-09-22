@@ -1,5 +1,7 @@
 ﻿namespace CitizenBank.Features.Authentication.Login;
 
+using CitizenBank.Features.Shared;
+
 using RhoMicro.ApplicationFramework.Aspects;
 using RhoMicro.ApplicationFramework.Composition;
 using RhoMicro.CodeAnalysis;

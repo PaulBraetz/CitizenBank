@@ -1,0 +1,12 @@
+﻿@inherits ModelComponentBase<IInputGroupModel<CitizenName, DoesCitizenExist.DoesNotExist>>
+@namespace CitizenBank.Features.Shared
+
+<div @attributes="Attributes">
+    <div>
+        @Model.Label
+    </div>
+    <CitizenNameInput Value="Model.Input" />
+    <div>
+        @Model.Description
+    </div>
+</div>

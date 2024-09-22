@@ -2,4 +2,4 @@
 
 using System.Collections.Immutable;
 
-public readonly record struct HashedPassword(ImmutableArray<Byte> Digest, PasswordParameters Parameters, PrehashedPasswordParameters PrehashedPasswordParameters);
+public readonly record struct HashedPassword(ImmutableBytes Digest, PasswordParameters Parameters, PrehashedPasswordParameters PrehashedPasswordParameters);

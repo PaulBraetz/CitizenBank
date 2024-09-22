@@ -9,12 +9,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="RhoMicro.ApplicationFramework.Common" Version="0.0.0-alpha.95" />
-		<PackageReference Include="RhoMicro.ApplicationFramework.Hosting.Blazor.LocalGui" Version="0.0.0-alpha.95" />
+		<PackageReference Include="RhoMicro.ApplicationFramework.Common" Version="0.0.0-alpha.108" />
+		<PackageReference Include="RhoMicro.ApplicationFramework.Hosting.Blazor.LocalGui" Version="0.0.0-alpha.108" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\CitizenBank.Client\CitizenBank.Clientside.csproj" />
+		<ProjectReference Include="..\CitizenBank.Clientside\CitizenBank.Clientside.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -24,12 +24,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Update="appsettings.Development.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="appsettings.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
+		<Content Include="..\WebClientGui\wwwroot\appsettings.Development.Core.json" Link="appsettings.Development.Core.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Update="appsettings.Development.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Update="appsettings.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -37,5 +40,5 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
-	
+
 </Project>

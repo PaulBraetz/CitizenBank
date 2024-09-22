@@ -7,3 +7,5 @@ using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task")]
 [assembly: SuppressMessage("Security", "CA5394:Do not use insecure randomness")]
+[assembly: SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores")]
+[assembly: SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes")]

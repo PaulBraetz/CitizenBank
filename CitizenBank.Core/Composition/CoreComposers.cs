@@ -1,12 +1,5 @@
 ﻿namespace CitizenBank.Composition;
-
-using System.Net.Http;
-
-using CitizenBank.Features.Authentication;
-using CitizenBank.Infrastructure;
-
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+using CitizenBank.Persistence;
 
 using RhoMicro.ApplicationFramework.Composition;
 
@@ -14,10 +7,13 @@ using SimpleInjector;
 using SimpleInjector.Integration.ServiceCollection;
 
 /// <summary>
-/// Contains template composers.
+/// Contains core object graph composers.
 /// </summary>
 public static class CoreComposers
 {
+    /// <summary>
+    /// Gets the core composer instance.
+    /// </summary>
     public static IComposer Instance { get; } = Composer.Create(c =>
     {
         c.RegisterConditional(
@@ -28,5 +24,8 @@ public static class CoreComposers
             Lifestyle.Singleton,
             ctx => !ctx.Handled);
     });
+    /// <summary>
+    /// Gets the core Simpleinjector integration event handler.
+    /// </summary>
     public static Action<SimpleInjectorAddOptions> SimpleinjectorAddHandler { get; } = o => { };
 }

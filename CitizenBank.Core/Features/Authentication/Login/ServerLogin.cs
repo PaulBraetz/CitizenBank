@@ -1,6 +1,7 @@
 ﻿namespace CitizenBank.Features.Authentication.Login;
 
 using CitizenBank.Features.Authentication.CompleteRegistration;
+using CitizenBank.Features.Shared;
 
 using RhoMicro.ApplicationFramework.Aspects;
 using RhoMicro.ApplicationFramework.Common.Abstractions;
@@ -22,6 +23,7 @@ public partial record struct ServerLogin : IApiRequest<ServerLogin, ServerLogin.
     [UnionType<LoadRegistration.DoesNotExist>(Alias = "LoadRegistrationDoesNotExist")]
     [UnionType<ValidatePassword.Mismatch>(Alias = "PasswordMismatch")]
     [UnionType<ValidatePrehashedPasswordParameters.Insecure>(Alias = "InsecurePrehashParameters")]
+    [UnionType<DoesCitizenExist.DoesNotExist>(Alias = "CitizenDoesNotExist")]
     public readonly partial struct Failure;
     public readonly struct Success;
     [UnionType<Failure, Success>]
@@ -35,7 +37,7 @@ public partial record struct ServerLogin : IApiRequest<ServerLogin, ServerLogin.
             Result IApiResultDto<Result>.ToResult() =>
                 Kind switch
                 {
-                    0 => (Failure)(CompleteRegistration.Failure)new LoadBio.UnknownCitizen(),
+                    0 => (Failure)(CompleteRegistration.Failure)new GetCitizenBio.NotFound(),
                     1 => (Failure)(CompleteRegistration.Failure)new RhoMicro.ApplicationFramework.Common.Failure(Reason),
                     2 => (Failure)(CompleteRegistration.Failure)new ValidatePassword.Mismatch(),
                     3 => (Failure)(CompleteRegistration.Failure)new ValidateBioCode.Mismatch(),
@@ -43,6 +45,7 @@ public partial record struct ServerLogin : IApiRequest<ServerLogin, ServerLogin.
                     4 => (Failure)new LoadRegistration.DoesNotExist(),
                     5 => (Failure)new ValidatePassword.Mismatch(),
                     6 => (Failure)new ValidatePrehashedPasswordParameters.Insecure(),
+                    8 => (Failure)new DoesCitizenExist.DoesNotExist(),
 
                     7 => new Success(),
                     _ => throw new InvalidOperationException("Invalid dto data received.")
@@ -54,14 +57,15 @@ public partial record struct ServerLogin : IApiRequest<ServerLogin, ServerLogin.
             Kind = Match(
                 (Failure f) => f.Match(
                     (CompleteRegistration.Failure f) => f.Match(
-                        (LoadBio.UnknownCitizen _) => 0,
+                        (GetCitizenBio.NotFound _) => 0,
                         (RhoMicro.ApplicationFramework.Common.Failure _) => 1,
                         (ValidatePassword.Mismatch _) => 2,
                         (ValidateBioCode.Mismatch _) => 3),
                     (RhoMicro.ApplicationFramework.Common.Failure _) => 1,
                     (LoadRegistration.DoesNotExist _) => 4,
                     (ValidatePassword.Mismatch _) => 5,
-                    (ValidatePrehashedPasswordParameters.Insecure _) => 6),
+                    (ValidatePrehashedPasswordParameters.Insecure _) => 6,
+                    (DoesCitizenExist.DoesNotExist _) => 8),
                 (Success _) => 7),
             Reason =
                 TryAsFailure(out var f0)
@@ -80,13 +84,13 @@ public partial record struct ServerLogin : IApiRequest<ServerLogin, ServerLogin.
         (
             Name: Name,
             Password: new(
-                Digest: [.. Convert.FromBase64String(Password)],
+                Digest: ImmutableBytes.FromBase64String(Password),
                 Parameters: Parameters)
         );
     }
 
     Dto IApiRequest<ServerLogin, Result, Dto, Result.Dto>.ToDto() => new(
         Name: Name,
-        Password: Convert.ToBase64String(Password.Digest.ToArray()),
+        Password: Password.Digest.ToBase64String(),
         Parameters: Password.Parameters);
 }

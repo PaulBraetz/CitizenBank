@@ -1,5 +1,7 @@
 ﻿namespace CitizenBank.Features.Authentication.Login;
 
+using CitizenBank.Features.Shared;
+
 using RhoMicro.ApplicationFramework.Aspects;
 using RhoMicro.ApplicationFramework.Common;
 using RhoMicro.ApplicationFramework.Composition;
@@ -15,7 +17,9 @@ partial class ClientLoginServiceDefinition
 
 public partial record struct ClientLogin
 {
-    [UnionType<ValidatePassword.Mismatch, Failure, Success>]
+    [UnionType<Failure, Success>]
+    [UnionType<DoesCitizenExist.DoesNotExist>(Alias = "CitizenDoesNotExist")]
+    [UnionType<ValidatePassword.Mismatch>(Alias = "PasswordMismatch")]
     public readonly partial struct Result;
     public readonly struct Success;
 }

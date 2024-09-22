@@ -17,7 +17,7 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
-		<PackageReference Include="RhoMicro.ApplicationFramework.Hosting.Blazor.Extensions" Version="0.0.0-alpha.95" />
+		<PackageReference Include="RhoMicro.ApplicationFramework.Hosting.Blazor.Extensions" Version="0.0.0-alpha.108" />
 		<PackageReference Include="xunit" Version="2.9.0" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
 		  <PrivateAssets>all</PrivateAssets>
@@ -26,9 +26,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\CitizenBank.Client\CitizenBank.Clientside.csproj" />
+		<ProjectReference Include="..\CitizenBank.Clientside\CitizenBank.Clientside.csproj" />
 		<ProjectReference Include="..\CitizenBank.Core\CitizenBank.Core.csproj" />
-		<ProjectReference Include="..\CitizenBank\CitizenBank.Serverside.csproj" />
+		<ProjectReference Include="..\CitizenBank.Serverside\CitizenBank.Serverside.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

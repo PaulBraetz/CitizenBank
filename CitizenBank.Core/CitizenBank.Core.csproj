@@ -12,23 +12,21 @@
 	<ItemGroup>
 	  <Content Include="..\Diagrams\out\Features\Authentication\CompleteRegistration\Sequence\Sequence.png" Link="Features\Authentication\CompleteRegistration\Sequence.png" />
 	  <Content Include="..\Diagrams\out\Features\Authentication\Login\Sequence\Sequence.png" Link="Features\Authentication\Login\Sequence.png" />
-	  <Content Include="..\Diagrams\out\Features\Authentication\Registration\Sequence\Sequence.png" Link="Features\Authentication\Register\Sequence.png" />
-	</ItemGroup>
+	  <Content Include="..\Diagrams\out\Features\Authentication\Registration\Sequence\Sequence.png" Link="Features\Authentication\Register\Sequence.png" />	</ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="CitizenBank.WebServerGui" />
 		<InternalsVisibleTo Include="CitizenBank.Tests" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="8.0.8" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
-		<PackageReference Include="RhoMicro.ApplicationFramework.Common" Version="0.0.0-alpha.95" />
-		<PackageReference Include="RhoMicro.ApplicationFramework.Composition" Version="0.0.0-alpha.95" />
+		<PackageReference Include="RhoMicro.ApplicationFramework.Common" Version="0.0.0-alpha.108" />
+		<PackageReference Include="RhoMicro.ApplicationFramework.Composition" Version="0.0.0-alpha.108" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="RhoMicro.ApplicationFramework.Aspects.Generator" Version="0.0.0-alpha.95">
+		<PackageReference Include="RhoMicro.ApplicationFramework.Aspects.Generator" Version="0.0.0-alpha.108">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>

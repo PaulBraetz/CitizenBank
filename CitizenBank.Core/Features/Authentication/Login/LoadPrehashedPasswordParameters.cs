@@ -2,6 +2,8 @@
 
 using System.Diagnostics.CodeAnalysis;
 
+using CitizenBank.Features.Shared;
+
 using RhoMicro.ApplicationFramework.Aspects;
 using RhoMicro.ApplicationFramework.Common.Abstractions;
 using RhoMicro.ApplicationFramework.Composition;
@@ -31,7 +33,9 @@ public partial record struct LoadPrehashedPasswordParameters
     public readonly partial struct Result : IApiResult<Result, Result.Dto>
     {
         public sealed record Dto(
+#pragma warning disable IDE0280 // Use 'nameof'
             [property: MemberNotNullWhen(true, "Parameters")] Boolean IsSuccess,
+#pragma warning restore IDE0280 // Use 'nameof'
             PrehashedPasswordParameters? Parameters) : IApiResultDto<Result>
         {
             Result IApiResultDto<Result>.ToResult() =>

@@ -8,21 +8,24 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.8" />
-		<PackageReference Include="RhoMicro.ApplicationFramework.Common" Version="0.0.0-alpha.95" />
-		<PackageReference Include="RhoMicro.ApplicationFramework.Hosting.Blazor.WebClientGui" Version="0.0.0-alpha.95" />
+		<PackageReference Include="RhoMicro.ApplicationFramework.Common" Version="0.0.0-alpha.108" />
+		<PackageReference Include="RhoMicro.ApplicationFramework.Hosting.Blazor.WebClientGui" Version="0.0.0-alpha.108" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\CitizenBank.Client\CitizenBank.Clientside.csproj" />
+		<ProjectReference Include="..\CitizenBank.Clientside\CitizenBank.Clientside.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Update="wwwroot\appsettings.Development.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="wwwroot\appsettings.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
+		<Content Update="..\appsettings.Development.Core.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Update="wwwroot\appsettings.Development.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Update="wwwroot\appsettings.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 </Project>

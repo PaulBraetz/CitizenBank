@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 public sealed record PrehashedPasswordParameters(
-    ImmutableArray<Byte> Salt,
+    ImmutableBytes Salt,
     Int32 HashSize,
     KeyDerivationPrf Prf,
     Int32 Iterations);

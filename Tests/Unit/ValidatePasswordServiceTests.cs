@@ -56,7 +56,7 @@ public class ValidatePasswordServiceTests
         var (differentPrehashedPassword, differentParameters) = PasswordHelpers.CreatePrehashedPasswordAndParameters(differentSeed);
 
         Debug.Assert(!differentParameters.Equals(parameters));
-        Debug.Assert(!differentPrehashedPassword.Digest.SequenceEqual(prehashedPassword.Digest));
+        Debug.Assert(differentPrehashedPassword.Digest != prehashedPassword.Digest);
 
         var result = await validatePasswordService.ValidatePassword(differentPrehashedPassword, hashedPassword, default);
         Assert.True(result.IsMismatch);

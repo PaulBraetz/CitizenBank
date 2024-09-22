@@ -1,0 +1,17 @@
+﻿@inherits ModelComponentBase<IInputModel<CitizenName, DoesCitizenExist.DoesNotExist>>
+@namespace CitizenBank.Features.Shared
+
+<InputControl @attributes="Attributes"
+              Value="Model"
+              TValue="CitizenName"
+              TError="DoesCitizenExist.DoesNotExist"
+              Parse="v=>v"
+              CanParse="v=>true"
+              UpdateOnFocusLost="false"
+              ErrorTitleParse="ParseErrorTitle"
+              InitialValueParse="v=>v" />
+
+@code {
+    static String ParseErrorTitle(DoesCitizenExist.DoesNotExist _) =>
+        $"The citizen provided does not appear to exist.";
+}

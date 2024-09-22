@@ -1,5 +1,7 @@
 ﻿namespace CitizenBank.Features.Authentication.Register;
 
+using CitizenBank.Features.Shared;
+
 using RhoMicro.ApplicationFramework.Aspects;
 using RhoMicro.ApplicationFramework.Common;
 using RhoMicro.ApplicationFramework.Common.Abstractions;
@@ -22,7 +24,7 @@ public partial record struct ServerRegister : IApiRequest<ServerRegister, Server
         (
             Name: Name,
             Password: new PrehashedPassword(
-                Digest: [.. Convert.FromBase64String(Password)],
+                Digest: ImmutableBytes.FromBase64String(Password),
                 Parameters: Parameters)
         );
     }
@@ -68,7 +70,7 @@ public partial record struct ServerRegister : IApiRequest<ServerRegister, Server
     Dto IApiRequest<ServerRegister, Result, Dto, Result.Dto>.ToDto() => new
     (
         Name: Name,
-        Password: Convert.ToBase64String(Password.Digest.ToArray()),
+        Password: Password.Digest.ToBase64String(),
         Parameters: Password.Parameters
     );
 }

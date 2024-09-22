@@ -33,7 +33,7 @@ end box
 end box
 
 box Core
-box Authentication Feature #Snow
+box Shared Feature #Snow
 participant DoesCitizenExist
 end box
 end box

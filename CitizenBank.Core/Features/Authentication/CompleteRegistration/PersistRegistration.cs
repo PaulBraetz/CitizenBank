@@ -1,5 +1,7 @@
 ﻿namespace CitizenBank.Features.Authentication.CompleteRegistration;
 
+using CitizenBank.Features.Shared;
+
 using RhoMicro.ApplicationFramework.Aspects;
 using RhoMicro.ApplicationFramework.Common;
 using RhoMicro.ApplicationFramework.Composition;

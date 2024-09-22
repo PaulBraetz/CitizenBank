@@ -5,4 +5,5 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "Handled by decorator.")]
+[assembly: SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "generated consumer")]
+[assembly: SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "explicit request/result pattern")]

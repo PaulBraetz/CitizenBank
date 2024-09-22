@@ -1,15 +1,20 @@
 using CitizenBank.Composition;
+using CitizenBank.Features.Authentication.CompleteRegistration;
+using CitizenBank.Features.Shared;
 using CitizenBank.WebServerGui;
 
 using Microsoft.Extensions.Options;
 
+using RhoMicro.ApplicationFramework.Common.Abstractions;
 using RhoMicro.ApplicationFramework.Common.Environment;
 using RhoMicro.ApplicationFramework.Composition;
 using RhoMicro.ApplicationFramework.Hosting;
 
-await WebServerGuiApp.CreateBuilder(out var builder, s =>
+using SimpleInjector;
+
+await WebServerGuiApp.CreateBuilder(s =>
     {
-        s.BuilderSettings = new WebApplicationOptions()
+        s.AppOptions = new WebApplicationOptions()
         {
             Args = args,
 #if DEBUG
@@ -18,35 +23,51 @@ await WebServerGuiApp.CreateBuilder(out var builder, s =>
             EnvironmentName = EnvironmentConfiguration.Production.Name
 #endif
         };
+        s.SetupLoggingCallback = Console.WriteLine;
     })
+    //get config up before mapping endpoints, as those resolve settings
+    .ConfigureCapabilities(c => c.Configuration.AddJsonFile(Path.Combine(Path.GetDirectoryName(typeof(Program).Assembly.Location) ?? String.Empty, $"appsettings.{c.EnvironmentConfiguration.Name}.Core.json")))
+    .AddFileLogging(configSection: "Logging:File")
     .AddTimeout()
     .AddClipboard()
     .AddBlazor()
+    .AddAspects(
+        Lifestyle.Scoped,
+        CommonAspects.Execution | CommonAspects.ServiceType,
+        interceptors => interceptors.Append<CitizenNameInterceptor, CitizenName>())
     .AddApiServiceEndpoints()
     .AddConsoleLogging()
+#if DEBUG
+    .AddHostedServices(typeof(DatabaseSeedService).Assembly)
+#endif
     .ConfigureOptions(o =>
     {
         o.Composer += ClientsideComposers.Default + ServersideComposers.WebServer + Composer.Create(c =>
+        {
             c.RegisterServices(
-                ConventionalServiceRegistrationOptions.PreferAssembly(typeof(ServersideComposers).Assembly)
+                ConventionalServiceRegistrationOptions.PreferAssemblies(
+                    typeof(ServersideComposers).Assembly,
+                    typeof(ClientsideComposers).Assembly)
 #if !DEBUG
-                    with { RegistrationPredicate = ConventionalServiceRegistrationPredicates.IgnoreAttributeFakes }
+                with { RegistrationPredicate = ConventionalServiceRegistrationPredicates.IgnoreAttributeFakes }
 #endif
                 ,
                 typeof(CoreComposers).Assembly,
-                typeof(ServersideComposers).Assembly));
-
+                typeof(ClientsideComposers).Assembly,
+                typeof(ServersideComposers).Assembly);
+        });
         o.OnContainerAdd += CoreComposers.SimpleinjectorAddHandler;
+        o.OnContainerAdd += ClientsideComposers.SimpleinjectorAddHandler;
         o.OnContainerAdd += ServersideComposers.SimpleinjectorAddHandler;
         o.OnContainerAdd += o => o.Services
-            .AddOptions<CorsSettings>()
-            .BindConfiguration("CorsSettings")
-            .Validate(
-                s => s.AllowedOrigins.All(o => !String.IsNullOrWhiteSpace(o)),
-                $"The configuration key CorsSettings:{nameof(CorsSettings.AllowedOrigins)} cannot have empty or null entries.")
-            .ValidateOnStart()
-            .Services
-            .AddCors();
+        .AddOptions<CorsSettings>()
+        .BindConfiguration("CorsSettings")
+        .Validate(
+            s => s.AllowedOrigins.All(o => !String.IsNullOrWhiteSpace(o)),
+            $"The configuration key CorsSettings:{nameof(CorsSettings.AllowedOrigins)} cannot have empty or null entries.")
+        .ValidateOnStart()
+        .Services
+        .AddCors();
     })
     .ConfigureCapabilities(c =>
     {
@@ -54,7 +75,7 @@ await WebServerGuiApp.CreateBuilder(out var builder, s =>
             .AddInteractiveServerComponents()
             .AddInteractiveWebAssemblyComponents();
         _ = c.Components
-            .Add(typeof(CitizenBank.Shared.Presentation.Views.App).Assembly)
+            .Add(typeof(CitizenBank.Features.Shared.Views.App).Assembly)
             .Add(typeof(CitizenBank.WebClientGui.EntryPoint))
             .Add(typeof(CitizenBank.WebServerGui.App));
     })
@@ -74,17 +95,14 @@ await WebServerGuiApp.CreateBuilder(out var builder, s =>
 
         var allowedOrigins = app.Services.GetRequiredService<IOptions<CorsSettings>>().Value.AllowedOrigins;
         _ = app.UseCors(b => b.WithOrigins(allowedOrigins).AllowAnyHeader().AllowAnyMethod());
-
         _ = app.UseHttpsRedirection();
-
         _ = app.UseStaticFiles();
         _ = app.UseAntiforgery();
-
         _ = app.MapRazorComponents<App>()
             .AddInteractiveServerRenderMode()
             .AddInteractiveWebAssemblyRenderMode()
             .AddAdditionalAssemblies(
-                typeof(CitizenBank.Shared.Presentation.Views.App).Assembly,
+                typeof(CitizenBank.Features.Shared.Views.App).Assembly,
                 typeof(CitizenBank.WebClientGui.EntryPoint).Assembly);
     })
     .MapApiServiceEndpoints()
