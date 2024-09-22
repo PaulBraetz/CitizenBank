@@ -14,6 +14,8 @@ using RhoMicro.ApplicationFramework.Common.Environment;
 using RhoMicro.ApplicationFramework.Composition;
 using RhoMicro.ApplicationFramework.Hosting;
 
+using SimpleInjector;
+
 class Program
 {
     [STAThread]
@@ -32,8 +34,9 @@ class Program
            //get config up before mapping clients, as those resolve settings
            .ConfigureCapabilities(c => c.Configuration.AddJsonFile(Path.Combine(Path.GetDirectoryName(typeof(Program).Assembly.Location) ?? String.Empty, $"appsettings.{c.EnvironmentConfiguration.Name}.Core.json")))
            .AddFileLogging(configSection: "Logging:File")
-           .AddTimeout()
+           //.AddTimeout()
            .AddBlazor()
+           .AddAspects(Lifestyle.Scoped, CommonAspects.Execution)
            .AddAppSettings()
            .AddApiServiceClients()
            .ConfigureBuilder(b => b.RootComponents.Add<EntryPoint>("app"))

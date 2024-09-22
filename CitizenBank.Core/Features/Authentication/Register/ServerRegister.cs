@@ -18,14 +18,14 @@ partial class ServerRegisterDefinition
 
 public partial record struct ServerRegister : IApiRequest<ServerRegister, ServerRegister.Result, ServerRegister.Dto, ServerRegister.Result.Dto>
 {
-    public sealed record Dto(String Name, String Password, PrehashedPasswordParameters Parameters) : IApiRequestDto<ServerRegister, Result>
+    public sealed record Dto(String Name, String Password, String Salt, PrehashedPasswordParameters Parameters) : IApiRequestDto<ServerRegister, Result>
     {
         ServerRegister IApiRequestDto<ServerRegister, Result>.ToRequest() => new
         (
             Name: Name,
             Password: new PrehashedPassword(
                 Digest: ImmutableBytes.FromBase64String(Password),
-                Parameters: Parameters)
+                Parameters: Parameters with { Salt = ImmutableBytes.FromBase64String(Salt) })
         );
     }
     [UnionType<CreateSuccess, OverwriteSuccess, ValidatePrehashedPasswordParameters.Insecure, DoesCitizenExist.DoesNotExist, Failure>]
@@ -71,6 +71,7 @@ public partial record struct ServerRegister : IApiRequest<ServerRegister, Server
     (
         Name: Name,
         Password: Password.Digest.ToBase64String(),
-        Parameters: Password.Parameters
+        Parameters: Password.Parameters,
+        Salt: Password.Parameters.Salt.ToBase64String()
     );
 }

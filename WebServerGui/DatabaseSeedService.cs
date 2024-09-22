@@ -53,26 +53,22 @@ class DatabaseSeedService(Container container) : IHostedService
                     var registerResult = await clientRegisterService
                         .ClientRegister(d.Name, d.Password, ct)
                         .ConfigureAwait(false);
-                    
+
                     if(!( registerResult.IsCreateSuccess || registerResult.IsOverwriteSuccess ))
                     {
                         var logger = scope2.GetRequiredService<ILoggerFactory>().CreateLogger<DatabaseSeedService>();
                         logger.LogError("register result for citizen {Name} does not indicate success: {Result}", d.Name, registerResult);
                     }
-                    //}
 
-                    //var scope3 = AsyncScopedLifestyle.BeginScope(container);
-                    //await using(scope3.ConfigureAwait(false))
-                    //{
                     var clientLoginService = scope2.GetRequiredService<IClientLoginService>();
                     var loginResult = await clientLoginService
-                        .ClientLogin(d.Name, d.Password, PrehashedPasswordParametersSource.RegistrationRequest, ct)
+                        .ClientLogin(d.Name, d.Password, LoginType.CompleteRegistration, ct)
                         .ConfigureAwait(false);
 
                     if(!loginResult.IsSuccess)
                     {
                         var logger = scope2.GetRequiredService<ILoggerFactory>().CreateLogger<DatabaseSeedService>();
-                        logger.LogError("login result for citizen {Name} does not indicate success: {Result}", d.Name, loginResult);
+                        logger.LogError("login result for citizen {Name} does not indicate success: {Result}", d.Name, (Object)loginResult);
                     }
                 }
             });

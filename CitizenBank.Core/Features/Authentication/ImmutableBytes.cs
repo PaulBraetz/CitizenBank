@@ -39,7 +39,7 @@ public readonly struct ImmutableBytes : IEquatable<ImmutableBytes>
         return result;
     }
 
-    public override String ToString() => "***";
+    public override String ToString() => $"*{Length}*";
 
     private Byte[] ToArray()
     {

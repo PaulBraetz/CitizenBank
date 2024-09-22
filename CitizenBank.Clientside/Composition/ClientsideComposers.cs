@@ -33,19 +33,31 @@ public static class ClientsideComposers
 
         c.RegisterSingleton<IInputControlCssStyle, InputControlCssStyle>();
 
+        c.Register<IInputModel<LoginType, LoadPrehashedPasswordParameters.Failure>, LoginTypeInputModel>();
+        c.RegisterInstance<IDefaultValueProvider<LoginType>>(
+            new DefaultValueProvider<LoginType>(() => LoginType.Regular));
+        c.RegisterInstance<IDefaultValueProvider<LoadPrehashedPasswordParameters.Failure>>(
+            new DefaultValueProvider<LoadPrehashedPasswordParameters.Failure>(() => new LoadPrehashedPasswordParameters.RegistrationNotFound()));
+
         c.Register<IInputModel<CitizenName, DoesCitizenExist.DoesNotExist>, CitizenNameInputModel>();
-        c.RegisterSingleton<IDefaultValueProvider<CitizenName>, CitizenNameDefaultProvider>();
-        c.RegisterSingleton<IDefaultValueProvider<DoesCitizenExist.DoesNotExist>, DoesDoesNotExistDefaultValueProvider>();
-        c.RegisterSingleton<IDefaultValueProvider<ClearPassword>, ClearPasswordDefaultValueProvider>();
+        c.RegisterInstance<IDefaultValueProvider<CitizenName>>(
+            new DefaultValueProvider<CitizenName>(() => CitizenName.Empty));
+        c.RegisterInstance<IDefaultValueProvider<DoesCitizenExist.DoesNotExist>>(
+            new DefaultValueProvider<DoesCitizenExist.DoesNotExist>(() => new()));
+        c.RegisterInstance<IDefaultValueProvider<ClearPassword>>(
+            new DefaultValueProvider<ClearPassword>(() => ClearPassword.Empty));
 
         c.Register<ClientLoginModel>();
         c.Register<IInputModel<ClearPassword, ValidatePassword.Mismatch>, Features.Authentication.Login.ClearPasswordInputModel>();
-        c.RegisterSingleton<IDefaultValueProvider<ValidatePassword.Mismatch>, PasswordMismatchDefaultValueProvider>();
+        c.RegisterInstance<IDefaultValueProvider<ValidatePassword.Mismatch>>(
+            new DefaultValueProvider<ValidatePassword.Mismatch>(() => new()));
 
         c.Register<ClientRegisterModel>();
-        c.RegisterSingleton<IDefaultValueProvider<Optional<ClientRegister.Result>>, OptionalClientRegisterResultDefaultValueProvider>();
+        c.RegisterInstance<IDefaultValueProvider<Optional<ClientRegister.Result>>>(
+            new DefaultValueProvider<Optional<ClientRegister.Result>>(() => Optional.None<ClientRegister.Result>()));
         c.Register<IInputModel<ClearPassword, PasswordValidity>, Features.Authentication.Register.ClearPasswordInputModel>();
-        c.RegisterSingleton<IDefaultValueProvider<PasswordValidity>, PasswordValidityDefaultValueProvider>();
+        c.RegisterInstance<IDefaultValueProvider<PasswordValidity>>(
+            new DefaultValueProvider<PasswordValidity>(() => PasswordValidity.Empty));
     });
     /// <summary>
     /// Gets the default composition root for web application clients.

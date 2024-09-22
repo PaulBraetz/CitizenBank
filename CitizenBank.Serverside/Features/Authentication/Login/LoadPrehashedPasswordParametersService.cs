@@ -10,23 +10,28 @@ using RhoMicro.ApplicationFramework.Aspects;
 partial class LoadPrehashedPasswordParametersService(CitizenBankContext context)
 {
     [ServiceMethodImplementation(Request = typeof(LoadPrehashedPasswordParameters), Service = typeof(ILoadPrehashedPasswordParametersService))]
-    async ValueTask<LoadPrehashedPasswordParameters.Result> LoadPrehashedPasswordParameters([Intercept] CitizenName name, PrehashedPasswordParametersSource source, CancellationToken ct)
+    async ValueTask<LoadPrehashedPasswordParameters.Result> LoadPrehashedPasswordParameters([Intercept] CitizenName name, LoginType loginType, CancellationToken ct)
     {
         var nameString = name.Value;
         LoadPrehashedPasswordParameters.Result result =
-            source switch
+            loginType switch
             {
-                PrehashedPasswordParametersSource.RegistrationRequest =>
-                   ( await context.RegistrationRequests.SingleOrDefaultAsync(r => r.Name == nameString, ct) )?
+                LoginType.CompleteRegistration =>
+                   ( await context.RegistrationRequests.FindAsync([nameString], ct) )?
                        .Password,
-                PrehashedPasswordParametersSource.Registration =>
-                   ( await context.Registrations.SingleOrDefaultAsync(r => r.Name == nameString, ct) )?
+                LoginType.Regular =>
+                   ( await context.Registrations.FindAsync([nameString], ct) )?
                        .Password,
-                _ => throw new ArgumentOutOfRangeException(nameof(source), source, $"Unable to handle prehashed password parameters source '{source}'.")
+                _ => throw new ArgumentOutOfRangeException(nameof(loginType), loginType, $"Unable to handle login type '{loginType}'.")
             } switch
             {
                 { } pw => pw.PrehashedPasswordParameters.ToPrehashedPasswordParameters(),
-                null => new LoadPrehashedPasswordParameters.NotFound()
+                null => loginType switch
+                {
+                    LoginType.CompleteRegistration => (LoadPrehashedPasswordParameters.Failure)new LoadPrehashedPasswordParameters.RegistrationRequestNotFound(),
+                    LoginType.Regular => (LoadPrehashedPasswordParameters.Failure)new LoadPrehashedPasswordParameters.RegistrationNotFound(),
+                    _ => throw new ArgumentOutOfRangeException(nameof(loginType), loginType, $"Unable to handle login type '{loginType}'.")
+                }
             };
 
         return result;

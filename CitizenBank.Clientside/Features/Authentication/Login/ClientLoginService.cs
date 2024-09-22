@@ -17,18 +17,18 @@ partial class ClientLoginService(
     async ValueTask<ClientLogin.Result> ClientLogin(
         CitizenName name,
         ClearPassword password,
-        PrehashedPasswordParametersSource parametersSource,
+        LoginType loginType,
         CancellationToken ct)
     {
         var existsResult = await doesCitizenExistService.DoesCitizenExist(name, ct);
         if(existsResult.TryAsDoesNotExist(out var doesNotExist))
             return doesNotExist;
 
-        var loadParametersResult = await parametersService.LoadPrehashedPasswordParameters(name, parametersSource, ct);
-        if(loadParametersResult.IsNotFound)
-            return new Failure("Unable to locate registration or registration request foir citizen.");
+        var loadParametersResult = await parametersService.LoadPrehashedPasswordParameters(name, loginType, ct);
+        if(loadParametersResult.TryAsFailure(out var f))
+            return f;
 
-        var prehashedPassword = await prehashPasswordService.PrehashPassword(password, loadParametersResult.AsPrehashedPasswordParameters, ct);
+        var prehashedPassword = await prehashPasswordService.PrehashPassword(password, loadParametersResult.AsPrehashedPasswordParameters!, ct);
         var loginResult = await serverLoginService.ServerLogin(name, prehashedPassword, ct);
 
         var result = loginResult.Match(

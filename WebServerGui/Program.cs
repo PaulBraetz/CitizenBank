@@ -28,12 +28,12 @@ await WebServerGuiApp.CreateBuilder(s =>
     //get config up before mapping endpoints, as those resolve settings
     .ConfigureCapabilities(c => c.Configuration.AddJsonFile(Path.Combine(Path.GetDirectoryName(typeof(Program).Assembly.Location) ?? String.Empty, $"appsettings.{c.EnvironmentConfiguration.Name}.Core.json")))
     .AddFileLogging(configSection: "Logging:File")
-    .AddTimeout()
+    //.AddTimeout()
     .AddClipboard()
     .AddBlazor()
     .AddAspects(
         Lifestyle.Scoped,
-        CommonAspects.Execution | CommonAspects.ServiceType,
+        CommonAspects.Execution,
         interceptors => interceptors.Append<CitizenNameInterceptor, CitizenName>())
     .AddApiServiceEndpoints()
     .AddConsoleLogging()

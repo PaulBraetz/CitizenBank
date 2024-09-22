@@ -14,13 +14,13 @@ public sealed class ClientLoginModel : HasObservableProperties
     public ClientLoginModel(
         IInputGroupModel<CitizenName, DoesCitizenExist.DoesNotExist> name,
         IInputGroupModel<ClearPassword, ValidatePassword.Mismatch> password,
-        //ISelectInputGroupModel<PrehashedPasswordParametersSource, String> parameterSource,
+        IInputGroupModel<LoginType, LoadPrehashedPasswordParameters.Failure> loginType,
         IButtonModel login,
         IClientLoginService loginService)
     {
         Name = name;
         Password = password;
-        //ParameterSource = parameterSource;
+        LoginType = loginType;
         Login = login;
 
         _loginService = loginService;
@@ -47,6 +47,8 @@ public sealed class ClientLoginModel : HasObservableProperties
         };
         Name.Input.Entered += OnLoginClicked;
 
+        LoginType.Label = "Complete Registration";
+
         Login.Label = "Login";
         Login.Clicked += OnLoginClicked;
 
@@ -57,7 +59,7 @@ public sealed class ClientLoginModel : HasObservableProperties
 
     public IInputGroupModel<CitizenName, DoesCitizenExist.DoesNotExist> Name { get; }
     public IInputGroupModel<ClearPassword, ValidatePassword.Mismatch> Password { get; }
-    //public ISelectInputGroupModel<PrehashedPasswordParametersSource, String> ParameterSource { get; }
+    public IInputGroupModel<LoginType, LoadPrehashedPasswordParameters.Failure> LoginType { get; }
     public IButtonModel Login { get; }
     private Optional<ClientLogin.Result> _result = Optional.None<ClientLogin.Result>();
     public Optional<ClientLogin.Result> Result
@@ -73,24 +75,23 @@ public sealed class ClientLoginModel : HasObservableProperties
         var result = await _loginService.ClientLogin(
             name: Name.Input.Value,
             password: Password.Input.Value,
-            parametersSource: PrehashedPasswordParametersSource.RegistrationRequest,
+            loginType: LoginType.Input.Value,
             cancellationToken: args.CancellationToken);
 
         Result = result;
-        if(result.TryAsPasswordMismatch(out var passwordMismatch))
-        {
-            Password.Input.SetInvalid(passwordMismatch);
-        } else
-        {
-            Password.Input.UnsetValidity();
-        }
-        
-        if(result.TryAsCitizenDoesNotExist(out var citizenDoesNotExist))
-        {
-            Name.Input.SetInvalid(citizenDoesNotExist);
-        } else
-        {
-            Name.Input.UnsetValidity();
-        }
+        Password.Input.UnsetValidity();
+        Name.Input.UnsetValidity();
+        LoginType.Input.UnsetValidity();
+        result.Switch(
+            onSuccess: _ =>
+            {
+                Password.Input.SetValid();
+                Name.Input.SetValid();
+                LoginType.Input.SetValid();
+            },
+            onFailure: _ => { },
+            onCitizenDoesNotExist: Name.Input.SetInvalid,
+            onParametersError: LoginType.Input.SetInvalid,
+            onPasswordMismatch: Password.Input.SetInvalid);
     }
 }

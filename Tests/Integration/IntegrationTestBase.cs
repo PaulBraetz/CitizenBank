@@ -108,7 +108,7 @@ public abstract class IntegrationTestBase
         var scope = AsyncScopedLifestyle.BeginScope(container);
 
         var accessor = scope.GetService<HttpClientAccessor>();
-        if(accessor is not null or HttpClientAccessorFake)
+        if(accessor is not null and not HttpClientAccessorFake)
             throw new InvalidOperationException("Registered http client accessor is not fake; this would allow for outbound http requests in tests.");
 
         var service = scope.GetRequiredService<TService>();

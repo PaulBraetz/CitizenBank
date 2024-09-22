@@ -14,7 +14,7 @@ partial class LoadRegistrationRequestService(CitizenBankContext context)
     async ValueTask<LoadRegistrationRequest.Result> LoadRegistrationRequest(CitizenName name, CancellationToken ct)
     {
         var nameString = name.Value;
-        LoadRegistrationRequest.Result result = await context.RegistrationRequests.SingleOrDefaultAsync(r => r.Name == nameString, ct) is { } r
+        LoadRegistrationRequest.Result result = await context.RegistrationRequests.FindAsync([nameString], ct) is { } r
             ? r.ToRegistrationRequest()
             : new LoadRegistrationRequest.NotFound();
 

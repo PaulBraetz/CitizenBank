@@ -1,0 +1,26 @@
+﻿@inherits ModelComponentBase<IInputModel<LoginType, LoadPrehashedPasswordParameters.Failure>>
+@namespace CitizenBank.Features.Authentication.Login
+
+<InputControl @attributes="Attributes"
+              type="checkbox"
+              checked="@(Model.Value == LoginType.CompleteRegistration)"
+              Value="Model"
+              TValue="LoginType"
+              TError="LoadPrehashedPasswordParameters.Failure"
+              UpdateOnFocusLost="false"
+              ErrorTitleParse="ErrorTitleParse"
+              InitialValueParse="v=>String.Empty"
+              @onclick="SwitchLoginType" />
+
+@code {
+    private void SwitchLoginType()
+    {
+        Model.Value = Model.Value == LoginType.CompleteRegistration
+            ? LoginType.Regular
+            : LoginType.CompleteRegistration;
+    }
+    private static String ErrorTitleParse(LoadPrehashedPasswordParameters.Failure failure) =>
+        failure.Match(
+            onRegistrationNotFound: _ => "Unable to locate registration for citizen.",
+            onRegistrationRequestNotFound: _ => "Unable to locate registration request for citizen.");
+}

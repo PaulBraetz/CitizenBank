@@ -16,7 +16,8 @@ partial class ServerLoginServiceDefinition
         throw Exceptions.DefinitionNotSupported<ServerLoginServiceDefinition>();
 }
 
-public partial record struct ServerLogin : IApiRequest<ServerLogin, ServerLogin.Result, ServerLogin.Dto, ServerLogin.Result.Dto>
+public partial record struct ServerLogin
+    : IApiRequest<ServerLogin, ServerLogin.Result, ServerLogin.Dto, ServerLogin.Result.Dto>
 {
     [UnionType<CompleteRegistration.Failure>(Alias = "CompleteRegistrationFailure")]
     [UnionType<RhoMicro.ApplicationFramework.Common.Failure>(Alias = "GenericFailure")]
@@ -78,19 +79,20 @@ public partial record struct ServerLogin : IApiRequest<ServerLogin, ServerLogin.
         };
     }
 
-    public sealed record Dto(String Name, String Password, PrehashedPasswordParameters Parameters) : IApiRequestDto<ServerLogin, Result>
+    public sealed record Dto(String Name, String Password, String Salt, PrehashedPasswordParameters Parameters) : IApiRequestDto<ServerLogin, Result>
     {
         ServerLogin IApiRequestDto<ServerLogin, Result>.ToRequest() => new
         (
             Name: Name,
             Password: new(
                 Digest: ImmutableBytes.FromBase64String(Password),
-                Parameters: Parameters)
+                Parameters: Parameters with { Salt = ImmutableBytes.FromBase64String(Salt) })
         );
     }
 
     Dto IApiRequest<ServerLogin, Result, Dto, Result.Dto>.ToDto() => new(
         Name: Name,
         Password: Password.Digest.ToBase64String(),
+        Salt: Password.Parameters.Salt.ToBase64String(),
         Parameters: Password.Parameters);
 }
